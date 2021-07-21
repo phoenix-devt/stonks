@@ -6,7 +6,7 @@
 
     <groupId>fr.lezoo</groupId>
     <artifactId>stonks</artifactId>
-    <version>1.0-ALPHA</version>
+    <version>1.0</version>
     <description>Stocks in Minecraft!</description>
 
     <build>
@@ -33,6 +33,13 @@
 
     <repositories>
 
+        <!-- Public repo for NMS spigot builds -->
+        <repository>
+            <id>dre-repo</id>
+            <url>http://erethon.de/repo/</url>
+        </repository>
+
+        <!-- Allows to use any Github repo as dependency -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -43,7 +50,7 @@
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
 
-        <!-- Repository used to fetch all Spigot builds -->
+        <!-- Repository used to fetch all Spigot API builds -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -56,7 +63,7 @@
         <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+            <artifactId>spigot</artifactId>
             <version>1.17-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
