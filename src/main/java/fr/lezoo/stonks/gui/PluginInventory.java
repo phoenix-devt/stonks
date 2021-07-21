@@ -35,8 +35,17 @@ public abstract class PluginInventory implements InventoryHolder {
 
     public abstract Inventory getInventory();
 
+    /**
+     * Called when the inventory is clicked
+     *
+     * @param event Click event
+     */
     public abstract void whenClicked(InventoryClickEvent event);
 
-    public void whenClosed(InventoryCloseEvent event) {
-    }
+    /**
+     * Called when the inventory is closed
+     *
+     * @param event Close event
+     */
+    public abstract void whenClosed(InventoryCloseEvent event);
 }

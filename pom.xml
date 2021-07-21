@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.lezoo</groupId>
-    <artifactId>stonks</artifactId>
+    <artifactId>Stonks</artifactId>
     <version>1.0</version>
     <description>Stocks in Minecraft!</description>
 
