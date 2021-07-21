@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.logging.Level;
 
+/**
+ * Util class to check out, edit and save configuration files
+ */
 public class ConfigFile {
     private final File file;
     private final FileConfiguration config;

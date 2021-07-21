@@ -10,6 +10,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Uses reflection to handle version dependent code. Since 1.17
+ * a lot of NMS code disappeared but there is still OBC code
+ * which is dependant on the server version.
+ */
 public class VersionWrapper_Reflection implements VersionWrapper {
 
     @Override
