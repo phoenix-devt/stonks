@@ -7,6 +7,7 @@
     <groupId>fr.lezoo</groupId>
     <artifactId>stonks</artifactId>
     <version>1.0-ALPHA</version>
+    <description>Stocks in Minecraft!</description>
 
     <build>
         <finalName>${project.name}-${project.version}</finalName>
@@ -30,7 +31,6 @@
         </plugins>
     </build>
 
-
     <repositories>
 
         <repository>
@@ -50,5 +50,17 @@
         </repository>
 
     </repositories>
+
+    <dependencies>
+
+        <!-- Spigot API -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.17-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
 
 </project>
