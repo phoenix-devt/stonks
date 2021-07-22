@@ -1,14 +1,17 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.api.NBTItem;
 import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
+import fr.lezoo.stonks.api.quotation.QuotationInfo;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
 import fr.lezoo.stonks.gui.api.item.PlaceholderItem;
 import fr.lezoo.stonks.gui.api.item.Placeholders;
 import fr.lezoo.stonks.gui.api.item.SimplePlaceholderItem;
+import fr.lezoo.stonks.version.ItemTag;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -31,13 +34,9 @@ public class QuotationList extends EditableInventory {
         return new SimplePlaceholderItem(config);
     }
 
-    @Override
-    public GeneratedInventory generate(PlayerData player) {
-        return new GeneratedQuotationList(player, this);
-    }
-
     public class GeneratedQuotationList extends GeneratedInventory {
         private final List<Quotation> quotations = new ArrayList<>();
+        private final int maxPage;
 
         // Page indexing arbitrarily starts at 0
         private int page = 0;
@@ -45,20 +44,22 @@ public class QuotationList extends EditableInventory {
         public GeneratedQuotationList(PlayerData playerData, EditableInventory editable) {
             super(playerData, editable);
 
+            int perPage = editable.getByFunction("quotation").getSlots().size();
+
             quotations.addAll(Stonks.plugin.quotationManager.getQuotations());
+            maxPage = ((int) Math.ceil((double) quotations.size() / perPage)) - 1;
         }
 
         @Override
-        public String calculateName() {
-            // TODO translation
-            return "Quotations";
+        public String applyNamePlaceholders(String str) {
+            return str.replace("{page}", "" + page).replace("{max}", "" + maxPage);
         }
 
         @Override
         public void whenClicked(InventoryClickEvent event, InventoryItem item) {
 
             // Next Page
-            if (item.getFunction().equalsIgnoreCase("next-page")) {
+            if (item.getFunction().equalsIgnoreCase("next-page") && page < maxPage) {
                 page++;
                 open();
                 return;
@@ -73,6 +74,7 @@ public class QuotationList extends EditableInventory {
 
             if (item instanceof QuotationItem) {
                 // TODO
+
 
             }
         }
@@ -100,8 +102,17 @@ public class QuotationList extends EditableInventory {
             if (index >= inv.quotations.size())
                 return noQuotation.getDisplayedItem(inv, n);
 
+            Quotation quotation = inv.quotations.get(index);
+
             // Displayed required quotation
-            return super.getDisplayedItem(inv, n);
+            NBTItem nbt = NBTItem.get(super.getDisplayedItem(inv, n));
+            nbt.addTag(new ItemTag("quotationId", quotation.getId()));
+            return nbt.toItem();
+        }
+
+        @Override
+        public boolean hasDifferentDisplay() {
+            return true;
         }
 
         @Override
@@ -115,10 +126,10 @@ public class QuotationList extends EditableInventory {
             holders.register("stock-name", quotation.getStockName());
             // TODO remplacer les placeholders
             holders.register("current-price", 0);
-            holders.register("week-low", 0);
-            holders.register("week-high", 0);
-            holders.register("year-low", 0);
-            holders.register("year-high", 0);
+            holders.register("week-low", quotation.getLowest(QuotationInfo.WEEK_TIME_OUT));
+            holders.register("week-high", quotation.getHighest(QuotationInfo.WEEK_TIME_OUT));
+            holders.register("month-low", quotation.getLowest(QuotationInfo.MONTH_TIME_OUT));
+            holders.register("month-high", quotation.getHighest(QuotationInfo.MONTH_TIME_OUT));
 
             return holders;
         }

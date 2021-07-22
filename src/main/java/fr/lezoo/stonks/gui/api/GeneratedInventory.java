@@ -13,11 +13,13 @@ import java.util.List;
 public abstract class GeneratedInventory extends PluginInventory {
     private final EditableInventory editable;
     private final List<InventoryItem> loaded = new ArrayList<>();
+    private final String guiName;
 
     public GeneratedInventory(PlayerData playerData, EditableInventory editable) {
         super(playerData);
 
         this.editable = editable;
+        this.guiName = editable.getName();
     }
 
     public List<InventoryItem> getLoaded() {
@@ -54,7 +56,6 @@ public abstract class GeneratedInventory extends PluginInventory {
         return null;
     }
 
-
     /**
      * Order matters in the loaded array; if the user uses two
      * items with the same slot, we want the last item to be generated
@@ -69,7 +70,7 @@ public abstract class GeneratedInventory extends PluginInventory {
 
     @Override
     public Inventory getInventory() {
-        Inventory inv = Bukkit.createInventory(this, editable.getSlots(), Stonks.plugin.placeholderParser.parse(player, calculateName()));
+        Inventory inv = Bukkit.createInventory(this, editable.getSlots(), Stonks.plugin.placeholderParser.parse(player, getName()));
 
         for (InventoryItem item : editable.getItems())
             if (item.isDisplayed(this))
@@ -109,14 +110,18 @@ public abstract class GeneratedInventory extends PluginInventory {
         }
     }
 
+    public String getName() {
+        return applyNamePlaceholders(guiName);
+    }
+
     /**
      * The name of the inventory depends on the state of the inventory.
      * If the current page is 4 and if the max amount of pages is 6,
      * the inventory name should return 'Quotations (4/6)'
      *
-     * @return The name of the inventory.
+     * @return String with GUI name placeholders parsed
      */
-    public abstract String calculateName();
+    public abstract String applyNamePlaceholders(String str);
 
     public abstract void whenClicked(InventoryClickEvent event, InventoryItem item);
 }

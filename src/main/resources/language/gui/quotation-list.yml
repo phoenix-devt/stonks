@@ -24,12 +24,12 @@ items:
     lore:
       - ''
       - '&7Company Name: &f{company-name}'
-      - '&7Current Price: &f{price}'
+      - '&7Current Price: &f${price}'
       - ''
       - '&71 Week Extrema: &f${week-low} &7- &f{week-high}'
       - '&71 Month Extrema: &f${month-low} &7- &f{month-high}'
       - ''
-      - '&eClick to open the stock menu.'
+      - '&eClick to open the share menu.'
     no-quotation:
       name: '&aNo Quotation'
       item: GUNPOWDER

@@ -50,11 +50,11 @@
             <url>https://jitpack.io</url>
         </repository>
 
-        <!-- Public repo for NMS spigot builds -->
+        <!-- Public repo for NMS spigot builds
         <repository>
             <id>dre-repo</id>
             <url>http://erethon.de/repo/</url>
-        </repository>
+        </repository> -->
 
     </repositories>
 

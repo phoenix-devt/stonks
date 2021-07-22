@@ -14,7 +14,7 @@ import java.util.logging.Level;
 
 public class ConfigManager {
     private final Map<String, CustomItem> items = new HashMap<>();
-    private final String[] itemIds = {"PHYSICAL_STOCK_BILL"};
+    private final String[] itemIds = {"PHYSICAL_SHARE_BILL"};
 
     public ConfigManager() {
         reload();

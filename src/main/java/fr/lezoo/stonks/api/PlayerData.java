@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.api;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.api.share.Share;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -13,9 +14,9 @@ public class PlayerData {
     private Player player;
 
     /**
-     * Mapped stocks the player bought from a particular quotation
+     * Mapped shares the player bought from a particular quotation
      */
-    private final Map<String, Set<Stock>> stocks = new HashMap<>();
+    private final Map<String, Set<Share>> shares = new HashMap<>();
 
     public PlayerData(Player player) {
         this.player = player;

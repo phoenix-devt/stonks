@@ -11,7 +11,9 @@ import fr.lezoo.stonks.manager.PlayerDataManager;
 import fr.lezoo.stonks.manager.QuotationManager;
 import fr.lezoo.stonks.version.ServerVersion;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper;
+import fr.lezoo.stonks.version.wrapper.VersionWrapper_1_17_R1;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
@@ -20,10 +22,12 @@ public class Stonks extends JavaPlugin {
     public static Stonks plugin;
 
     public PlaceholderParser placeholderParser = new DefaultPlaceholderParser();
-    public VersionWrapper versionWrapper;
     public ServerVersion version;
-    public PlayerDataManager playerManager;
-    public QuotationManager quotationManager;
+
+    // TODO fixer l'initialisation de ces classes
+    public VersionWrapper versionWrapper = new VersionWrapper_1_17_R1();
+    public PlayerDataManager playerManager = new PlayerDataManager();
+    public QuotationManager quotationManager = new QuotationManager();
 
     public void onLoad() {
         plugin = this;
@@ -32,6 +36,16 @@ public class Stonks extends JavaPlugin {
     public void onEnable() {
         /* TEST*/
 
+
+        // Read server version
+        try {
+            version = new ServerVersion(Bukkit.getServer().getClass());
+            getLogger().log(Level.INFO, "Detected Bukkit Version: " + version.toString());
+        } catch (Exception exception) {
+            getLogger().log(Level.INFO, ChatColor.RED + "Your server version is not compatible.");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Change once plugin is posted on Spigot
         /*new Metrics(this, 111111);*/
