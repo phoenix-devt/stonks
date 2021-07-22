@@ -11,6 +11,7 @@ A RAJOUTER
 - afficher les STONKS sur une MAP
 - option pour acheter automatiquement ou vendre auto en fonction de certaines conditions des stocks
 - option pour fermer le marché temporairement
+- option pour changer le taux de comission d'une personne
 
 PROBLEMES AVEC L'ANCIEN PLUGIN
 - Afficher les stocks sur DES PANNEAUX pour voir en temps réel !!

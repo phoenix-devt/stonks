@@ -1,7 +1,8 @@
-package fr.lezoo.stonks.gui;
+package fr.lezoo.stonks.gui.api;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.item.InventoryItem;
+import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.gui.api.item.InventoryItem;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -70,7 +71,29 @@ public abstract class EditableInventory {
         return null;
     }
 
+    /**
+     * Generates an inventory and opens it to a player
+     */
+    public void generateAndOpen(PlayerData player) {
+        generate(player).open();
+    }
+
+    /**
+     * Method used to load an item in the custom inventory
+     *
+     * @param function The item function
+     * @param config   The configuration section to load the item from
+     * @return Loaded inventory item
+     */
     public abstract InventoryItem load(String function, ConfigurationSection config);
+
+    /**
+     * Method called to generate the inventory open by the player
+     *
+     * @param player Player opening the inventory
+     * @return Inventory that will be opened
+     */
+    public abstract GeneratedInventory generate(PlayerData player);
 
     private InventoryItem loadInventoryItem(ConfigurationSection config) {
         String function = config.contains("function") ? config.getString("function").toLowerCase() : "";

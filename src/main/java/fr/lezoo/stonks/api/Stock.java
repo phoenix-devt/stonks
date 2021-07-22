@@ -9,7 +9,7 @@ import fr.lezoo.stonks.api.quotation.Quotation;
  */
 public class Stock {
     private final Quotation quotation;
-    private final double leverage, stocks;
+    private double leverage, stocks;
 
     /**
      * @param quotation Quotation that stock was purchased from
@@ -33,5 +33,13 @@ public class Stock {
 
     public double getAmount() {
         return stocks;
+    }
+
+    public void setStocks(double stocks) {
+        this.stocks = stocks;
+    }
+
+    public void setLeverage(double leverage) {
+        this.leverage = leverage;
     }
 }

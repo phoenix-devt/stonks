@@ -7,6 +7,8 @@ package fr.lezoo.stonks.api.quotation;
 public abstract class Quotation {
     private final String id;
 
+    private double stockPrice;
+
     public Quotation(String id) {
         this.id = id;
     }

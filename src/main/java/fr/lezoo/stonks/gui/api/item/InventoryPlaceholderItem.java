@@ -1,10 +1,10 @@
-package fr.lezoo.stonks.gui.item;
+package fr.lezoo.stonks.gui.api.item;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.GeneratedInventory;
-import fr.lezoo.stonks.gui.PluginInventory;
+import fr.lezoo.stonks.gui.api.GeneratedInventory;
+import fr.lezoo.stonks.gui.api.PluginInventory;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public abstract class InventoryPlaceholderItem extends InventoryItem {
+public abstract class InventoryPlaceholderItem<T extends GeneratedInventory> extends InventoryItem<T> {
     private final Material material;
-    private final String name, texture;
+    private final String name;
     private final List<String> lore;
     private final int modelData;
-    private final boolean placeholders, hideFlags;
+    private final boolean hideFlags;
 
     public InventoryPlaceholderItem(ConfigurationSection config) {
         this(Material.valueOf(config.getString("item", "").toUpperCase().replace(" ", "_").replace("-", "_")), config);
@@ -37,9 +37,7 @@ public abstract class InventoryPlaceholderItem extends InventoryItem {
         this.name = config.getString("name");
         this.lore = config.getStringList("lore");
         this.hideFlags = config.getBoolean("hide-flags");
-        this.texture = config.getString("texture");
-        this.placeholders = config.getBoolean("placeholders");
-        this.modelData = config.getInt("custom-model-data");
+        this.modelData = config.getInt("model-data");
     }
 
     public Material getMaterial() {
@@ -70,30 +68,19 @@ public abstract class InventoryPlaceholderItem extends InventoryItem {
         return modelData;
     }
 
-    public boolean supportPlaceholders() {
-        return placeholders;
-    }
-
     @Override
-    public boolean canDisplay(GeneratedInventory inv) {
+    public boolean isDisplayed(T inv) {
         return true;
     }
 
-    public Placeholders getPlaceholders(PluginInventory inv) {
-        return getPlaceholders(inv, 0);
-    }
-
-    public abstract Placeholders getPlaceholders(PluginInventory inv, int n);
+    public abstract Placeholders getPlaceholders(T inv, int n);
 
     @Override
-    public ItemStack display(GeneratedInventory inv, int n) {
+    public ItemStack getDisplayedItem(T inv, int n) {
 
         Placeholders placeholders = getPlaceholders(inv, n);
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-
-        if (texture != null && meta instanceof SkullMeta)
-            applyTexture(texture, (SkullMeta) meta);
 
         if (hasName())
             meta.setDisplayName(placeholders.apply(inv.getPlayer(), getName()));

@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.api;
 
-import fr.lezoo.stonks.gui.item.Placeholders;
+import fr.lezoo.stonks.api.util.Utils;
+import fr.lezoo.stonks.gui.api.item.Placeholders;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -17,7 +18,7 @@ public class CustomItem {
     private final String displayName;
 
     public CustomItem(ConfigurationSection config) {
-        this.material = Material.valueOf(enumName(config.getString("type")));
+        this.material = Material.valueOf(Utils.enumName(config.getString("type")));
         this.displayName = config.getString("name");
         this.lore = config.getStringList("lore");
         this.modelData = config.getInt("model-data");
@@ -56,13 +57,5 @@ public class CustomItem {
         return item;
     }
 
-    /**
-     * Transforms 'badly-formatted ENUM name' into 'BADLY_FORMATTED_ENUM_NAME'
-     *
-     * @param str String input
-     * @return String formatted for enum fields
-     */
-    protected String enumName(String str) {
-        return str == null ? "" : str.toUpperCase().replace(" ", "_").replace("-", "_");
-    }
+
 }

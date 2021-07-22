@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.gui;
+package fr.lezoo.stonks.gui.api;
 
 import fr.lezoo.stonks.api.PlayerData;
 import org.bukkit.entity.Player;
