@@ -15,4 +15,14 @@ public class Utils {
     public static String enumName(String str) {
         return str == null ? "" : str.toUpperCase().replace(" ", "_").replace("-", "_");
     }
+
+    /**
+     * @param x        Number to truncate
+     * @param decimals Amount of decimals
+     * @return Double truncated to X decimals
+     */
+    public static double truncate(double x, int decimals) {
+        double pow = Math.pow(10, decimals);
+        return Math.floor(x * pow) / pow;
+    }
 }

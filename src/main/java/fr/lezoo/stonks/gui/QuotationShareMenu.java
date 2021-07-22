@@ -1,8 +1,8 @@
 package fr.lezoo.stonks.gui;
 
-import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
+import fr.lezoo.stonks.api.quotation.QuotationInfo;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
@@ -12,70 +12,51 @@ import fr.lezoo.stonks.gui.api.item.SimplePlaceholderItem;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class QuotationShareMenu extends EditableInventory {
     public QuotationShareMenu() {
-        super("quotation-list");
+        super("share-menu");
     }
 
     @Override
     public InventoryItem load(String function, ConfigurationSection config) {
 
-        if (function.equalsIgnoreCase("quotation"))
-            return new QuotationItem(config);
+        if (function.startsWith("leverage"))
+            // TODO
+            return null;
+
+        if (function.startsWith("buy"))
+            // TODO
+            return null;
+
+        if (function.startsWith("sell"))
+            // TODO
+            return null;
 
         return new SimplePlaceholderItem(config);
     }
 
-    @Override
-    public GeneratedInventory generate(PlayerData player) {
-        return new GeneratedQuotationList(player, this);
-    }
+    public class GeneratedShareMenu extends GeneratedInventory {
+        private final Quotation quotation;
 
-    public class GeneratedQuotationList extends GeneratedInventory {
-        private final List<Quotation> quotations = new ArrayList<>();
+        private double leverage = 1;
 
-        // Page indexing arbitrarily starts at 0
-        private int page = 0;
-
-        public GeneratedQuotationList(PlayerData playerData, EditableInventory editable) {
+        public GeneratedShareMenu(PlayerData playerData, EditableInventory editable, Quotation quotation) {
             super(playerData, editable);
 
-            quotations.addAll(Stonks.plugin.quotationManager.getQuotations());
+            this.quotation = quotation;
         }
 
         @Override
-        public String calculateName() {
-            // TODO translation
-            return "Quotations";
+        public String applyNamePlaceholders(String str) {
+            return str.replace("{company}", quotation.getCompanyName());
         }
 
         @Override
         public void whenClicked(InventoryClickEvent event, InventoryItem item) {
 
-            // Next Page
-            if (item.getFunction().equalsIgnoreCase("next-page")) {
-                page++;
-                open();
-                return;
-            }
-
-            // Previous Page
-            if (item.getFunction().equalsIgnoreCase("previous-page") && page >= 0) {
-                page--;
-                open();
-                return;
-            }
-
-            if (item instanceof QuotationItem) {
+            if (item instanceof QuotationInfoItem) {
                 // TODO
-                
-
-
 
 
             }
@@ -87,42 +68,63 @@ public class QuotationShareMenu extends EditableInventory {
         }
     }
 
-    public class QuotationItem extends PlaceholderItem<GeneratedQuotationList> {
-        private final SimplePlaceholderItem noQuotation;
+    public class BuyShareItem extends PlaceholderItem<GeneratedShareMenu> {
+        private final int amount;
 
-        public QuotationItem(ConfigurationSection config) {
+        public BuyShareItem(ConfigurationSection config, String function) {
             super(config);
 
-            noQuotation = new SimplePlaceholderItem(config.getConfigurationSection("no-quotation"));
+            this.amount = Integer.parseInt(function.substring(3));
         }
 
         @Override
-        public ItemStack getDisplayedItem(GeneratedQuotationList inv, int n) {
-            int index = getSlots().size() * inv.page + n;
-
-            // If above quotation number, display 'No quotation'
-            if (index >= inv.quotations.size())
-                return noQuotation.getDisplayedItem(inv, n);
-
-            // Displayed required quotation
-            return super.getDisplayedItem(inv, n);
-        }
-
-        @Override
-        public Placeholders getPlaceholders(GeneratedQuotationList inv, int n) {
-            int index = getSlots().size() * inv.page + n;
-            Quotation quotation = inv.quotations.get(index);
-
+        public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
 
-            holders.register("company-name", quotation.getCompanyName());
-            holders.register("stock-name", quotation.getStockName());
-            // TODO remplacer les placeholders
-            holders.register("current-price", 0);
-            holders.register("week-low", 0);
-            holders.register("week-high", 0);
-            holders.register("year-low", 0);
-            holders.register("year-high", 0);
+            holders.register("price", inv.quotation.getPrice());
+            holders.register("amount", amount);
+
+            return holders;
+        }
+    }
+
+    public class LeverageItem extends PlaceholderItem<GeneratedShareMenu> {
+        public LeverageItem(ConfigurationSection config) {
+            super(config);
+        }
+
+        @Override
+        public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
+            Placeholders holders = new Placeholders();
+
+            holders.register("leverage", inv.leverage);
+
+            return holders;
+        }
+    }
+
+    public class QuotationInfoItem extends PlaceholderItem<GeneratedShareMenu> {
+        public QuotationInfoItem(ConfigurationSection config) {
+            super(config);
+        }
+
+        @Override
+        public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
+            Placeholders holders = new Placeholders();
+
+            holders.register("company-name", inv.quotation.getCompanyName());
+            holders.register("stock-name", inv.quotation.getStockName());
+
+            holders.register("week-low", inv.quotation.getLowest(QuotationInfo.WEEK_TIME_OUT));
+            holders.register("week-high", inv.quotation.getHighest(QuotationInfo.WEEK_TIME_OUT));
+            holders.register("month-low", inv.quotation.getLowest(QuotationInfo.MONTH_TIME_OUT));
+            holders.register("month-high", inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT));
+
+            // TODO instead of comparing to 1 day ago, compare to the beginning of the day, same with month, year..
+            holders.register("hour-evolution", inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT));
+            holders.register("day-evolution", inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT));
+            holders.register("week-evolution", inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT));
+            holders.register("month-evolution", inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT));
 
             return holders;
         }

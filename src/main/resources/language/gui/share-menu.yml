@@ -1,0 +1,120 @@
+# GUI display name
+name: 'Shares for {company}'
+
+# Number of slots in your inventory. Must be
+# between 9 and 54 and must be a multiple of 9.
+slots: 54
+
+items:
+  buy1:
+    slots: [ 23 ]
+    function: buy1
+    name: '&aBuy {amount} Share'
+    item: LIME_CONCRETE
+    lore:
+      - ''
+      - '&7Buy {amount} share with leverage {leverage}'
+      - '&7Price: &f${price}'
+      - ''
+      - '&eClick to buy.'
+  buy10:
+    slots: [ 24 ]
+    function: buy10
+    name: '&aBuy {amount} Shares'
+    item: LIME_CONCRETE
+    lore:
+      - ''
+      - '&7Buy {amount} shares with leverage {leverage}'
+      - '&7Price: &f${price}'
+      - ''
+      - '&eClick to buy.'
+  buy100:
+    slots: [ 25 ]
+    function: buy100
+    name: '&aBuy {amount} Shares'
+    item: LIME_CONCRETE
+    lore:
+      - ''
+      - '&7Buy {amount} shares with leverage {leverage}'
+      - '&7Price: &f${price}'
+      - ''
+      - '&eClick to buy.'
+  buy-custom:
+    slots: [ 32 ]
+    function: buy-custom
+    name: '&aBuy {amount} Shares'
+    item: LIME_TERRACOTTA
+    lore:
+      - ''
+      - '&7Buy a custom amount of shares with leverage {leverage}'
+      - '&7(Write in the chat the amount you want)'
+      - ''
+      - '&eClick to buy.'
+  sell1:
+    slots: [ 21 ]
+    function: sell1
+    name: '&aSell {amount} Share'
+    item: RED_CONCRETE
+    lore:
+      - ''
+      - '&7Sell {amount} share with leverage {leverage}'
+      - '&7Price: &f${price}'
+      - ''
+      - '&eClick to sell.'
+  sell10:
+    slots: [ 20 ]
+    function: sell10
+    name: '&aSell {amount} Shares'
+    item: RED_CONCRETE
+    lore:
+      - ''
+      - '&7Sell {amount} shares with leverage {leverage}'
+      - '&7Price: &f${price}'
+      - ''
+      - '&eClick to sell.'
+  sell100:
+    slots: [ 19 ]
+    function: sell100
+    name: '&aSell {amount} Shares'
+    item: RED_CONCRETE
+    lore:
+      - ''
+      - '&7Sell {amount} shares with leverage {leverage}'
+      - '&7Price: &f${price}'
+      - ''
+      - '&eClick to sell.'
+  sell-custom:
+    slots: [ 30 ]
+    function: sell-custom
+    name: '&aSell {amount} Shares'
+    item: MAGENTA_TERRACOTTA
+    lore:
+      - ''
+      - '&7Sell a custom amount of shares with leverage {leverage}'
+      - '&7(Write in the chat the amount you want)'
+      - ''
+      - '&eClick to sell.'
+  stock-info:
+    slots: [ 13 ]
+    function: info
+    name: '&a{stock-name}'
+    item: BOOK
+    lore:
+      - ''
+      - '&71 Hour Evolution: {hour-evolution}'
+      - '&71 Day Evolution: {day-evolution}'
+      - '&71 Week Evolution: {week-evolution}'
+      - '&71 Month Evolution: {month-evolution}'
+      - ''
+      - '&71 Week Extrema: &f${week-low} &7- &f{week-high}'
+      - '&71 Month Extrema: &f${month-low} &7- &f{month-high}'
+  leverage:
+    slots: [ 43 ]
+    function: leverage
+    name: '&aLeverage'
+    item: TRIPWIRE_HOOK
+    lore:
+      - ''
+      - '&7Current leverage is &f{leverage}'
+      - ''
+      - '&eClick to change it.'

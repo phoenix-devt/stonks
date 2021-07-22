@@ -1,6 +1,8 @@
 package fr.lezoo.stonks.api.quotation;
 
 
+import fr.lezoo.stonks.api.util.Utils;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +11,7 @@ import org.bukkit.map.MapView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Place where players can buy and sell shares
@@ -23,6 +26,8 @@ public class Quotation {
         this.stockName = stockName;
         this.quotationData=quotationData;
     }
+
+    private double price;
 
     public Quotation(String id, String companyName, String stockName) {
         this.id = id;
@@ -40,6 +45,10 @@ public class Quotation {
 
     public String getStockName() {
         return stockName;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     /**
@@ -94,6 +103,42 @@ public class Quotation {
         return highest;
     }
 
+    /**
+     * This method compares the current price with the info which time
+     * stamp matches the most the time stamp given as parameter
+     * <p>
+     * TODO use linear interpolation instead
+     *
+     * @param delta Difference of time in the past, in millis
+     * @return Growth rate compared to some time ago
+     */
+    public double getEvolution(long delta) {
+        QuotationInfo info = getClosestInfo(System.currentTimeMillis() - delta);
+
+        // Check if no division by zero?
+        double growthRate = 100 * Math.abs((getPrice() - info.getPrice()) / info.getPrice());
+
+        return Utils.truncate(growthRate, 1);
+    }
+
+    /**
+     * @return Quotation info with closest time
+     * stamp to the one given as parameter
+     */
+    private QuotationInfo getClosestInfo(long timeStamp) {
+        Validate.isTrue(!quotationData.isEmpty(), "Quotation data is empty");
+
+        QuotationInfo closest = null;
+        long delta = Long.MAX_VALUE;
+
+        for (QuotationInfo info : quotationData)
+            if (Math.abs(info.getTimeStamp() - timeStamp) < delta) {
+                delta = Math.abs(info.getTimeStamp() - timeStamp);
+                closest = info;
+            }
+
+        return closest;
+    }
 
     /**
      * @param NUMBER_DATA number of points taken for the graphic
@@ -114,5 +159,4 @@ public class Quotation {
         return mapItem;
 
     }
-
 }

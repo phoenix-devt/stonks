@@ -72,13 +72,6 @@ public abstract class EditableInventory {
     }
 
     /**
-     * Generates an inventory and opens it to a player
-     */
-    public void generateAndOpen(PlayerData player) {
-        generate(player).open();
-    }
-
-    /**
      * Method used to load an item in the custom inventory
      *
      * @param function The item function
@@ -86,14 +79,6 @@ public abstract class EditableInventory {
      * @return Loaded inventory item
      */
     public abstract InventoryItem load(String function, ConfigurationSection config);
-
-    /**
-     * Method called to generate the inventory open by the player
-     *
-     * @param player Player opening the inventory
-     * @return Inventory that will be opened
-     */
-    public abstract GeneratedInventory generate(PlayerData player);
 
     private InventoryItem loadInventoryItem(ConfigurationSection config) {
         String function = config.contains("function") ? config.getString("function").toLowerCase() : "";

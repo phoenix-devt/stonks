@@ -1,6 +1,4 @@
-package fr.lezoo.stonks.api;
-
-import fr.lezoo.stonks.api.quotation.Quotation;
+package fr.lezoo.stonks.api.share;
 
 /**
  * One share can be bought by a player. This could be
@@ -8,26 +6,34 @@ import fr.lezoo.stonks.api.quotation.Quotation;
  * parameter and the date at which it was bought
  */
 public class Share {
-    private final Quotation quotation;
+    private final ShareType type;
     private double leverage, shares;
     private final long timeStamp;
 
     /**
-     * @param quotation Quotation that share was purchased from
+     * @param type      Type of share
      * @param leverage  Multiplicative factor for the money made out of,
      *                  or lost by a share purchase
      * @param shares    Amount of shares purchased
      * @param timeStamp When the share was bought
      */
-    public Share(Quotation quotation, double leverage, double shares, long timeStamp) {
-        this.quotation = quotation;
+    public Share(ShareType type, double leverage, double shares, long timeStamp) {
+        this.type = type;
         this.leverage = leverage;
         this.shares = shares;
         this.timeStamp = timeStamp;
     }
 
-    public Quotation getQuotation() {
-        return quotation;
+    /**
+     * Public constructor when creating a share. The time stamp
+     * is the time at which this instance was created
+     */
+    public Share(ShareType type, double leverage, double shares) {
+        this(type, leverage, shares, System.currentTimeMillis());
+    }
+
+    public ShareType getType() {
+        return type;
     }
 
     public double getLeverage() {

@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.api;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.api.share.Share;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

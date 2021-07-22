@@ -8,8 +8,10 @@ public class QuotationInfo {
     private final long timeStamp;
     private final double price;
 
-    public static final long WEEK_TIME_OUT = 1000 * 60 * 60 * 24 * 7;
-    public static final long MONTH_TIME_OUT = 1000 * 60 * 60 * 24 * 30;
+    public static final long HOUR_TIME_OUT = 1000 * 60 * 60;
+    public static final long DAY_TIME_OUT = HOUR_TIME_OUT * 24;
+    public static final long WEEK_TIME_OUT = DAY_TIME_OUT * 7;
+    public static final long MONTH_TIME_OUT = DAY_TIME_OUT * 30;
 
     public QuotationInfo(long time, double price) {
         this.timeStamp = time;
