@@ -2,6 +2,7 @@ package fr.lezoo.stonks.api.quotation;
 
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
@@ -105,6 +106,9 @@ public class Quotation {
         ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
         //We cast the ItemMeta into MapMeta
         MapMeta meta = (MapMeta) mapItem.getItemMeta();
+        meta.setDisplayName(ChatColor.RED+"StockPaper of :"+companyName);
+
+
         //Creates a mapview to later change its Renderer and load img
         MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
         mapView.getRenderers().clear();
