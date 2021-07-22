@@ -1,9 +1,11 @@
 package fr.lezoo.stonks;
 
 import fr.lezoo.stonks.comp.placeholder.PlaceholderParser;
+import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.manager.PlayerDataManager;
 import fr.lezoo.stonks.version.ServerVersion;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Stonks extends JavaPlugin {
@@ -23,6 +25,9 @@ public class Stonks extends JavaPlugin {
         // Change once plugin is posted on Spigot
         /*new Metrics(this, 111111);*/
 
+        // Initialize managers
 
+        // Register listeners
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
     }
 }
