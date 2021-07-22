@@ -33,10 +33,15 @@
 
     <repositories>
 
-        <!-- Public repo for NMS spigot builds -->
+        <!-- Repository used to fetch all Spigot API builds -->
         <repository>
-            <id>dre-repo</id>
-            <url>http://erethon.de/repo/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
 
         <!-- Allows to use any Github repo as dependency -->
@@ -45,15 +50,10 @@
             <url>https://jitpack.io</url>
         </repository>
 
+        <!-- Public repo for NMS spigot builds -->
         <repository>
-            <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
-
-        <!-- Repository used to fetch all Spigot API builds -->
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>dre-repo</id>
+            <url>http://erethon.de/repo/</url>
         </repository>
 
     </repositories>
@@ -63,7 +63,7 @@
         <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
+            <artifactId>spigot-api</artifactId>
             <version>1.17-R0.1-SNAPSHOT</version>
         </dependency>
 
