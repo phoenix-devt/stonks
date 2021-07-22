@@ -19,6 +19,11 @@ public class Placeholders {
         placeholders.put(path, obj.toString());
     }
 
+    /**
+     * @param player Player to parse placeholders from
+     * @param str    String input
+     * @return String with parsed placeholders and color codes
+     */
     public String apply(Player player, String str) {
 
         /*
