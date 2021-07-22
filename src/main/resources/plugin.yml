@@ -1,8 +1,12 @@
 name: ${project.name}
 version: ${project.version}
 main: fr.lezoo.stonks
-author: [GMF, Indyuce]
+author: [ GMF, Indyuce ]
 description: ${project.description}
 api-version: 1.13
-commands: {}
-permissions: {}
+commands:
+  stonks:
+    description: 'Main plugin command.'
+permissions:
+  stonks.admin:
+    default: op
