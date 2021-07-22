@@ -1,9 +1,9 @@
-PHYSICAL_STOCK_BILL:
+PHYSICAL_SHARE_BILL:
   type: PAPER
-  name: '&aStock Bill'
+  name: '&aShare Bill'
   model-data: 0
   lore:
     - '&7This bill can be used at the broker'
-    - '&7to redeem &c{stocks} &7stocks of &c{quotation}&7.'
+    - '&7to redeem &c{shares} &7shares of &c{quotation}&7.'
     - '&7'
     - '&7Generated on &c{date}'

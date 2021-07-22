@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Place where players can buy and sell stocks
+ * Place where players can buy and sell shares
  */
 public abstract class Quotation {
     private final String id, companyName, stockName;

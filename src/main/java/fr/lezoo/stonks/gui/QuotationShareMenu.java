@@ -17,8 +17,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuotationList extends EditableInventory {
-    public QuotationList() {
+public class QuotationShareMenu extends EditableInventory {
+    public QuotationShareMenu() {
         super("quotation-list");
     }
 
@@ -73,7 +73,7 @@ public class QuotationList extends EditableInventory {
 
             if (item instanceof QuotationItem) {
                 // TODO
-
+                
 
 
 

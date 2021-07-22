@@ -13,9 +13,9 @@ public class PlayerData {
     private Player player;
 
     /**
-     * Mapped stocks the player bought from a particular quotation
+     * Mapped shares the player bought from a particular quotation
      */
-    private final Map<String, Set<Stock>> stocks = new HashMap<>();
+    private final Map<String, Set<Share>> shares = new HashMap<>();
 
     public PlayerData(Player player) {
         this.player = player;
