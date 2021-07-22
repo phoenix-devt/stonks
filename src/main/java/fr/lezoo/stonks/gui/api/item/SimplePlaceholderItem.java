@@ -7,7 +7,7 @@ import org.bukkit.configuration.ConfigurationSection;
  * An inventory item that has no particular placeholder
  * yet it DOES support PAPI placeholders.
  */
-public class SimplePlaceholderItem<T extends GeneratedInventory> extends InventoryPlaceholderItem<T> {
+public class SimplePlaceholderItem<T extends GeneratedInventory> extends PlaceholderItem<T> {
     public SimplePlaceholderItem(ConfigurationSection config) {
         super(config);
     }

@@ -17,9 +17,14 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuotationList extends EditableInventory {
-    public QuotationList() {
-        super("quotation-list");
+/**
+ * First stage of portfolio. It displays generic information
+ * about every course, that is the amount invested so far,
+ * active number of shares.
+ */
+public class Portfolio extends EditableInventory {
+    public Portfolio() {
+        super("portfolio");
     }
 
     @Override
@@ -71,10 +76,7 @@ public class QuotationList extends EditableInventory {
                 return;
             }
 
-            if (item instanceof QuotationItem) {
-                // TODO
 
-            }
         }
 
         @Override
@@ -109,16 +111,10 @@ public class QuotationList extends EditableInventory {
             int index = getSlots().size() * inv.page + n;
             Quotation quotation = inv.quotations.get(index);
 
+
             Placeholders holders = new Placeholders();
 
-            holders.register("company-name", quotation.getCompanyName());
-            holders.register("stock-name", quotation.getStockName());
-            // TODO remplacer les placeholders
-            holders.register("current-price", 0);
-            holders.register("week-low", 0);
-            holders.register("week-high", 0);
-            holders.register("year-low", 0);
-            holders.register("year-high", 0);
+            holders.register("name", "");
 
             return holders;
         }

@@ -2,7 +2,6 @@ package fr.lezoo.stonks.gui.api.item;
 
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,14 +13,10 @@ public abstract class InventoryItem<T extends GeneratedInventory> {
     private final List<Integer> slots = new ArrayList<>();
 
     public InventoryItem(ConfigurationSection config) {
-        this(config.getName(), config.getString("function"));
+        this.id = config.getName();
+        this.function = config.getString("function", "").toLowerCase();
 
         config.getStringList("slots").forEach(str -> slots.add(Integer.parseInt(str)));
-    }
-
-    public InventoryItem(String id, String function) {
-        this.id = id;
-        this.function = function == null ? "" : function.toLowerCase();
     }
 
     public String getId() {
@@ -55,7 +50,6 @@ public abstract class InventoryItem<T extends GeneratedInventory> {
         } else
             for (int j = 0; j < slots.size(); j++)
                 inv.setItem(slots.get(j), getDisplayedItem(generated, j));
-
     }
 
     /**

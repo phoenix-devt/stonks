@@ -1,0 +1,35 @@
+# GUI display name
+name: 'Quotations ({page}/{max})'
+
+# Number of slots in your inventory. Must be
+# between 9 and 54 and must be a multiple of 9.
+slots: 54
+
+items:
+  next-page:
+    slots: [ 53 ]
+    function: 'next-page'
+    item: ARROW
+    name: '&aNext Page'
+  prev-page:
+    slots: [ 45 ]
+    function: 'previous-page'
+    name: '&aPrevious Page'
+    item: ARROW
+  quotation:
+    slots: [ 10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34 ]
+    function: quotation
+    name: '&a{stock-name}'
+    item: BOOK
+    lore:
+      - ''
+      - '&7Company Name: &f{company-name}'
+      - '&7Current Price: &f{price}'
+      - ''
+      - '&71 Week Extrema: &f${week-low} &7- &f{week-high}'
+      - '&71 Month Extrema: &f${month-low} &7- &f{month-high}'
+      - ''
+      - '&eClick to open the stock menu.'
+    no-quotation:
+      name: '&aNo Quotation'
+      item: GUNPOWDER

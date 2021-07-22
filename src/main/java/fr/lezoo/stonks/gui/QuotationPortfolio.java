@@ -17,9 +17,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuotationList extends EditableInventory {
-    public QuotationList() {
-        super("quotation-list");
+public class QuotationPortfolio extends EditableInventory {
+    public QuotationPortfolio() {
+        super("portfolio");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class QuotationList extends EditableInventory {
         @Override
         public String calculateName() {
             // TODO translation
-            return "Quotations";
+            return "Quotations ("+(page+1)+")";
         }
 
         @Override
@@ -71,10 +71,7 @@ public class QuotationList extends EditableInventory {
                 return;
             }
 
-            if (item instanceof QuotationItem) {
-                // TODO
 
-            }
         }
 
         @Override
@@ -111,14 +108,7 @@ public class QuotationList extends EditableInventory {
 
             Placeholders holders = new Placeholders();
 
-            holders.register("company-name", quotation.getCompanyName());
-            holders.register("stock-name", quotation.getStockName());
-            // TODO remplacer les placeholders
-            holders.register("current-price", 0);
-            holders.register("week-low", 0);
-            holders.register("week-high", 0);
-            holders.register("year-low", 0);
-            holders.register("year-high", 0);
+            holders.register("name", "");
 
             return holders;
         }

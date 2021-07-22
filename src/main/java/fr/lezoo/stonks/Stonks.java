@@ -8,6 +8,7 @@ import fr.lezoo.stonks.comp.placeholder.PlaceholderParser;
 import fr.lezoo.stonks.comp.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.manager.PlayerDataManager;
+import fr.lezoo.stonks.manager.QuotationManager;
 import fr.lezoo.stonks.version.ServerVersion;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper;
 import org.bukkit.Bukkit;
@@ -22,6 +23,7 @@ public class Stonks extends JavaPlugin {
     public VersionWrapper versionWrapper;
     public ServerVersion version;
     public PlayerDataManager playerManager;
+    public QuotationManager quotationManager;
 
     public void onLoad() {
         plugin = this;
