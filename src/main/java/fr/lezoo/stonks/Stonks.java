@@ -30,6 +30,8 @@ public class Stonks extends JavaPlugin {
     }
 
     public void onEnable() {
+        /* TEST*/
+
 
         // Change once plugin is posted on Spigot
         /*new Metrics(this, 111111);*/
