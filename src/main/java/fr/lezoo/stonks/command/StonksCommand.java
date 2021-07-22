@@ -16,6 +16,17 @@ public class StonksCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player))
             return true;
+
+
+        if (args.length > 0 && args[0].equals("stonks")) {
+
+            // debug
+
+
+            return true;
+        }
+
+
         Player player = (Player) sender;
         List<QuotationInfo> quot = new ArrayList<>();
         for (int i = 0; i < 10; i++)

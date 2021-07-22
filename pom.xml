@@ -33,11 +33,11 @@
 
     <repositories>
 
-        <!-- Repository used to fetch all Spigot API builds -->
+        <!-- Repository used to fetch all Spigot API builds
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
+        </repository>-->
 
         <repository>
             <id>placeholderapi</id>
@@ -65,6 +65,8 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.17-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/spigot-1.17.1.jar</systemPath>
         </dependency>
 
         <dependency>

@@ -1,6 +1,6 @@
 name: ${project.name}
 version: ${project.version}
-main: fr.lezoo.stonks
+main: fr.lezoo.stonks.Stonks
 author: [ GMF, Indyuce ]
 description: ${project.description}
 api-version: 1.13
