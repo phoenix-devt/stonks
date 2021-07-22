@@ -9,16 +9,19 @@ import org.bukkit.map.MapView;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 
-
+/**
+ * Used to render the quotation evolution on a map item
+ */
 public class QuotationMapRenderer extends MapRenderer {
-    private final QuotationInfo[] quotationData;
+    private final List<QuotationInfo> quotationData;
     //It will update every TIMEOUT tick the Map
     private static final int TIMEOUT=200;
     //Count the number of ticks
     private int iterations=0;
 
-    public QuotationMapRenderer(QuotationInfo[] quotationData) {
+    public QuotationMapRenderer(List<QuotationInfo> quotationData) {
         this.quotationData=quotationData;
     }
 
