@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
 public class QuotationMapRenderer extends MapRenderer {
     private final List<QuotationInfo> quotationData;
     //Number of pixels on the BufferedImage drawn
-    private static final double IMAGE_SIZE=200;
+    private static final double IMAGE_SIZE=256;
     //It will update every TIMEOUT tick the Map
     private final int DATA_NUMBER;
     //Timeout de 30s
@@ -79,6 +80,8 @@ public class QuotationMapRenderer extends MapRenderer {
         //Blank Image
         BufferedImage image = new BufferedImage((int)IMAGE_SIZE,(int)IMAGE_SIZE,BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d =(Graphics2D)image.getGraphics();
+        g2d.setColor(Color.BLUE);
+        g2d.fill(new Rectangle2D.Double(0,0,IMAGE_SIZE,IMAGE_SIZE));
         Path2D.Double curb = new Path2D.Double();
         curb.moveTo(0,IMAGE_SIZE-(0.8*IMAGE_SIZE*(priceData[0]-minValue)/(maxValue-minValue)));
         for (int i=1;i<DATA_NUMBER;i++) {
