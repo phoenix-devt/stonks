@@ -13,9 +13,16 @@ import java.util.List;
 /**
  * Place where players can buy and sell stocks
  */
-public abstract class Quotation {
+public class Quotation {
     private final String id, companyName, stockName;
-    private final List<QuotationInfo> quotationData = new ArrayList<>();
+    private  List<QuotationInfo> quotationData = new ArrayList<>();
+
+    public Quotation(String id, String companyName, String stockName,List<QuotationInfo> quotationData) {
+        this.id = id;
+        this.companyName = companyName;
+        this.stockName = stockName;
+        this.quotationData=quotationData;
+    }
 
     public Quotation(String id, String companyName, String stockName) {
         this.id = id;
@@ -89,17 +96,19 @@ public abstract class Quotation {
 
 
     /**
+     * @param NUMBER_DATA number of points taken for the graphic
      * @return a map where we can see the quotation
      */
-    public ItemStack createQuotationMap() {
+
+
+    public ItemStack createQuotationMap(int NUMBER_DATA) {
         ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
         //We cast the ItemMeta into MapMeta
         MapMeta meta = (MapMeta) mapItem.getItemMeta();
         //Creates a mapview to later change its Renderer and load img
         MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
         mapView.getRenderers().clear();
-        mapView.addRenderer(new QuotationMapRenderer(quotationData));
-
+        mapView.addRenderer(new QuotationMapRenderer(quotationData, NUMBER_DATA));
         meta.setMapView(mapView);
         mapItem.setItemMeta(meta);
         return mapItem;
