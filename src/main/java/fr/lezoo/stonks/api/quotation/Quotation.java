@@ -6,11 +6,20 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
+import org.spigotmc.Metrics;
 
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,13 +27,15 @@ import java.util.List;
  */
 public class Quotation {
     private final String id, companyName, stockName;
-    private  List<QuotationInfo> quotationData = new ArrayList<>();
+    private List<QuotationInfo> quotationData = new ArrayList<>();
+    //Refresh time of the quotation in milliseconds
+    private final static int REFRESH_TIME = 1000;
 
-    public Quotation(String id, String companyName, String stockName,List<QuotationInfo> quotationData) {
+    public Quotation(String id, String companyName, String stockName, List<QuotationInfo> quotationData) {
         this.id = id;
         this.companyName = companyName;
         this.stockName = stockName;
-        this.quotationData=quotationData;
+        this.quotationData = quotationData;
     }
 
     private double price;
@@ -50,6 +61,11 @@ public class Quotation {
     public double getPrice() {
         return price;
     }
+
+    public List<QuotationInfo> getQuotationData() {
+        return quotationData;
+    }
+
 
     /**
      * @param timeOut The delay in the past in millis on which the lowest value
@@ -140,23 +156,82 @@ public class Quotation {
         return closest;
     }
 
+
+    public BufferedImage getQuotationBoardImage(int NUMBER_DATA) {
+        //Number of pixel in one line in the image
+        final double IMAGE_SIZE = 128 * 5;
+        //If not enough data on quotation data we take care of avoiding IndexOutOfBounds
+        BufferedImage image = new BufferedImage((int) IMAGE_SIZE, (int) IMAGE_SIZE, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) image.getGraphics();
+        int data_taken = Math.min(NUMBER_DATA, quotationData.size());
+        int index = quotationData.size() - data_taken;
+        //We look at the lowest val in the time we look backward to set the scale
+        double minVal = getLowest(NUMBER_DATA * REFRESH_TIME);
+        double maxVal = getHighest(NUMBER_DATA * REFRESH_TIME);
+        g2d.setColor(new Color(126, 51, 0));
+        g2d.fill(new Rectangle2D.Double(0, 0.2 * IMAGE_SIZE, IMAGE_SIZE, 0.8 * IMAGE_SIZE));
+        g2d.setColor(Color.RED);
+        Path2D.Double curve = new Path2D.Double();
+
+
+        //If price = maxVal y =0.2 IMAGE_SIZE
+        //If price = min Val y=IMAGE_SIZE (BOTTOM)
+        double x= 0;
+        double y=IMAGE_SIZE-(0.8*IMAGE_SIZE*(quotationData.get(index).getPrice()-minVal)/(maxVal-minVal));
+        curve.moveTo(x,y);
+        for (int i = 1; i < data_taken; i++) {
+            //if data_taken < NUMBER_DATA,the graphics will be on the left of the screen mainly
+            x=(double)i*IMAGE_SIZE/NUMBER_DATA;
+            y=IMAGE_SIZE-(0.8*IMAGE_SIZE*(quotationData.get(index+i).getPrice()-minVal)/(maxVal-minVal));
+            curve.lineTo(x,y);
+        }
+        g2d.draw(curve);
+        return image;
+    }
+
+
+    /**
+     * Creates a 5x5 map of the Quotation to the player
+     * gives the player all the maps in his inventory
+     */
+    public void createQuotationBoard(Player player, int NUMBER_DATA) {
+        BufferedImage image = getQuotationBoardImage(NUMBER_DATA);
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
+                MapMeta meta = (MapMeta) item.getItemMeta();
+                MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
+                mapView.getRenderers().clear();
+                mapView.setTrackingPosition(false);
+                //We draw on ea
+                mapView.addRenderer(new QuotationBoardRenderer(image.getSubimage(128 * i, 128 * j, 128, 128)));
+                meta.setMapView(mapView);
+                item.setItemMeta(meta);
+                player.getInventory().addItem(item);
+
+            }
+        }
+
+
+    }
+
+
     /**
      * @param NUMBER_DATA number of points taken for the graphic
      * @return a map where we can see the quotation
      */
 
-
     public ItemStack createQuotationMap(int NUMBER_DATA) {
         ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
         //We cast the ItemMeta into MapMeta
         MapMeta meta = (MapMeta) mapItem.getItemMeta();
-        meta.setDisplayName(ChatColor.RED+"StockPaper of :"+companyName);
-
+        meta.setDisplayName(ChatColor.RED + "StockPaper of :" + companyName);
+        meta.setLore(Arrays.asList(ChatColor.BLUE + "Company name : " + companyName, ChatColor.GREEN + "Stock name : " + stockName));
 
         //Creates a mapview to later change its Renderer and load img
         MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
         mapView.getRenderers().clear();
-        mapView.addRenderer(new QuotationMapRenderer(quotationData, NUMBER_DATA));
+        mapView.addRenderer(new QuotationMapRenderer(this, NUMBER_DATA));
         meta.setMapView(mapView);
         mapItem.setItemMeta(meta);
         return mapItem;
