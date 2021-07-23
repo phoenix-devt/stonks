@@ -49,6 +49,7 @@ public class QuotationMapRenderer extends MapRenderer {
 
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
+        /*
         if (iterations >= TIMEOUT) {
             BufferedImage image = this.getQuotationImage();
             //We resize to take less RAM
@@ -61,7 +62,7 @@ public class QuotationMapRenderer extends MapRenderer {
             iterations = 0;
         }
         iterations++;
-
+*/
 
     }
 

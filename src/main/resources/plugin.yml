@@ -8,6 +8,12 @@ api-version: 1.13
 commands:
   stonks:
     description: 'Main plugin command.'
+    usage : "Problem with Stonks command"
+
+  boarddisplay :
+    description : 'Display a board'
+    usage : "Problem with boarddisplay command"
+
 permissions:
   stonks.admin:
     default: op

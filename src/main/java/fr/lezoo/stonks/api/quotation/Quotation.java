@@ -157,9 +157,9 @@ public class Quotation {
     }
 
 
-    public BufferedImage getQuotationBoardImage(int NUMBER_DATA) {
+    public BufferedImage getQuotationBoardImage(int NUMBER_DATA,int NUMBER_BOARD) {
         //Number of pixel in one line in the image
-        final double IMAGE_SIZE = 128 * 5;
+        final double IMAGE_SIZE = 128 * NUMBER_BOARD;
         //If not enough data on quotation data we take care of avoiding IndexOutOfBounds
         BufferedImage image = new BufferedImage((int) IMAGE_SIZE, (int) IMAGE_SIZE, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) image.getGraphics();
@@ -194,16 +194,17 @@ public class Quotation {
      * Creates a 5x5 map of the Quotation to the player
      * gives the player all the maps in his inventory
      */
-    public void createQuotationBoard(Player player, int NUMBER_DATA) {
-        BufferedImage image = getQuotationBoardImage(NUMBER_DATA);
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+    public void createQuotationBoard(Player player, int NUMBER_DATA,int NUMBER_BOARD) {
+        BufferedImage image = getQuotationBoardImage(NUMBER_DATA,NUMBER_BOARD);
+        for (int i = 0; i < NUMBER_BOARD; i++) {
+            for (int j = 0; j < NUMBER_BOARD; j++) {
                 ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
                 MapMeta meta = (MapMeta) item.getItemMeta();
                 MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
+                meta.setDisplayName("ligne :"+i+"colonne :"+j);
                 mapView.getRenderers().clear();
                 mapView.setTrackingPosition(false);
-                //We draw on ea
+                //We draw on each map
                 mapView.addRenderer(new QuotationBoardRenderer(image.getSubimage(128 * i, 128 * j, 128, 128)));
                 meta.setMapView(mapView);
                 item.setItemMeta(meta);
