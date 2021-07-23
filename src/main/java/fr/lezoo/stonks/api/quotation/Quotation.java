@@ -12,7 +12,6 @@ import org.bukkit.map.MapView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Place where players can buy and sell shares

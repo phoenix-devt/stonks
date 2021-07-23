@@ -30,11 +30,7 @@ public class StonksCommand implements CommandExecutor {
             return true;
         }
 
-
-        List<QuotationInfo> quot = new ArrayList<>();
-        for (int i = 0; i < 10; i++)
-            quot.add(new QuotationInfo(System.currentTimeMillis() + 10000 * i, Math.log(1 + i)));
-        Quotation quotation = new Quotation("aaa", "ooo", "hiiii", quot);
+        Quotation quotation = Stonks.plugin.quotationManager.getQuotations().stream().findAny().get();
         player.getInventory().addItem(quotation.createQuotationMap(10));
         return true;
     }

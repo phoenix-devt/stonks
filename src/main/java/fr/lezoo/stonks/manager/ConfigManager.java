@@ -11,19 +11,32 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class ConfigManager {
-    private final Map<String, CustomItem> items = new HashMap<>();
-    private final String[] itemIds = {"PHYSICAL_SHARE_BILL"};
 
+    // List of items to reload
+    private final String[] itemIds = {"PHYSICAL_SHARE_BILL"};
+    private final Map<String, CustomItem> items = new HashMap<>();
+
+    // Accessible public GUIs
     public final QuotationList QUOTATION_LIST = new QuotationList();
     public final QuotationShareMenu QUOTATION_SHARE = new QuotationShareMenu();
     private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE};
 
+    // Accessible public config fields
+    public DecimalFormat stockPriceFormat;
+
     public void reload() {
+
+        // Reload default config
+        Stonks.plugin.reloadConfig();
+
+        // Update public config fields
+        stockPriceFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("stock-price-decimal-format"));
 
         // Copy default files
         for (DefaultFile def : DefaultFile.values())
