@@ -26,8 +26,8 @@ items:
       - '&7Company Name: &f{company-name}'
       - '&7Current Price: &f${price}'
       - ''
-      - '&71 Week Extrema: &f${week-low} &7- &f{week-high}'
-      - '&71 Month Extrema: &f${month-low} &7- &f{month-high}'
+      - '&71 Week Extrema: &c${week-low} &7- &a${week-high}'
+      - '&71 Month Extrema: &c${month-low} &7- &a${month-high}'
       - ''
       - '&eClick to open the share menu.'
     no-quotation:
