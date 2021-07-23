@@ -1,7 +1,6 @@
 package fr.lezoo.stonks.gui.api;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,7 +40,7 @@ public abstract class EditableInventory {
                 try {
                     ConfigurationSection section = config.getConfigurationSection("items." + key);
                     Validate.notNull(section, "Could not load config");
-                    items.add(loadInventoryItem(section));
+                    items.add(loadItem(section));
                 } catch (IllegalArgumentException exception) {
                     Stonks.plugin.getLogger().log(Level.WARNING, "Could not load item '" + key + "' from inventory '" + getId() + "': " + exception.getMessage());
                 }
@@ -78,14 +77,14 @@ public abstract class EditableInventory {
      * @param config   The configuration section to load the item from
      * @return Loaded inventory item
      */
-    public abstract InventoryItem load(String function, ConfigurationSection config);
+    public abstract InventoryItem loadItem(String function, ConfigurationSection config);
 
-    private InventoryItem loadInventoryItem(ConfigurationSection config) {
+    private InventoryItem loadItem(ConfigurationSection config) {
         String function = config.contains("function") ? config.getString("function").toLowerCase() : "";
 
         /*if (function.startsWith("trigger:"))
             // Load trigger item*/
 
-        return load(function, config);
+        return loadItem(function, config);
     }
 }

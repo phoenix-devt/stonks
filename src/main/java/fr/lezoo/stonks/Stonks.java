@@ -7,6 +7,7 @@ import fr.lezoo.stonks.comp.placeholder.PlaceholderAPIParser;
 import fr.lezoo.stonks.comp.placeholder.PlaceholderParser;
 import fr.lezoo.stonks.comp.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.PlayerListener;
+import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.manager.PlayerDataManager;
 import fr.lezoo.stonks.manager.QuotationManager;
 import fr.lezoo.stonks.version.ServerVersion;
@@ -23,6 +24,7 @@ public class Stonks extends JavaPlugin {
 
     public PlaceholderParser placeholderParser = new DefaultPlaceholderParser();
     public ServerVersion version;
+    public final ConfigManager configManager = new ConfigManager();
 
     // TODO fixer l'initialisation de ces classes
     public VersionWrapper versionWrapper = new VersionWrapper_1_17_R1();
@@ -50,7 +52,14 @@ public class Stonks extends JavaPlugin {
         // Change once plugin is posted on Spigot
         /*new Metrics(this, 111111);*/
 
+        // Load player data of online players
+        Bukkit.getOnlinePlayers().forEach(online -> playerManager.setup(online));
+
+        // Reload config BEFORE config is reloaded
+        saveDefaultConfig();
+
         // Initialize managers
+        configManager.reload();
 
         // PlaceholderAPI compatibility
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {

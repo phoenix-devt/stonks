@@ -19,7 +19,7 @@ public class QuotationShareMenu extends EditableInventory {
     }
 
     @Override
-    public InventoryItem load(String function, ConfigurationSection config) {
+    public InventoryItem loadItem(String function, ConfigurationSection config) {
 
         if (function.startsWith("leverage"))
             // TODO
