@@ -9,9 +9,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Message {
-    NOT_ENOUGH_MONEY_BUY_SHARE("&cYou don't have enough money to buy {shares} shares. You need ${left} more"),
+    NOT_ENOUGH_MONEY("&cYou don't have enough money: you need ${left} more"),
     BUY_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou bought {shares} shares from {company} for ${price}."),
+    SELL_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou short-sold {shares} shares from {company} for ${price}."),
 
+    BUY_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eWrite in the chat the amount of shares you would like to buy."),
+    SELL_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eWrite in the chat the amount of shares you would like to buy."),
+
+    NOT_VALID_NUMBER("&c{input} is not a valid number."),
+    NOT_VALID_LEVERAGE("&cThe leverage must be a positive number"),
     ;
 
     private List<String> message;

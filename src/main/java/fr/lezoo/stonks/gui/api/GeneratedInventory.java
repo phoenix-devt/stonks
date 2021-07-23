@@ -91,8 +91,8 @@ public abstract class GeneratedInventory extends PluginInventory {
          */
         loaded.clear();
 
-        // Only then we open the inventory
-        getPlayer().openInventory(getInventory());
+        // Only then we open the inventory on sync
+        Bukkit.getScheduler().runTask(Stonks.plugin, () -> getPlayer().openInventory(getInventory()));
     }
 
     public void whenClicked(InventoryClickEvent event) {

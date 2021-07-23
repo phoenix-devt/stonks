@@ -1,11 +1,15 @@
 package fr.lezoo.stonks.api.share;
 
+import java.util.Objects;
+import java.util.UUID;
+
 /**
  * One share can be bought by a player. This could be
  * saved in a hashMap if there weren't the leverage
  * parameter and the date at which it was bought
  */
 public class Share {
+    private final UUID uuid = UUID.randomUUID();
     private final ShareType type;
     private double leverage, shares;
     private final long timeStamp;
@@ -50,5 +54,18 @@ public class Share {
 
     public void setLeverage(double leverage) {
         this.leverage = leverage;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Share share = (Share) o;
+        return Objects.equals(uuid, share.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
     }
 }
