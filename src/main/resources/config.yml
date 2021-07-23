@@ -1,0 +1,9 @@
+# Notifies players with the 'stonks.update-notify' perm
+# node when they join the server if a new update is available
+# for download. Requires a server reload when changed.
+update-notify: true
+
+# How stock prices display in item lores
+# Check out 'DecimalFormat java' online for more info
+stock-price-decimal-format: '0.##'
+

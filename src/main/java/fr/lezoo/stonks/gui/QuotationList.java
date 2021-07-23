@@ -12,11 +12,13 @@ import fr.lezoo.stonks.gui.api.item.PlaceholderItem;
 import fr.lezoo.stonks.gui.api.item.Placeholders;
 import fr.lezoo.stonks.gui.api.item.SimplePlaceholderItem;
 import fr.lezoo.stonks.version.ItemTag;
+import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,12 @@ public class QuotationList extends EditableInventory {
 
         if (function.equalsIgnoreCase("quotation"))
             return new QuotationItem(config);
+
+        if (function.equalsIgnoreCase("next-page"))
+            return new NextPageItem(config);
+
+        if (function.equalsIgnoreCase("previous-page"))
+            return new PreviousPageItem(config);
 
         return new SimplePlaceholderItem(config);
     }
@@ -51,7 +59,7 @@ public class QuotationList extends EditableInventory {
             int perPage = editable.getByFunction("quotation").getSlots().size();
 
             quotations.addAll(Stonks.plugin.quotationManager.getQuotations());
-            maxPage = ((int) Math.ceil((double) quotations.size() / perPage)) - 1;
+            maxPage = Math.max(((int) Math.ceil((double) quotations.size() / perPage)) - 1, 0);
         }
 
         @Override
@@ -63,29 +71,54 @@ public class QuotationList extends EditableInventory {
         public void whenClicked(InventoryClickEvent event, InventoryItem item) {
 
             // Next Page
-            if (item.getFunction().equalsIgnoreCase("next-page") && page < maxPage) {
+            if (item instanceof PreviousPageItem && page < maxPage) {
                 page++;
                 open();
                 return;
             }
 
             // Previous Page
-            if (item.getFunction().equalsIgnoreCase("previous-page") && page >= 0) {
+            if (item instanceof PreviousPageItem && page > 0) {
                 page--;
                 open();
                 return;
             }
 
             if (item instanceof QuotationItem) {
-                // TODO
+                NBTItem nbt = NBTItem.get(event.getCurrentItem());
+                String quotationId = nbt.getString("quotationId");
+                Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
+                Validate.notNull(quotation, "Could not find quotation with ID '" + quotationId + "'");
 
-
+                Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, quotation).open();
             }
         }
 
         @Override
         public void whenClosed(InventoryCloseEvent event) {
             // Nothing
+        }
+    }
+
+    public class NextPageItem extends SimplePlaceholderItem<GeneratedQuotationList> {
+        public NextPageItem(ConfigurationSection config) {
+            super(config);
+        }
+
+        @Override
+        public boolean isDisplayed(GeneratedQuotationList inv) {
+            return inv.page < inv.maxPage;
+        }
+    }
+
+    public class PreviousPageItem extends SimplePlaceholderItem<GeneratedQuotationList> {
+        public PreviousPageItem(ConfigurationSection config) {
+            super(config);
+        }
+
+        @Override
+        public boolean isDisplayed(GeneratedQuotationList inv) {
+            return inv.page > 0;
         }
     }
 
@@ -126,14 +159,15 @@ public class QuotationList extends EditableInventory {
 
             Placeholders holders = new Placeholders();
 
+            DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
+
             holders.register("company-name", quotation.getCompanyName());
             holders.register("stock-name", quotation.getStockName());
-            // TODO remplacer les placeholders
-            holders.register("current-price", 0);
-            holders.register("week-low", quotation.getLowest(QuotationInfo.WEEK_TIME_OUT));
-            holders.register("week-high", quotation.getHighest(QuotationInfo.WEEK_TIME_OUT));
-            holders.register("month-low", quotation.getLowest(QuotationInfo.MONTH_TIME_OUT));
-            holders.register("month-high", quotation.getHighest(QuotationInfo.MONTH_TIME_OUT));
+            holders.register("price", format.format(quotation.getPrice()));
+            holders.register("week-low", format.format(quotation.getLowest(QuotationInfo.WEEK_TIME_OUT)));
+            holders.register("week-high", format.format(quotation.getHighest(QuotationInfo.WEEK_TIME_OUT)));
+            holders.register("month-low", format.format(quotation.getLowest(QuotationInfo.MONTH_TIME_OUT)));
+            holders.register("month-high", format.format(quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
 
             return holders;
         }

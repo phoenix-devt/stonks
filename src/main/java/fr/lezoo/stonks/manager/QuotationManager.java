@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.api.quotation.Quotation;
+import org.apache.commons.lang.Validate;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,6 +12,12 @@ public class QuotationManager {
 
     public Quotation get(String id) {
         return map.get(id);
+    }
+
+    public void register(Quotation quotation) {
+        Validate.isTrue(!map.containsKey(quotation.getId()), "There is already a quotation with ID '" + quotation.getId() + "'");
+
+        map.put(quotation.getId(), quotation);
     }
 
     public Collection<Quotation> getQuotations() {
