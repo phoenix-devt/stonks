@@ -6,6 +6,14 @@ name: 'Shares for {company}'
 slots: 54
 
 items:
+  back:
+    slots: [ 37 ]
+    function: back
+    name: '&aBack'
+    item: OAK_SIGN
+    lore:
+      - ''
+      - '&eClick to go back to the quotation list.'
   buy1:
     slots: [ 23 ]
     function: buy1
@@ -42,7 +50,7 @@ items:
   buy-custom:
     slots: [ 32 ]
     function: buy-custom
-    name: '&aBuy {amount} Shares'
+    name: '&aBuy Shares'
     item: LIME_TERRACOTTA
     lore:
       - ''
@@ -86,7 +94,7 @@ items:
   sell-custom:
     slots: [ 30 ]
     function: sell-custom
-    name: '&aSell {amount} Shares'
+    name: '&aSell Shares'
     item: MAGENTA_TERRACOTTA
     lore:
       - ''
@@ -106,8 +114,8 @@ items:
       - '&71 Week Evolution: {week-evolution}'
       - '&71 Month Evolution: {month-evolution}'
       - ''
-      - '&71 Week Extrema: &f${week-low} &7- &f{week-high}'
-      - '&71 Month Extrema: &f${month-low} &7- &f{month-high}'
+      - '&71 Week Extrema: &c${week-low} &7- &a${week-high}'
+      - '&71 Month Extrema: &c${month-low} &7- &a${month-high}'
   leverage:
     slots: [ 43 ]
     function: leverage

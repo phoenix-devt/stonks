@@ -13,6 +13,7 @@ import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.manager.PlayerDataManager;
 import fr.lezoo.stonks.manager.QuotationManager;
 import fr.lezoo.stonks.version.ServerVersion;
+import fr.lezoo.stonks.version.SpigotPlugin;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper_1_17_R1;
 import net.milkbowl.vault.economy.Economy;
@@ -42,7 +43,6 @@ public class Stonks extends JavaPlugin {
     }
 
     public void onEnable() {
-        /* TEST*/
 
         // Read server version
         try {
@@ -64,8 +64,11 @@ public class Stonks extends JavaPlugin {
             return;
         }
 
-        // Change once plugin is posted on Spigot
+        // Metrics data TODO change once plugin is posted on Spigot
         /*new Metrics(this, 111111);*/
+
+        // Update checker, TODO change when plugin is on Spigot
+        /*new SpigotPlugin(11111, this).checkForUpdate();*/
 
         // Load player data of online players
         Bukkit.getOnlinePlayers().forEach(online -> playerManager.setup(online));

@@ -7,3 +7,6 @@ update-notify: true
 # Check out 'DecimalFormat java' online for more info
 stock-price-decimal-format: '0.##'
 
+# How the amount of shares are displayed in messages
+shares-decimal-format: '0.#'
+

@@ -28,7 +28,7 @@ public class ConfigManager {
     private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE};
 
     // Accessible public config fields
-    public DecimalFormat stockPriceFormat;
+    public DecimalFormat stockPriceFormat, shareFormat;
 
     public void reload() {
 
@@ -37,6 +37,7 @@ public class ConfigManager {
 
         // Update public config fields
         stockPriceFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("stock-price-decimal-format"));
+        shareFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("shares-decimal-format"));
 
         // Copy default files
         for (DefaultFile def : DefaultFile.values())
@@ -103,7 +104,6 @@ public class ConfigManager {
             File file = getFile();
             if (!file.exists())
                 try {
-                    Stonks.plugin.getLogger().log(Level.INFO, "Copying " + name() + "'" + getResourcePath() + "'");
                     Files.copy(Stonks.plugin.getResource(getResourcePath()), file.getAbsoluteFile().toPath());
                 } catch (IOException exception) {
                     Stonks.plugin.getLogger().log(Level.WARNING, "Could not load default file " + name() + ": " + exception.getMessage());

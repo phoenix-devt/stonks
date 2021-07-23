@@ -4,13 +4,18 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
+import fr.lezoo.stonks.api.share.Share;
+import fr.lezoo.stonks.api.share.ShareType;
+import fr.lezoo.stonks.api.util.ChatInput;
 import fr.lezoo.stonks.api.util.Utils;
+import fr.lezoo.stonks.api.util.message.Message;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
 import fr.lezoo.stonks.gui.api.item.PlaceholderItem;
 import fr.lezoo.stonks.gui.api.item.Placeholders;
 import fr.lezoo.stonks.gui.api.item.SimplePlaceholderItem;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -25,13 +30,8 @@ public class QuotationShareMenu extends EditableInventory {
     @Override
     public InventoryItem loadItem(String function, ConfigurationSection config) {
 
-        if (function.startsWith("buy-custom"))
-            // TODO
-            return new SimplePlaceholderItem(config);
-
-        if (function.startsWith("sell-custom"))
-            // TODO
-            return new SimplePlaceholderItem(config);
+        if (function.equalsIgnoreCase("buy-custom") || function.equalsIgnoreCase("sell-custom"))
+            return new CustomActionItem(config);
 
         if (function.startsWith("info"))
             return new QuotationInfoItem(config);
@@ -40,10 +40,10 @@ public class QuotationShareMenu extends EditableInventory {
             return new LeverageItem(config);
 
         if (function.startsWith("buy"))
-            return new BuyShareItem(function, config);
+            return new BuyShareItem(config);
 
         if (function.startsWith("sell"))
-            return new SimplePlaceholderItem(config);
+            return new SellShareItem(config);
 
         return new SimplePlaceholderItem(config);
     }
@@ -54,8 +54,6 @@ public class QuotationShareMenu extends EditableInventory {
 
     public class GeneratedShareMenu extends GeneratedInventory {
         private final Quotation quotation;
-
-        private double leverage = 1;
 
         public GeneratedShareMenu(PlayerData playerData, EditableInventory editable, Quotation quotation) {
             super(playerData, editable);
@@ -76,37 +74,91 @@ public class QuotationShareMenu extends EditableInventory {
                 return;
             }
 
-            if (item instanceof BuyShareItem) {
-                int amount = ((BuyShareItem) item).amount;
-                double price = quotation.getPrice() * amount;
+            if (item instanceof LeverageItem)
+                new ChatInput(this, (playerData, input) -> {
+                    double amount;
+                    try {
+                        amount = Double.parseDouble(input);
+                    } catch (IllegalArgumentException exception) {
+                        Message.NOT_VALID_NUMBER.format("input", input).send(player);
+                        return false;
+                    }
 
-                // Check for balance
+                    if (amount <= 0) {
+                        Message.NOT_VALID_LEVERAGE.format("input", input).send(player);
+                        return false;
+                    }
 
+                    playerData.setLeverage(amount);
+                    return true;
+                });
 
+            if (item instanceof CustomActionItem) {
+                ShareType type = item.getFunction().equalsIgnoreCase("buy-custom") ? ShareType.POSITIVE : ShareType.SHORT;
 
+                new ChatInput(this, (playerData, input) -> {
+                    double amount;
+                    try {
+                        amount = Double.parseDouble(input);
+                    } catch (IllegalArgumentException exception) {
+                        Message.NOT_VALID_NUMBER.format("input", input).send(player);
+                        return false;
+                    }
 
+                    tryAndBuy(type, amount);
+                    return true;
+                });
             }
 
-            if (item instanceof QuotationInfoItem) {
-                // TODO
-
-
-            }
+            if (item instanceof AmountActionItem)
+                tryAndBuy(item instanceof BuyShareItem ? ShareType.POSITIVE : ShareType.SHORT, ((AmountActionItem) item).getAmount());
         }
 
         @Override
         public void whenClosed(InventoryCloseEvent event) {
             // Nothing
         }
+
+        private void tryAndBuy(ShareType type, double amount) {
+            double price = quotation.getPrice() * amount;
+
+            // Check for balance
+            double bal = Stonks.plugin.economy.getBalance(player);
+            if (bal < price) {
+                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", Stonks.plugin.configManager.stockPriceFormat.format(price - bal)).send(player);
+                return;
+            }
+
+            // Remove from balance and buy shares
+            Share share = new Share(type, playerData.getLeverage(), amount);
+            playerData.addShare(quotation, share);
+            Stonks.plugin.economy.withdrawPlayer(player, price);
+
+            // Send player message
+            (type == ShareType.POSITIVE ? Message.BUY_SHARES : Message.SELL_SHARES).format(
+                    "shares", Stonks.plugin.configManager.shareFormat.format(amount),
+                    "price", Stonks.plugin.configManager.stockPriceFormat.format(price),
+                    "company", quotation.getCompanyName()).send(player);
+        }
     }
 
-    public class SellShareItem extends PlaceholderItem<GeneratedShareMenu> {
+    /**
+     * Used to reduce code multiplication
+     */
+    public interface AmountActionItem {
+        public int getAmount();
+    }
+
+    /**
+     * Item when selling a specific amount of shares
+     */
+    public class SellShareItem extends PlaceholderItem<GeneratedShareMenu> implements AmountActionItem {
         private final int amount;
 
-        public SellShareItem(String function, ConfigurationSection config) {
+        public SellShareItem(ConfigurationSection config) {
             super(config);
 
-            this.amount = Integer.parseInt(function.substring(4));
+            this.amount = Integer.parseInt(getFunction().substring(4));
         }
 
         @Override
@@ -114,20 +166,28 @@ public class QuotationShareMenu extends EditableInventory {
             Placeholders holders = new Placeholders();
 
             holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.quotation.getPrice() * amount));
-            holders.register("leverage", Utils.singleDigit.format(inv.leverage));
+            holders.register("leverage", Utils.singleDigit.format(inv.getPlayerData().getLeverage()));
             holders.register("amount", amount);
 
             return holders;
         }
+
+        @Override
+        public int getAmount() {
+            return amount;
+        }
     }
 
-    public class BuyShareItem extends PlaceholderItem<GeneratedShareMenu> {
+    /**
+     * Item when buying a specific amount of shares
+     */
+    public class BuyShareItem extends PlaceholderItem<GeneratedShareMenu> implements AmountActionItem {
         private final int amount;
 
-        public BuyShareItem(String function, ConfigurationSection config) {
+        public BuyShareItem(ConfigurationSection config) {
             super(config);
 
-            this.amount = Integer.parseInt(function.substring(3));
+            this.amount = Integer.parseInt(getFunction().substring(3));
         }
 
         @Override
@@ -135,8 +195,31 @@ public class QuotationShareMenu extends EditableInventory {
             Placeholders holders = new Placeholders();
 
             holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.quotation.getPrice() * amount));
-            holders.register("leverage", Utils.singleDigit.format(inv.leverage));
+            holders.register("leverage", Utils.singleDigit.format(inv.getPlayerData().getLeverage()));
             holders.register("amount", amount);
+
+            return holders;
+        }
+
+        @Override
+        public int getAmount() {
+            return amount;
+        }
+    }
+
+    /**
+     * Item when buying or short selling a custom amount of shares
+     */
+    public class CustomActionItem extends PlaceholderItem<GeneratedShareMenu> {
+        public CustomActionItem(ConfigurationSection config) {
+            super(config);
+        }
+
+        @Override
+        public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
+            Placeholders holders = new Placeholders();
+
+            holders.register("leverage", Utils.singleDigit.format(inv.getPlayerData().getLeverage()));
 
             return holders;
         }
@@ -151,7 +234,7 @@ public class QuotationShareMenu extends EditableInventory {
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
 
-            holders.register("leverage", Utils.singleDigit.format(inv.leverage));
+            holders.register("leverage", Utils.singleDigit.format(inv.getPlayerData().getLeverage()));
 
             return holders;
         }
@@ -177,12 +260,22 @@ public class QuotationShareMenu extends EditableInventory {
             holders.register("month-high", format.format(inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
 
             // TODO instead of comparing to 1 day ago, compare to the beginning of the day, same with month, year..
-            holders.register("hour-evolution", format.format(inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
-            holders.register("day-evolution", format.format(inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
-            holders.register("week-evolution", format.format(inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
-            holders.register("month-evolution", format.format(inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
+            holders.register("hour-evolution", formatEvolution(inv.quotation.getEvolution(QuotationInfo.HOUR_TIME_OUT)));
+            holders.register("day-evolution", formatEvolution(inv.quotation.getEvolution(QuotationInfo.DAY_TIME_OUT)));
+            holders.register("week-evolution", formatEvolution(inv.quotation.getEvolution(QuotationInfo.WEEK_TIME_OUT)));
+            holders.register("month-evolution", formatEvolution(inv.quotation.getEvolution(QuotationInfo.MONTH_TIME_OUT)));
 
             return holders;
         }
+    }
+
+    private String formatEvolution(double growthRate) {
+        if (growthRate == 0)
+            return ChatColor.WHITE + "0";
+
+        DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
+        if (growthRate < 0)
+            return ChatColor.RED + format.format(growthRate) + "%";
+        return ChatColor.GREEN + "+" + format.format(growthRate) + "%";
     }
 }
