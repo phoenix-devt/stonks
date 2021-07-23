@@ -2,6 +2,7 @@ name: ${project.name}
 version: ${project.version}
 main: fr.lezoo.stonks.Stonks
 author: [ GMF, Indyuce ]
+depend: [ Vault ]
 description: ${project.description}
 api-version: 1.13
 commands:
