@@ -5,13 +5,16 @@ import fr.lezoo.stonks.api.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
+import org.bukkit.util.Vector;
 import org.spigotmc.Metrics;
 
 import java.awt.*;
@@ -157,7 +160,7 @@ public class Quotation {
     }
 
 
-    public BufferedImage getQuotationBoardImage(int NUMBER_DATA,int NUMBER_BOARD) {
+    public BufferedImage getQuotationBoardImage(int NUMBER_DATA, int NUMBER_BOARD) {
         //Number of pixel in one line in the image
         final double IMAGE_SIZE = 128 * NUMBER_BOARD;
         //If not enough data on quotation data we take care of avoiding IndexOutOfBounds
@@ -176,14 +179,14 @@ public class Quotation {
 
         //If price = maxVal y =0.2 IMAGE_SIZE
         //If price = min Val y=IMAGE_SIZE (BOTTOM)
-        double x= 0;
-        double y=IMAGE_SIZE-(0.8*IMAGE_SIZE*(quotationData.get(index).getPrice()-minVal)/(maxVal-minVal));
-        curve.moveTo(x,y);
+        double x = 0;
+        double y = IMAGE_SIZE - (0.8 * IMAGE_SIZE * (quotationData.get(index).getPrice() - minVal) / (maxVal - minVal));
+        curve.moveTo(x, y);
         for (int i = 1; i < data_taken; i++) {
             //if data_taken < NUMBER_DATA,the graphics will be on the left of the screen mainly
-            x=(double)i*IMAGE_SIZE/NUMBER_DATA;
-            y=IMAGE_SIZE-(0.8*IMAGE_SIZE*(quotationData.get(index+i).getPrice()-minVal)/(maxVal-minVal));
-            curve.lineTo(x,y);
+            x = (double) i * IMAGE_SIZE / NUMBER_DATA;
+            y = IMAGE_SIZE - (0.8 * IMAGE_SIZE * (quotationData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
+            curve.lineTo(x, y);
         }
         g2d.draw(curve);
         return image;
@@ -194,8 +197,42 @@ public class Quotation {
      * Creates a 5x5 map of the Quotation to the player
      * gives the player all the maps in his inventory
      */
-    public void createQuotationBoard(Player player, int NUMBER_DATA,int NUMBER_BOARD) {
-        BufferedImage image = getQuotationBoardImage(NUMBER_DATA,NUMBER_BOARD);
+    public void createQuotationBoard(Player player, BlockFace blockFace, int distance, int NUMBER_DATA, int BOARDSIZE) {
+        BufferedImage image = getQuotationBoardImage(NUMBER_DATA,BOARDSIZE);
+
+        //We create the wall to have the board with ItemFrames on it
+
+        //the offset from where we will build the board
+        Vector offset = blockFace.getDirection().multiply(distance);
+        //We get the direction to build horizontally and vertically
+        Vector verticalBuildDirection = new Vector(0,1,0);
+        Vector horizontalBuildDirection = new Vector();
+        switch(blockFace) {
+            case NORTH :
+                horizontalBuildDirection=BlockFace.EAST.getDirection();
+                break;
+            case EAST :
+                horizontalBuildDirection=BlockFace.SOUTH.getDirection();
+                break;
+            case SOUTH :
+                horizontalBuildDirection=BlockFace.WEST.getDirection();
+                break;
+            case WEST :
+                horizontalBuildDirection= BlockFace.NORTH.getDirection();
+                break;
+        }
+        //Point de depart
+        Location location= player.getLocation().add(offset);
+        for(int i =0;i<BOARDSIZE;i++) {
+            //i stands for the line of the board and j the column
+            location.add(verticalBuildDirection);
+            for(int j=0;j<BOARDSIZE;j++) {
+                location.add(horizontalBuildDirection);
+                //we create the block
+                location.getBlock().setType(Material.DARK_OAK_WOOD);
+            }
+        }
+        /*
         for (int i = 0; i < NUMBER_BOARD; i++) {
             for (int j = 0; j < NUMBER_BOARD; j++) {
                 ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
@@ -211,7 +248,10 @@ public class Quotation {
                 player.getInventory().addItem(item);
 
             }
+
+
         }
+*/
 
 
     }

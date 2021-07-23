@@ -27,7 +27,6 @@ import java.util.logging.Level;
 
 public class Stonks extends JavaPlugin {
     public static Stonks plugin;
-
     public PlaceholderParser placeholderParser = new DefaultPlaceholderParser();
     public ServerVersion version;
     public final ConfigManager configManager = new ConfigManager();
