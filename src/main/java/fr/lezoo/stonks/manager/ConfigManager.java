@@ -3,6 +3,9 @@ package fr.lezoo.stonks.manager;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.ConfigFile;
 import fr.lezoo.stonks.api.CustomItem;
+import fr.lezoo.stonks.gui.QuotationList;
+import fr.lezoo.stonks.gui.QuotationShareMenu;
+import fr.lezoo.stonks.gui.api.EditableInventory;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
@@ -16,9 +19,9 @@ public class ConfigManager {
     private final Map<String, CustomItem> items = new HashMap<>();
     private final String[] itemIds = {"PHYSICAL_SHARE_BILL"};
 
-    public ConfigManager() {
-        reload();
-    }
+    public final QuotationList QUOTATION_LIST = new QuotationList();
+    public final QuotationShareMenu QUOTATION_SHARE = new QuotationShareMenu();
+    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE};
 
     public void reload() {
 
@@ -29,7 +32,19 @@ public class ConfigManager {
         // Reload items
         FileConfiguration config = new ConfigFile("/language", "items").getConfig();
         for (String id : itemIds)
-            items.put(id, new CustomItem(config.getConfigurationSection(id)));
+            try {
+                items.put(id, new CustomItem(config.getConfigurationSection(id)));
+            } catch (IllegalArgumentException exception) {
+                Stonks.plugin.getLogger().log(Level.WARNING, "Could not load item '" + id + "': " + exception.getMessage());
+            }
+
+        // Reload GUIs
+        for (EditableInventory inv : guis)
+            try {
+                inv.reload(new ConfigFile("/language/gui", inv.getId()).getConfig());
+            } catch (IllegalArgumentException exception) {
+                Stonks.plugin.getLogger().log(Level.WARNING, "Could not load custom inventory '" + inv.getId() + "': " + exception.getMessage());
+            }
     }
 
     /**
@@ -37,9 +52,12 @@ public class ConfigManager {
      * they are copied into the plugin folder when the plugin enables
      */
     public enum DefaultFile {
-        ITEMS("language", "item.yml"),
+        ITEMS("language", "items.yml"),
         MESSAGES("language", "messages.yml"),
         QUOTATIONS("", "quotations.yml"),
+
+        GUI_QUOTATION_LIST("language/gui", "quotation-list.yml"),
+        GUI_SHARE_MENU("language/gui", "share-menu.yml"),
         ;
 
         private final String folderName, fileName;
@@ -54,14 +72,26 @@ public class ConfigManager {
         }
 
         public File getFile() {
-            return new File(Stonks.plugin.getDataFolder() + (folderName.equals("") ? "" : "/" + folderName), fileName);
+            return new File(Stonks.plugin.getDataFolder() + "/" + folderName, fileName);
+        }
+
+        private String getResourcePath() {
+            return "default/" + (folderName.isEmpty() ? "" : folderName + "/") + fileName;
         }
 
         public void checkFile() {
+
+            // Check folder first
+            File folder = new File(Stonks.plugin.getDataFolder() + "/" + folderName);
+            if (!folder.exists())
+                folder.mkdir();
+
+            // Check file
             File file = getFile();
             if (!file.exists())
                 try {
-                    Files.copy(Stonks.plugin.getResource((folderName.equals("") ? "" : folderName + "/") + fileName), file.getAbsoluteFile().toPath());
+                    Stonks.plugin.getLogger().log(Level.INFO, "Copying " + name() + "'" + getResourcePath() + "'");
+                    Files.copy(Stonks.plugin.getResource(getResourcePath()), file.getAbsoluteFile().toPath());
                 } catch (IOException exception) {
                     Stonks.plugin.getLogger().log(Level.WARNING, "Could not load default file " + name() + ": " + exception.getMessage());
                 }

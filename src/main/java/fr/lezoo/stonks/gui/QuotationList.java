@@ -26,12 +26,16 @@ public class QuotationList extends EditableInventory {
     }
 
     @Override
-    public InventoryItem load(String function, ConfigurationSection config) {
+    public InventoryItem loadItem(String function, ConfigurationSection config) {
 
         if (function.equalsIgnoreCase("quotation"))
             return new QuotationItem(config);
 
         return new SimplePlaceholderItem(config);
+    }
+
+    public GeneratedInventory generate(PlayerData player) {
+        return new GeneratedQuotationList(player, this);
     }
 
     public class GeneratedQuotationList extends GeneratedInventory {
@@ -52,7 +56,7 @@ public class QuotationList extends EditableInventory {
 
         @Override
         public String applyNamePlaceholders(String str) {
-            return str.replace("{page}", "" + page).replace("{max}", "" + maxPage);
+            return str.replace("{page}", "" + (page + 1)).replace("{max}", "" + (maxPage + 1));
         }
 
         @Override
