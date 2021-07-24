@@ -6,13 +6,10 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
-import org.spigotmc.Metrics;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -32,7 +29,7 @@ public class Quotation {
     private final static int REFRESH_TIME = 1000;
 
     public Quotation(String id, String companyName, String stockName, List<QuotationInfo> quotationData) {
-        this.id = id;
+        this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.companyName = companyName;
         this.stockName = stockName;
         this.quotationData = quotationData;

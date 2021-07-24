@@ -1,8 +1,10 @@
 package fr.lezoo.stonks.comp.placeholder;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.api.PlayerData;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class StonksPlaceholders extends PlaceholderExpansion {
@@ -32,8 +34,24 @@ public class StonksPlaceholders extends PlaceholderExpansion {
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, @NotNull String params) {
-        // TODO
+    public String onRequest(OfflinePlayer offlinePlayer, @NotNull String params) {
+        if (!offlinePlayer.isOnline())
+            return "?";
+
+        Player player = offlinePlayer.getPlayer();
+        PlayerData playerData = PlayerData.get(player);
+
+        if (params.equals("leverage"))
+            return "" + playerData.getLeverage();
+
+        if (params.startsWith("shares_")) {
+            String id = params.substring(7);
+            if (!Stonks.plugin.quotationManager.has(id))
+                return "?";
+
+            return "" + playerData.countShares(Stonks.plugin.quotationManager.get(id));
+        }
+
         return "";
     }
 }

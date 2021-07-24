@@ -53,6 +53,18 @@ public class PlayerData {
         return shares.getOrDefault(quotation.getId(), new HashSet<>());
     }
 
+    /**
+     * @return Counts the shares the player owns in a certain quotation
+     */
+    public double countShares(Quotation quotation) {
+        double total = 0;
+
+        for (Share share : getShares(quotation))
+            total += share.getAmount();
+
+        return total;
+    }
+
     public static PlayerData get(Player player) {
         return Stonks.plugin.playerManager.get(player);
     }

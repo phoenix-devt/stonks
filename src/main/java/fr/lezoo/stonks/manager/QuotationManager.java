@@ -11,7 +11,11 @@ public class QuotationManager {
     private final Map<String, Quotation> map = new HashMap<>();
 
     public Quotation get(String id) {
-        return map.get(id);
+        return map.get(formatId(id));
+    }
+
+    public boolean has(String id) {
+        return map.containsKey(formatId(id));
     }
 
     public void register(Quotation quotation) {
@@ -22,5 +26,9 @@ public class QuotationManager {
 
     public Collection<Quotation> getQuotations() {
         return map.values();
+    }
+
+    private String formatId(String str) {
+        return str.toLowerCase().replace(" ", "-").replace("_", "-");
     }
 }
