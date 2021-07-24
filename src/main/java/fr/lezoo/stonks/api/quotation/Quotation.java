@@ -9,15 +9,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.util.Vector;
-import org.spigotmc.Metrics;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -34,11 +31,11 @@ import java.util.List;
 public class Quotation {
     private final String id, companyName, stockName;
     private List<QuotationInfo> quotationData = new ArrayList<>();
-    //Refresh time of the quotation in milliseconds
+    // Refresh time of the quotation in milliseconds
     private final static int REFRESH_TIME = 1000;
 
     public Quotation(String id, String companyName, String stockName, List<QuotationInfo> quotationData) {
-        this.id = id;
+        this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.companyName = companyName;
         this.stockName = stockName;
         this.quotationData = quotationData;
@@ -190,7 +187,7 @@ public class Quotation {
         g2d.setStroke(new BasicStroke(5.0f));
         g2d.setColor(new Color(126, 51, 0));
         g2d.draw(new Rectangle2D.Double(0, 0.2 * BOARD_HEIGHT, BOARD_WIDTH * 0.8, 0.8 * BOARD_HEIGHT));
-        g2d.draw(new Line2D.Double(0.8 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT, 0.8*BOARD_WIDTH,0));
+        g2d.draw(new Line2D.Double(0.8 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT, 0.8 * BOARD_WIDTH, 0));
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font(null, Font.PLAIN, BOARD_HEIGHT * 5 / 128));
         g2d.drawString("Company name : " + companyName, (int) (0.1 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
@@ -200,22 +197,20 @@ public class Quotation {
         g2d.drawString("Lowest Price : " + (double) ((int) (minVal * 100) / 1) / 100, (int) (0.1 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
 
 
-        g2d.setColor(new Color(80,30,0));
+        g2d.setColor(new Color(80, 30, 0));
         //Bouton SELL,SHORT,BUY,SET LEVERAGE
         //0.82*BOARD_WIDTH to 0.98
-        g2d.draw(new Rectangle2D.Double(0.82*BOARD_WIDTH,0.02*BOARD_HEIGHT,0.18*BOARD_WIDTH,0.19*BOARD_HEIGHT));
-        g2d.draw(new Rectangle2D.Double(0.82*BOARD_WIDTH,0.25*BOARD_HEIGHT,0.18*BOARD_WIDTH,0.2*BOARD_HEIGHT));
-        g2d.draw(new Rectangle2D.Double(0.82*BOARD_WIDTH,0.5*BOARD_HEIGHT,0.18*BOARD_WIDTH,0.2*BOARD_HEIGHT));
-        g2d.draw(new Rectangle2D.Double(0.82*BOARD_WIDTH,0.75*BOARD_HEIGHT,0.18*BOARD_WIDTH,0.2*BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.02 * BOARD_HEIGHT, 0.18 * BOARD_WIDTH, 0.19 * BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.25 * BOARD_HEIGHT, 0.18 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.5 * BOARD_HEIGHT, 0.18 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.75 * BOARD_HEIGHT, 0.18 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.setColor(Color.GRAY);
-        g2d.setFont(new Font(null,Font.BOLD,BOARD_HEIGHT * 5 / 128));
-        g2d.drawString("Set Leverage",(int)(0.84*BOARD_WIDTH),(int)(0.1*BOARD_HEIGHT));
-        g2d.setFont(new Font(null,Font.BOLD,BOARD_HEIGHT * 8 / 128));
-        g2d.drawString("BUY",(int)(0.84*BOARD_WIDTH),(int)(0.35*BOARD_HEIGHT));
-        g2d.drawString("SHORT",(int)(0.84*BOARD_WIDTH),(int)(0.60*BOARD_HEIGHT));
-        g2d.drawString("SELL",(int)(0.84*BOARD_WIDTH),(int)(0.85*BOARD_HEIGHT));
-
-
+        g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 5 / 128));
+        g2d.drawString("Set Leverage", (int) (0.84 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
+        g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 8 / 128));
+        g2d.drawString("BUY", (int) (0.84 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
+        g2d.drawString("SHORT", (int) (0.84 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));
+        g2d.drawString("SELL", (int) (0.84 * BOARD_WIDTH), (int) (0.85 * BOARD_HEIGHT));
 
 
         g2d.setColor(Color.RED);

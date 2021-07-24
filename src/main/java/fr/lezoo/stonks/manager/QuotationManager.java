@@ -24,15 +24,6 @@ public class QuotationManager {
         map.put(quotation.getId(), quotation);
     }
 
-    /**
-     *
-     * @param id of quotation
-     * @return if such a quotation exists
-     */
-    public boolean hasId(String id) {
-        return map.containsKey(id);
-    }
-
     public Collection<Quotation> getQuotations() {
         return map.values();
     }

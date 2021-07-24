@@ -3,17 +3,12 @@ package fr.lezoo.stonks.command;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import org.bukkit.ChatColor;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-
 
 //TODO : Change permission isOp stonks.admin
 
@@ -39,10 +34,11 @@ public class BoardDisplayCommand implements CommandExecutor {
             return true;
         }
 
-        if (!Stonks.plugin.quotationManager.hasId(args[0])) {
+        if (!Stonks.plugin.quotationManager.has(args[0])) {
             player.sendMessage(ChatColor.RED + "This quotation ID doesn't exist");
             return true;
         }
+
         //We look what direction the player looks at SOUTH,NORTH,WEST or EAST with scalarproduct
         final Vector direction = player.getEyeLocation().getDirection();
 
