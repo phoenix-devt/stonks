@@ -27,7 +27,7 @@ public class StonksCommand implements CommandExecutor {
         }
 
         Quotation quotation = Stonks.plugin.quotationManager.getQuotations().stream().findAny().get();
-        quotation.createQuotationBoard(player,10,5);
+
         return true;
     }
 }

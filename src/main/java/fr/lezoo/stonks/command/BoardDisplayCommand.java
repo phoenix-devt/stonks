@@ -3,6 +3,7 @@ package fr.lezoo.stonks.command;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,33 +22,48 @@ public class BoardDisplayCommand implements CommandExecutor {
     /**
      * The Command needs 4 arguments :
      * 1 : the id of the quotation
-     * 2 : the Distance it will be created from the Player
-     * 3 : the size of the panel
-     * 4 : the Direction SOUTH,EAST,WEST,EAST from where you will go
-     * 5 : NUMBER_DATA the number of data that you want to visualize
+     * 2 : NUMBER_DATA the number of data that you want to visualize
+     * 3 : the width of the board
+     * 4 : the height of the board
      */
-    public boolean onCommand(CommandSender sender,Command command,String label,String[] args) {
-        if(!(sender instanceof Player))
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player))
             return false;
-        Player player =(Player) sender;
-        if(!(player.isOp())) {
+        Player player = (Player) sender;
+        if (!(player.isOp())) {
             player.sendMessage("You dont have the right to execute this command");
             return true;
         }
-        if(args.length !=5) {
-            player.sendMessage(ChatColor.RED+"You need to pass 4 arguments");
+        if (args.length != 4) {
+            player.sendMessage(ChatColor.RED + "You need to pass 4 arguments");
             return true;
         }
-        //With BlockFace enum we get direction corresponding to south,east,north...
-        if(!(Arrays.asList("NORTH","SOUTH","EAST","WEST").contains(args[1]))) {
-            player.sendMessage(ChatColor.RED+"First argument can only be : NORTH,SOUTH,UP,DOWN,EAST,WEST");
+
+        if (!Stonks.plugin.quotationManager.hasId(args[0])) {
+            player.sendMessage(ChatColor.RED + "This quotation ID doesn't exist");
             return true;
         }
-        if(!Stonks.plugin.quotationManager.hasId(args[0])) {
-            player.sendMessage(ChatColor.RED+"This quotation ID doesn't exist");
+        //We look what direction the player looks at SOUTH,NORTH,WEST or EAST with scalarproduct
+        final Vector direction = player.getEyeLocation().getDirection();
+
+        BlockFace face = BlockFace.NORTH;
+        double val = direction.dot(face.getDirection());
+
+        if (direction.dot(BlockFace.WEST.getDirection()) > val) {
+            face = BlockFace.WEST;
+            val = direction.dot(face.getDirection());
         }
+        if (direction.dot(BlockFace.SOUTH.getDirection()) > val) {
+            face = BlockFace.SOUTH;
+            val = direction.dot(face.getDirection());
+        }
+        if (direction.dot(BlockFace.EAST.getDirection()) > val) {
+            face = BlockFace.EAST;
+            val = direction.dot(face.getDirection());
+        }
+
         Quotation quotation = Stonks.plugin.quotationManager.get(args[0]);
-        quotation.createQuotationBoard(player,BlockFace.valueOf(args[3]),Integer.valueOf(args[1]),Integer.valueOf(args[4]),Integer.valueOf(args[2]));
+        quotation.createQuotationBoard(player, face, Integer.valueOf(args[1]), Integer.valueOf(args[2]), Integer.valueOf(args[3]));
         return true;
     }
 }

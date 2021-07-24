@@ -8,7 +8,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,6 +20,7 @@ import org.bukkit.util.Vector;
 import org.spigotmc.Metrics;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -160,32 +163,72 @@ public class Quotation {
     }
 
 
-    public BufferedImage getQuotationBoardImage(int NUMBER_DATA, int NUMBER_BOARD) {
-        //Number of pixel in one line in the image
-        final double IMAGE_SIZE = 128 * NUMBER_BOARD;
+    public BufferedImage getQuotationBoardImage(int NUMBER_DATA, int BOARD_WIDTH, int BOARD_HEIGHT) {
+        //There is 128 pixel for each map
+        BOARD_HEIGHT = 128 * BOARD_HEIGHT;
+        BOARD_WIDTH = 128 * BOARD_WIDTH;
         //If not enough data on quotation data we take care of avoiding IndexOutOfBounds
-        BufferedImage image = new BufferedImage((int) IMAGE_SIZE, (int) IMAGE_SIZE, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(BOARD_WIDTH, BOARD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) image.getGraphics();
         int data_taken = Math.min(NUMBER_DATA, quotationData.size());
         int index = quotationData.size() - data_taken;
+
         //We look at the lowest val in the time we look backward to set the scale
-        double minVal = getLowest(NUMBER_DATA * REFRESH_TIME);
-        double maxVal = getHighest(NUMBER_DATA * REFRESH_TIME);
+        double minVal = quotationData.get(index).getPrice();
+        double maxVal = quotationData.get(index).getPrice();
+        for (int i = 1; i < data_taken; i++) {
+            if (quotationData.get(index + i).getPrice() > maxVal)
+                maxVal = quotationData.get(index + i).getPrice();
+            if (quotationData.get(index + i).getPrice() < minVal)
+                minVal = quotationData.get(index + i).getPrice();
+        }
+
+        // White background
+        g2d.setColor(Color.WHITE);
+        g2d.fill(new Rectangle2D.Double(2, 2, BOARD_WIDTH - 4, BOARD_HEIGHT - 4));
+
+        g2d.setStroke(new BasicStroke(5.0f));
         g2d.setColor(new Color(126, 51, 0));
-        g2d.fill(new Rectangle2D.Double(0, 0.2 * IMAGE_SIZE, IMAGE_SIZE, 0.8 * IMAGE_SIZE));
+        g2d.draw(new Rectangle2D.Double(0, 0.2 * BOARD_HEIGHT, BOARD_WIDTH * 0.8, 0.8 * BOARD_HEIGHT));
+        g2d.draw(new Line2D.Double(0.8 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT, 0.8*BOARD_WIDTH,0));
+        g2d.setColor(Color.BLACK);
+        g2d.setFont(new Font(null, Font.PLAIN, BOARD_HEIGHT * 5 / 128));
+        g2d.drawString("Company name : " + companyName, (int) (0.1 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
+        //We want only 2 numbers after the comma
+        g2d.drawString("Current Price : " + (double) ((int) (quotationData.get(quotationData.size() - 1).getPrice() * 100) / 1) / 100, (int) (0.1 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
+        g2d.drawString("Highest Price : " + (double) ((int) (maxVal * 100) / 1) / 100, (int) (0.1 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
+        g2d.drawString("Lowest Price : " + (double) ((int) (minVal * 100) / 1) / 100, (int) (0.1 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
+
+
+        g2d.setColor(new Color(80,30,0));
+        //Bouton SELL,SHORT,BUY,SET LEVERAGE
+        //0.82*BOARD_WIDTH to 0.98
+        g2d.draw(new Rectangle2D.Double(0.82*BOARD_WIDTH,0.02*BOARD_HEIGHT,0.18*BOARD_WIDTH,0.19*BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82*BOARD_WIDTH,0.25*BOARD_HEIGHT,0.18*BOARD_WIDTH,0.2*BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82*BOARD_WIDTH,0.5*BOARD_HEIGHT,0.18*BOARD_WIDTH,0.2*BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82*BOARD_WIDTH,0.75*BOARD_HEIGHT,0.18*BOARD_WIDTH,0.2*BOARD_HEIGHT));
+        g2d.setColor(Color.GRAY);
+        g2d.setFont(new Font(null,Font.BOLD,BOARD_HEIGHT * 5 / 128));
+        g2d.drawString("Set Leverage",(int)(0.84*BOARD_WIDTH),(int)(0.1*BOARD_HEIGHT));
+        g2d.setFont(new Font(null,Font.BOLD,BOARD_HEIGHT * 8 / 128));
+        g2d.drawString("BUY",(int)(0.84*BOARD_WIDTH),(int)(0.35*BOARD_HEIGHT));
+        g2d.drawString("SHORT",(int)(0.84*BOARD_WIDTH),(int)(0.60*BOARD_HEIGHT));
+        g2d.drawString("SELL",(int)(0.84*BOARD_WIDTH),(int)(0.85*BOARD_HEIGHT));
+
+
+
+
         g2d.setColor(Color.RED);
         Path2D.Double curve = new Path2D.Double();
-
-
         //If price = maxVal y =0.2 IMAGE_SIZE
         //If price = min Val y=IMAGE_SIZE (BOTTOM)
         double x = 0;
-        double y = IMAGE_SIZE - (0.8 * IMAGE_SIZE * (quotationData.get(index).getPrice() - minVal) / (maxVal - minVal));
+        double y = BOARD_HEIGHT - (0.8 * BOARD_HEIGHT * (quotationData.get(index).getPrice() - minVal) / (maxVal - minVal));
         curve.moveTo(x, y);
         for (int i = 1; i < data_taken; i++) {
             //if data_taken < NUMBER_DATA,the graphics will be on the left of the screen mainly
-            x = (double) i * IMAGE_SIZE / NUMBER_DATA;
-            y = IMAGE_SIZE - (0.8 * IMAGE_SIZE * (quotationData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
+            x = i * BOARD_WIDTH * 0.8 / NUMBER_DATA;
+            y = BOARD_HEIGHT - (0.8 * BOARD_HEIGHT * (quotationData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
             curve.lineTo(x, y);
         }
         g2d.draw(curve);
@@ -197,61 +240,71 @@ public class Quotation {
      * Creates a 5x5 map of the Quotation to the player
      * gives the player all the maps in his inventory
      */
-    public void createQuotationBoard(Player player, BlockFace blockFace, int distance, int NUMBER_DATA, int BOARDSIZE) {
-        BufferedImage image = getQuotationBoardImage(NUMBER_DATA,BOARDSIZE);
+    public void createQuotationBoard(Player player, BlockFace blockFace, int NUMBER_DATA, int BOARD_WIDTH, int BOARD_HEIGHT) {
+        BufferedImage image = getQuotationBoardImage(NUMBER_DATA, BOARD_WIDTH, BOARD_HEIGHT);
 
         //We create the wall to have the board with ItemFrames on it
 
-        //the offset from where we will build the board
-        Vector offset = blockFace.getDirection().multiply(distance);
         //We get the direction to build horizontally and vertically
-        Vector verticalBuildDirection = new Vector(0,1,0);
-        Vector horizontalBuildDirection = new Vector();
-        switch(blockFace) {
-            case NORTH :
-                horizontalBuildDirection=BlockFace.EAST.getDirection();
+        Vector verticalBuildDirection = new Vector(0, 1, 0);
+        Vector horizontalBuildDirection = blockFace.getDirection();
+
+        //We need to cole to have deepmemory of it
+        Vector horizontalLineReturn = horizontalBuildDirection.clone();
+        horizontalLineReturn.multiply(-BOARD_WIDTH);
+        Location location = player.getLocation().add(horizontalBuildDirection);
+        //the direction that we will move in to put item frames
+        Vector itemFrameDirection = new Vector();
+
+        switch (blockFace) {
+            case NORTH:
+                itemFrameDirection = BlockFace.EAST.getDirection();
                 break;
-            case EAST :
-                horizontalBuildDirection=BlockFace.SOUTH.getDirection();
+            case EAST:
+                itemFrameDirection = BlockFace.SOUTH.getDirection();
                 break;
-            case SOUTH :
-                horizontalBuildDirection=BlockFace.WEST.getDirection();
+            case SOUTH:
+                itemFrameDirection = BlockFace.WEST.getDirection();
                 break;
-            case WEST :
-                horizontalBuildDirection= BlockFace.NORTH.getDirection();
+            case WEST:
+                itemFrameDirection = BlockFace.NORTH.getDirection();
                 break;
         }
-        //Point de depart
-        Location location= player.getLocation().add(offset);
-        for(int i =0;i<BOARDSIZE;i++) {
+
+
+        for (int i = 0; i < BOARD_HEIGHT; i++) {
             //i stands for the line of the board and j the column
             location.add(verticalBuildDirection);
-            for(int j=0;j<BOARDSIZE;j++) {
+            for (int j = 0; j < BOARD_WIDTH; j++) {
                 location.add(horizontalBuildDirection);
+
                 //we create the block
                 location.getBlock().setType(Material.DARK_OAK_WOOD);
-            }
-        }
-        /*
-        for (int i = 0; i < NUMBER_BOARD; i++) {
-            for (int j = 0; j < NUMBER_BOARD; j++) {
-                ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
-                MapMeta meta = (MapMeta) item.getItemMeta();
+                location.add(itemFrameDirection);
+
+                //We create the item frame
+                ItemFrame itemFrame = (ItemFrame) player.getWorld().spawnEntity(location, EntityType.ITEM_FRAME);
+
+
+                //We create the map that will go in the itemframe
+                ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
+                MapMeta meta = (MapMeta) mapItem.getItemMeta();
                 MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
-                meta.setDisplayName("ligne :"+i+"colonne :"+j);
                 mapView.getRenderers().clear();
+                //j=0 ->x=0 but i=0 ->i =BOARD_HEIGHT because of how grpahics 2D works
+                mapView.addRenderer(new QuotationBoardRenderer(image.getSubimage(128 * j, 128 * (BOARD_HEIGHT - i - 1), 128, 128)));
                 mapView.setTrackingPosition(false);
-                //We draw on each map
-                mapView.addRenderer(new QuotationBoardRenderer(image.getSubimage(128 * i, 128 * j, 128, 128)));
+                mapView.setUnlimitedTracking(false);
                 meta.setMapView(mapView);
-                item.setItemMeta(meta);
-                player.getInventory().addItem(item);
+                mapItem.setItemMeta(meta);
 
+
+                itemFrame.setItem(mapItem);
+                location.subtract(itemFrameDirection);
             }
 
-
+            location.add(horizontalLineReturn);
         }
-*/
 
 
     }

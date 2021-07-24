@@ -2,6 +2,7 @@ package fr.lezoo.stonks;
 
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
+import fr.lezoo.stonks.command.BoardDisplayCommand;
 import fr.lezoo.stonks.command.StonksCommand;
 import fr.lezoo.stonks.command.completion.StonksCommandCompletion;
 import fr.lezoo.stonks.comp.placeholder.DefaultPlaceholderParser;
@@ -96,7 +97,7 @@ public class Stonks extends JavaPlugin {
         // Register commands
         getCommand("stonks").setExecutor(new StonksCommand());
         getCommand("stonks").setTabCompleter(new StonksCommandCompletion());
-
+        getCommand("boarddisplay").setExecutor(new BoardDisplayCommand());
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
     }
