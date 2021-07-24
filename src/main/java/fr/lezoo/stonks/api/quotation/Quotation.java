@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -34,6 +35,11 @@ public class Quotation {
     // Refresh time of the quotation in milliseconds
     private final static int REFRESH_TIME = 1000;
 
+    /**
+     * Current price, not final because it is updated every so often
+     */
+    private double price;
+
     public Quotation(String id, String companyName, String stockName, List<QuotationInfo> quotationData) {
         this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.companyName = companyName;
@@ -41,7 +47,13 @@ public class Quotation {
         this.quotationData = quotationData;
     }
 
-    private double price;
+    public Quotation(ConfigurationSection config) {
+        this.id = config.getName();
+        this.companyName = config.getString("company-name");
+        this.stockName = config.getString("stock-name");
+        // TODO
+    }
+
 
     public Quotation(String id, String companyName, String stockName) {
         this.id = id;

@@ -1,5 +1,7 @@
 package fr.lezoo.stonks.api.share;
 
+import org.bukkit.configuration.ConfigurationSection;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -26,6 +28,13 @@ public class Share {
         this.leverage = leverage;
         this.shares = shares;
         this.timeStamp = timeStamp;
+    }
+
+    public Share(ConfigurationSection config) {
+        this.type = ShareType.valueOf(config.getString("type"));
+        this.leverage = config.getDouble("leverage");
+        this.shares = config.getDouble("shares");
+        this.timeStamp = config.getLong("timestamp");
     }
 
     /**
