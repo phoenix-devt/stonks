@@ -1,7 +1,9 @@
 package fr.lezoo.stonks.api.quotation;
 
 
+import fr.lezoo.stonks.api.NBTItem;
 import fr.lezoo.stonks.api.util.Utils;
+import fr.lezoo.stonks.version.ItemTag;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -316,6 +318,7 @@ public class Quotation {
 
     }
 
+    public static final String MAP_ITEM_TAG_PATH = "StonksQuotationMap";
 
     /**
      * @param NUMBER_DATA number of points taken for the graphic
@@ -335,7 +338,9 @@ public class Quotation {
         mapView.addRenderer(new QuotationMapRenderer(this, NUMBER_DATA));
         meta.setMapView(mapView);
         mapItem.setItemMeta(meta);
-        return mapItem;
 
+        NBTItem nbtItem = NBTItem.get(mapItem);
+        nbtItem.addTag(new ItemTag(MAP_ITEM_TAG_PATH, true));
+        return nbtItem.toItem();
     }
 }
