@@ -22,8 +22,10 @@ public class BoardDisplayCommand implements CommandExecutor {
      * 4 : the height of the board
      */
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player))
-            return false;
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Problem : you're not a player!");
+            return true;
+        }
         Player player = (Player) sender;
         if (!(player.isOp())) {
             player.sendMessage("You dont have the right to execute this command");

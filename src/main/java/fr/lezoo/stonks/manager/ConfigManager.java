@@ -42,7 +42,6 @@ public class ConfigManager {
         // Copy default files
         for (DefaultFile def : DefaultFile.values())
             def.checkFile();
-
         // Reload items
         FileConfiguration config = new ConfigFile("/language", "items").getConfig();
         for (String id : itemIds)

@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.api.quotation;
 
 
+import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -192,25 +193,27 @@ public class Quotation {
         g2d.setFont(new Font(null, Font.PLAIN, BOARD_HEIGHT * 5 / 128));
         g2d.drawString("Company name : " + companyName, (int) (0.1 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
         //We want only 2 numbers after the comma
-        g2d.drawString("Current Price : " + (double) ((int) (quotationData.get(quotationData.size() - 1).getPrice() * 100) / 1) / 100, (int) (0.1 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
-        g2d.drawString("Highest Price : " + (double) ((int) (maxVal * 100) / 1) / 100, (int) (0.1 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
-        g2d.drawString("Lowest Price : " + (double) ((int) (minVal * 100) / 1) / 100, (int) (0.1 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
+        g2d.drawString("Current Price : " + Stonks.plugin.configManager.stockPriceFormat.format(quotationData.get(quotationData.size()-1).getPrice()), (int) (0.1 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
+        g2d.drawString("Highest Price : " + Stonks.plugin.configManager.stockPriceFormat.format(maxVal) , (int) (0.1 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
+        g2d.drawString("Lowest Price : " + Stonks.plugin.configManager.stockPriceFormat.format(minVal),(int)(0.1 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
 
 
         g2d.setColor(new Color(80, 30, 0));
         //Bouton SELL,SHORT,BUY,SET LEVERAGE
         //0.82*BOARD_WIDTH to 0.98
-        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.02 * BOARD_HEIGHT, 0.18 * BOARD_WIDTH, 0.19 * BOARD_HEIGHT));
-        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.25 * BOARD_HEIGHT, 0.18 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
-        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.5 * BOARD_HEIGHT, 0.18 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
-        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.75 * BOARD_HEIGHT, 0.18 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.02 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.19 * BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.25 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.5 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
+        g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.75 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.setColor(Color.GRAY);
-        g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 5 / 128));
-        g2d.drawString("Set Leverage", (int) (0.84 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
-        g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 8 / 128));
-        g2d.drawString("BUY", (int) (0.84 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
-        g2d.drawString("SHORT", (int) (0.84 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));
-        g2d.drawString("SELL", (int) (0.84 * BOARD_WIDTH), (int) (0.85 * BOARD_HEIGHT));
+        g2d.setFont(new Font(null, Font.BOLD, BOARD_WIDTH * 3 / 128));
+        g2d.drawString("Set", (int) (0.87 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
+        g2d.drawString("Leverage", (int) (0.83 * BOARD_WIDTH), (int) (0.15 * BOARD_HEIGHT));
+
+        g2d.setFont(new Font(null, Font.BOLD, BOARD_WIDTH * 5 / 128));
+        g2d.drawString("BUY", (int) (0.83 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
+        g2d.drawString("SHORT", (int) (0.83 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));
+        g2d.drawString("SELL", (int) (0.83 * BOARD_WIDTH), (int) (0.85 * BOARD_HEIGHT));
 
 
         g2d.setColor(Color.RED);
@@ -230,14 +233,37 @@ public class Quotation {
         return image;
     }
 
+    /**
+     * param :direction the board is built into
+     * @return the direction we will need to move in to build Item Frames on the Board
+     */
+    public Vector getItemFrameDirection(BlockFace blockFace){
+    Vector itemFrameDirection =null;
+    switch(blockFace) {
+        case NORTH:
+            itemFrameDirection = BlockFace.EAST.getDirection();
+            break;
+        case EAST:
+            itemFrameDirection = BlockFace.SOUTH.getDirection();
+            break;
+        case SOUTH:
+            itemFrameDirection = BlockFace.WEST.getDirection();
+            break;
+        case WEST:
+            itemFrameDirection = BlockFace.NORTH.getDirection();
+            break;
+    }
+    return itemFrameDirection;
+    }
 
     /**
      * Creates a 5x5 map of the Quotation to the player
      * gives the player all the maps in his inventory
      */
     public void createQuotationBoard(Player player, BlockFace blockFace, int NUMBER_DATA, int BOARD_WIDTH, int BOARD_HEIGHT) {
-        BufferedImage image = getQuotationBoardImage(NUMBER_DATA, BOARD_WIDTH, BOARD_HEIGHT);
 
+
+        BufferedImage image = getQuotationBoardImage(NUMBER_DATA, BOARD_WIDTH, BOARD_HEIGHT);
         //We create the wall to have the board with ItemFrames on it
 
         //We get the direction to build horizontally and vertically
@@ -248,30 +274,20 @@ public class Quotation {
         Vector horizontalLineReturn = horizontalBuildDirection.clone();
         horizontalLineReturn.multiply(-BOARD_WIDTH);
         Location location = player.getLocation().add(horizontalBuildDirection);
-        //the direction that we will move in to put item frames
-        Vector itemFrameDirection = new Vector();
 
-        switch (blockFace) {
-            case NORTH:
-                itemFrameDirection = BlockFace.EAST.getDirection();
-                break;
-            case EAST:
-                itemFrameDirection = BlockFace.SOUTH.getDirection();
-                break;
-            case SOUTH:
-                itemFrameDirection = BlockFace.WEST.getDirection();
-                break;
-            case WEST:
-                itemFrameDirection = BlockFace.NORTH.getDirection();
-                break;
-        }
+        Vector itemFrameDirection = getItemFrameDirection(blockFace);
+
+        //We save the board onto the boardManager
+        BoardInfo boardInfo = new BoardInfo(this,BOARD_HEIGHT,BOARD_WIDTH,
+                                        player.getLocation().getDirection().add(horizontalBuildDirection),NUMBER_DATA,blockFace);
+        Stonks.plugin.boardManager.register(boardInfo);
 
 
         for (int i = 0; i < BOARD_HEIGHT; i++) {
             //i stands for the line of the board and j the column
-            location.add(verticalBuildDirection);
+
             for (int j = 0; j < BOARD_WIDTH; j++) {
-                location.add(horizontalBuildDirection);
+
 
                 //we create the block
                 location.getBlock().setType(Material.DARK_OAK_WOOD);
@@ -291,14 +307,16 @@ public class Quotation {
                 mapView.setTrackingPosition(false);
                 mapView.setUnlimitedTracking(false);
                 meta.setMapView(mapView);
+
                 mapItem.setItemMeta(meta);
-
-
                 itemFrame.setItem(mapItem);
+
                 location.subtract(itemFrameDirection);
+                location.add(horizontalBuildDirection);
             }
 
             location.add(horizontalLineReturn);
+            location.add(verticalBuildDirection);
         }
 
 

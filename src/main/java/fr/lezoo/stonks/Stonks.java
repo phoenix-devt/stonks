@@ -10,6 +10,7 @@ import fr.lezoo.stonks.comp.placeholder.PlaceholderAPIParser;
 import fr.lezoo.stonks.comp.placeholder.PlaceholderParser;
 import fr.lezoo.stonks.comp.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.PlayerListener;
+import fr.lezoo.stonks.manager.BoardManager;
 import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.manager.PlayerDataManager;
 import fr.lezoo.stonks.manager.QuotationManager;
@@ -20,6 +21,8 @@ import fr.lezoo.stonks.version.wrapper.VersionWrapper_1_17_R1;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,13 +41,13 @@ public class Stonks extends JavaPlugin {
     public VersionWrapper versionWrapper = new VersionWrapper_1_17_R1();
     public PlayerDataManager playerManager = new PlayerDataManager();
     public QuotationManager quotationManager = new QuotationManager();
+    public BoardManager boardManager = new BoardManager();
 
     public void onLoad() {
         plugin = this;
     }
 
     public void onEnable() {
-
         // Read server version
         try {
             version = new ServerVersion(Bukkit.getServer().getClass());
@@ -79,7 +82,7 @@ public class Stonks extends JavaPlugin {
 
         // Initialize managers
         configManager.reload();
-
+        boardManager.reload();
         // PlaceholderAPI compatibility
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             placeholderParser = new PlaceholderAPIParser();
@@ -101,4 +104,10 @@ public class Stonks extends JavaPlugin {
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
     }
+
+@Override
+    public void onDisable() {
+        //We save the Managerdata
+    boardManager.save();
+}
 }

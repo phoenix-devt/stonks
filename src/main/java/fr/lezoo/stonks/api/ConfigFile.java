@@ -16,6 +16,8 @@ public class ConfigFile {
     private final File file;
     private final FileConfiguration config;
 
+
+
     /**
      * @param name File name WITHOUT EXTENSION like "quotations"
      */
