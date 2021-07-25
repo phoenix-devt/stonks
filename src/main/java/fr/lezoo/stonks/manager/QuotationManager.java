@@ -10,6 +10,10 @@ import java.util.Map;
 public class QuotationManager {
     private final Map<String, Quotation> map = new HashMap<>();
 
+    public void reload() {
+        // TODO
+    }
+
     public Quotation get(String id) {
         return map.get(formatId(id));
     }
