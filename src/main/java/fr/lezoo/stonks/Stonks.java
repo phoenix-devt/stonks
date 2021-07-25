@@ -48,6 +48,7 @@ public class Stonks extends JavaPlugin {
     }
 
     public void onEnable() {
+
         // Read server version
         try {
             version = new ServerVersion(Bukkit.getServer().getClass());
@@ -82,7 +83,9 @@ public class Stonks extends JavaPlugin {
 
         // Initialize managers
         configManager.reload();
+        quotationManager.load();
         boardManager.reload();
+
         // PlaceholderAPI compatibility
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             placeholderParser = new PlaceholderAPIParser();
@@ -90,24 +93,19 @@ public class Stonks extends JavaPlugin {
             getLogger().log(Level.INFO, "Hooked onto PlaceholderAPI");
         }
 
-        // Register test quotation
-        List<QuotationInfo> quot = new ArrayList<>();
-        for (int i = 0; i < 10; i++)
-            quot.add(new QuotationInfo(System.currentTimeMillis() + 10000 * i, Math.log(1 + i)));
-        Quotation quotation = new Quotation("aaa", "ooo", "hiiii", quot);
-        quotationManager.register(quotation);
-
         // Register commands
         getCommand("stonks").setExecutor(new StonksCommand());
         getCommand("stonks").setTabCompleter(new StonksCommandCompletion());
         getCommand("boarddisplay").setExecutor(new BoardDisplayCommand());
+
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
     }
 
-@Override
+    @Override
     public void onDisable() {
-        //We save the Managerdata
-    boardManager.save();
-}
+
+        // We save the Manager data
+        boardManager.save();
+    }
 }
