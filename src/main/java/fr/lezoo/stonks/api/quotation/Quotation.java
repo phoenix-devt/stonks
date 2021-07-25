@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.api.quotation;
 
 
+import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.NBTItem;
 import fr.lezoo.stonks.api.util.Utils;
 import fr.lezoo.stonks.version.ItemTag;
@@ -245,23 +246,7 @@ public class Quotation {
     }
 
 
-    /**
-     * Creates a 5x5 map of the Quotation to the player
-     * gives the player all the maps in his inventory
-     */
-    public void createQuotationBoard(Player player, BlockFace blockFace, int NUMBER_DATA, int BOARD_WIDTH, int BOARD_HEIGHT) {
-        BufferedImage image = getQuotationBoardImage(NUMBER_DATA, BOARD_WIDTH, BOARD_HEIGHT);
-
-        //We create the wall to have the board with ItemFrames on it
-
-        //We get the direction to build horizontally and vertically
-        Vector verticalBuildDirection = new Vector(0, 1, 0);
-        Vector horizontalBuildDirection = blockFace.getDirection();
-
-        //We need to cole to have deepmemory of it
-        Vector horizontalLineReturn = horizontalBuildDirection.clone();
-        horizontalLineReturn.multiply(-BOARD_WIDTH);
-        Location location = player.getLocation().add(horizontalBuildDirection);
+    public Vector getItemFrameDirection(BlockFace blockFace) {
         //the direction that we will move in to put item frames
         Vector itemFrameDirection = new Vector();
 
@@ -279,20 +264,45 @@ public class Quotation {
                 itemFrameDirection = BlockFace.NORTH.getDirection();
                 break;
         }
+        return itemFrameDirection;
+    }
 
+
+    /**
+     * Creates a 5x5 map of the Quotation to the player
+     * gives the player all the maps in his inventory
+     */
+    public void createQuotationBoard(boolean hasBeenCreated,Location location, BlockFace blockFace, int NUMBER_DATA, int BOARD_WIDTH, int BOARD_HEIGHT) {
+        BufferedImage image = getQuotationBoardImage(NUMBER_DATA, BOARD_WIDTH, BOARD_HEIGHT);
+
+        //We create the wall to have the board with ItemFrames on it
+
+        //We get the direction to build horizontally and vertically
+        Vector verticalBuildDirection = new Vector(0, 1, 0);
+        Vector horizontalBuildDirection = blockFace.getDirection();
+
+        //We need to clone to have deepmemory of it
+        Vector horizontalLineReturn = horizontalBuildDirection.clone();
+        horizontalLineReturn.multiply(-BOARD_WIDTH);
+        location = location.add(horizontalBuildDirection);
+        Vector itemFrameDirection = getItemFrameDirection(blockFace);
+
+        //if the board has never been created we register it
+        if(!hasBeenCreated)
+            Stonks.plugin.boardManager.register(new Board(this,BOARD_HEIGHT,BOARD_WIDTH,location.add(horizontalBuildDirection),NUMBER_DATA,blockFace));
 
         for (int i = 0; i < BOARD_HEIGHT; i++) {
             //i stands for the line of the board and j the column
-            location.add(verticalBuildDirection);
+
             for (int j = 0; j < BOARD_WIDTH; j++) {
-                location.add(horizontalBuildDirection);
+
 
                 //we create the block
                 location.getBlock().setType(Material.DARK_OAK_WOOD);
                 location.add(itemFrameDirection);
 
                 //We create the item frame
-                ItemFrame itemFrame = (ItemFrame) player.getWorld().spawnEntity(location, EntityType.ITEM_FRAME);
+                ItemFrame itemFrame = (ItemFrame) location.getWorld().spawnEntity(location, EntityType.ITEM_FRAME);
 
 
                 //We create the map that will go in the itemframe
@@ -300,7 +310,7 @@ public class Quotation {
                 MapMeta meta = (MapMeta) mapItem.getItemMeta();
                 MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
                 mapView.getRenderers().clear();
-                //j=0 ->x=0 but i=0 ->i =BOARD_HEIGHT because of how grpahics 2D works
+                //j=0 ->x=0 but i=0 ->i =BOARD_HEIGHT because of how graphics 2D works
                 mapView.addRenderer(new QuotationBoardRenderer(image.getSubimage(128 * j, 128 * (BOARD_HEIGHT - i - 1), 128, 128)));
                 mapView.setTrackingPosition(false);
                 mapView.setUnlimitedTracking(false);
@@ -310,8 +320,9 @@ public class Quotation {
 
                 itemFrame.setItem(mapItem);
                 location.subtract(itemFrameDirection);
+                location.add(horizontalBuildDirection);
             }
-
+            location.add(verticalBuildDirection);
             location.add(horizontalLineReturn);
         }
 

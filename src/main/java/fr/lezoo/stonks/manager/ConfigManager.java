@@ -30,6 +30,8 @@ public class ConfigManager {
     // Accessible public config fields
     public DecimalFormat stockPriceFormat, shareFormat;
 
+    public long boardRefreshTime;
+
     public void reload() {
 
         // Reload default config
@@ -38,7 +40,7 @@ public class ConfigManager {
         // Update public config fields
         stockPriceFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("stock-price-decimal-format"));
         shareFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("shares-decimal-format"));
-
+        boardRefreshTime = Stonks.plugin.getConfig().getLong("board-refresh-time");
         // Copy default files
         for (DefaultFile def : DefaultFile.values())
             def.checkFile();

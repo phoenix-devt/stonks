@@ -2,7 +2,7 @@ package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.ConfigFile;
-import fr.lezoo.stonks.api.quotation.BoardInfo;
+import fr.lezoo.stonks.api.quotation.Board;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.HashMap;
@@ -12,23 +12,27 @@ import java.util.logging.Level;
 
 
 public class BoardManager {
-    private final Map<UUID, BoardInfo> boards = new HashMap<UUID, BoardInfo>();
+    private final Map<UUID, Board> boards = new HashMap<UUID, Board>();
 
     public void reload() {
         FileConfiguration config = new ConfigFile("boarddata").getConfig();
         for (String key : config.getKeys(false))
             try {
-                register(new BoardInfo(config.getConfigurationSection(key)));
+                register(new Board(config.getConfigurationSection(key)));
             } catch (IllegalArgumentException exception) {
                 Stonks.plugin.getLogger().log(Level.WARNING, "Could not load board info '" + key + "'");
             }
     }
 
-    public void save() {
-        boards.values().forEach(boardInfo -> boardInfo.saveBoard());
+    public void refreshBoards() {
+        boards.values().forEach(board->board.refreshBoard());
     }
 
-    public void register(BoardInfo boardInfo) {
-        boards.put(boardInfo.getUuid(), boardInfo);
+    public void save() {
+        boards.values().forEach(board -> board.saveBoard());
+    }
+
+    public void register(Board board) {
+        boards.put(board.getUuid(), board);
     }
 }

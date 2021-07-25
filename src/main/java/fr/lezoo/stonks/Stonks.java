@@ -100,6 +100,10 @@ public class Stonks extends JavaPlugin {
 
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+
+
+        //Create scheduler to refresh boards
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this,()->boardManager.refreshBoards(),0,this.configManager.refreshTime);
     }
 
     @Override

@@ -10,3 +10,5 @@ stock-price-decimal-format: '0.##'
 # How the amount of shares are displayed in messages
 shares-decimal-format: '0.#'
 
+#The time between 2 boards refresh
+board-refresh-time : 10
