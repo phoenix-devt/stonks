@@ -5,6 +5,7 @@ import fr.lezoo.stonks.api.NBTItem;
 import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
+import fr.lezoo.stonks.api.util.message.Message;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
@@ -74,6 +75,13 @@ public class QuotationList extends EditableInventory {
 
         @Override
         public void whenClicked(InventoryClickEvent event, InventoryItem item) {
+
+            // Market is closing!
+            if (Stonks.plugin.isClosed()) {
+                Message.MARKET_CLOSING.format().send(player);
+                player.closeInventory();
+                return;
+            }
 
             // Next Page
             if (item instanceof PreviousPageItem && page < maxPage) {

@@ -3,6 +3,7 @@ package fr.lezoo.stonks.manager;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.ConfigFile;
 import fr.lezoo.stonks.api.CustomItem;
+import fr.lezoo.stonks.api.util.ConfigSchedule;
 import fr.lezoo.stonks.gui.QuotationList;
 import fr.lezoo.stonks.gui.QuotationShareMenu;
 import fr.lezoo.stonks.gui.api.EditableInventory;
@@ -31,6 +32,8 @@ public class ConfigManager {
 
     // Accessible public config fields
     public DecimalFormat stockPriceFormat, shareFormat;
+    public ConfigSchedule closeTime, openTime;
+    public boolean closeTimeEnabled;
 
     public long boardRefreshTime;
 
@@ -43,6 +46,9 @@ public class ConfigManager {
         stockPriceFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("stock-price-decimal-format"));
         shareFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("shares-decimal-format"));
         boardRefreshTime = Stonks.plugin.getConfig().getLong("board-refresh-time");
+        closeTimeEnabled = Stonks.plugin.getConfig().getBoolean("close-time.enaabled");
+        closeTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.from"));
+        openTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.to"));
 
         // Copy default files
         for (DefaultFile def : DefaultFile.values())

@@ -16,3 +16,16 @@ board-refresh-time: 10
 # The way dates are formatted in the plugin
 # Check out 'DateFormat java' onlien for more info
 date-format: 'EEE, d MMM yyyy HH:mm:ss'
+
+# Time during which the stock market is closed,
+# ie no shares can be bought or closed.
+# Hours must be within 0 and 23
+# Minutes must be within 0 and 59
+close-time:
+  enabled: true
+  from:
+    hour: 22
+    min: 30
+  to:
+    hour: 4
+    min: 0

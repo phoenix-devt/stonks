@@ -1,7 +1,6 @@
 package fr.lezoo.stonks;
 
-import fr.lezoo.stonks.api.quotation.Quotation;
-import fr.lezoo.stonks.api.quotation.QuotationInfo;
+import fr.lezoo.stonks.api.util.ConfigSchedule;
 import fr.lezoo.stonks.command.BoardDisplayCommand;
 import fr.lezoo.stonks.command.StonksCommand;
 import fr.lezoo.stonks.command.completion.RemoveBoardCommand;
@@ -16,19 +15,14 @@ import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.manager.PlayerDataManager;
 import fr.lezoo.stonks.manager.QuotationManager;
 import fr.lezoo.stonks.version.ServerVersion;
-import fr.lezoo.stonks.version.SpigotPlugin;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper_1_17_R1;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 public class Stonks extends JavaPlugin {
@@ -104,7 +98,7 @@ public class Stonks extends JavaPlugin {
 
 
         //Create scheduler to refresh boards
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this,()->boardManager.refreshBoards(),0,20L*this.configManager.boardRefreshTime);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> boardManager.refreshBoards(), 0, 20L * this.configManager.boardRefreshTime);
     }
 
     @Override
@@ -112,5 +106,19 @@ public class Stonks extends JavaPlugin {
 
         // We save the Manager data
         boardManager.save();
+    }
+
+    /**
+     * @return If the stock market is closed and no shares
+     * can be bought or closed
+     */
+    public boolean isClosed() {
+
+        // If the stock market is always open
+        if (!configManager.closeTimeEnabled)
+            return false;
+
+        // Make sure it's open otherwise
+        return ConfigSchedule.isBetween(configManager.closeTime, configManager.openTime);
     }
 }

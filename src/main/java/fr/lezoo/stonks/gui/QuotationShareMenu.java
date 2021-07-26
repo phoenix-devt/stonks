@@ -71,6 +71,13 @@ public class QuotationShareMenu extends EditableInventory {
         @Override
         public void whenClicked(InventoryClickEvent event, InventoryItem item) {
 
+            // Market is closing!
+            if (Stonks.plugin.isClosed()) {
+                Message.MARKET_CLOSING.format().send(player);
+                player.closeInventory();
+                return;
+            }
+
             if (item.getFunction().equals("back")) {
                 Stonks.plugin.configManager.QUOTATION_LIST.generate(playerData).open();
                 return;
