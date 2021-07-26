@@ -1,5 +1,6 @@
 package fr.lezoo.stonks.manager;
 
+import fr.lezoo.stonks.api.ConfigFile;
 import fr.lezoo.stonks.api.PlayerData;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -23,5 +24,15 @@ public class PlayerDataManager {
             map.get(player.getUniqueId()).updatePlayer(player);
         else
             map.put(player.getUniqueId(), new PlayerData(player));
+    }
+
+    public void save() {
+
+        // Save player data
+        for (PlayerData player : map.values()) {
+            ConfigFile config = new ConfigFile("/userdata", player.getUniqueId().toString());
+            player.saveInConfig(config.getConfig());
+            config.save();
+        }
     }
 }

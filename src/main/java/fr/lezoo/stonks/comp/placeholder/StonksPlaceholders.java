@@ -42,14 +42,14 @@ public class StonksPlaceholders extends PlaceholderExpansion {
         PlayerData playerData = PlayerData.get(player);
 
         if (params.equals("leverage"))
-            return "" + playerData.getLeverage();
+            return Double.toString(playerData.getLeverage());
 
         if (params.startsWith("shares_")) {
             String id = params.substring(7);
             if (!Stonks.plugin.quotationManager.has(id))
                 return "?";
 
-            return "" + playerData.countShares(Stonks.plugin.quotationManager.get(id));
+            return Double.toString(playerData.countShares(Stonks.plugin.quotationManager.get(id)));
         }
 
         return "";

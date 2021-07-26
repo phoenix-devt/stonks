@@ -17,24 +17,38 @@ public class Share {
     private final long timeStamp;
     private final double initialPrice;
 
+    // These can be modified by other plugins freely
     private double leverage, shares;
 
     /**
-     * @param type      Type of share
-     * @param quotation Quotation the share is bought from
-     * @param leverage  Multiplicative factor for the money made out of,
-     *                  or lost by a share purchase
-     * @param shares    Amount of shares purchased
-     * @param timeStamp When the share was bought
+     * Public constructor when buying or shorting a share.
+     * The time stamp is the time at which this instance was created
      */
-    public Share(ShareType type, Quotation quotation, double leverage, double shares, long timeStamp) {
+    public Share(ShareType type, Quotation quotation, double leverage, double shares) {
+        this(type, quotation.getPrice(), leverage, shares, System.currentTimeMillis());
+    }
+
+    /**
+     * Used when shares are being created
+     *
+     * @param type         Type of share
+     * @param initialPrice Initial stock price
+     * @param leverage     Multiplicative factor for the money made out of,
+     *                     or lost by a share purchase
+     * @param shares       Amount of shares purchased
+     * @param timeStamp    When the share was bought (millis)
+     */
+    public Share(ShareType type, double initialPrice, double leverage, double shares, long timeStamp) {
         this.type = type;
-        this.initialPrice = quotation.getPrice();
+        this.initialPrice = initialPrice;
         this.leverage = leverage;
         this.shares = shares;
         this.timeStamp = timeStamp;
     }
 
+    /**
+     * Loads a share from a config file
+     */
     public Share(ConfigurationSection config) {
         this.type = ShareType.valueOf(config.getString("type"));
         this.leverage = config.getDouble("leverage");
@@ -43,12 +57,12 @@ public class Share {
         this.initialPrice = config.getLong("initial");
     }
 
-    /**
-     * Public constructor when creating a share. The time stamp
-     * is the time at which this instance was created
-     */
-    public Share(ShareType type, Quotation quotation, double leverage, double shares) {
-        this(type, quotation, leverage, shares, System.currentTimeMillis());
+    public void saveInConfig(ConfigurationSection config) {
+        config.set("type", type.name());
+        config.set("leverage", leverage);
+        config.set("shares", shares);
+        config.set("timestamp", timeStamp);
+        config.set("initial-price", initialPrice);
     }
 
     public UUID getUniqueId() {

@@ -8,6 +8,7 @@ import fr.lezoo.stonks.api.share.ShareType;
 import fr.lezoo.stonks.api.util.message.Message;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -27,6 +28,40 @@ public class PlayerData {
     public PlayerData(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();
+
+        loadFromConfig(new ConfigFile("/userdata", uuid.toString()).getConfig());
+    }
+
+    public void loadFromConfig(FileConfiguration config) {
+
+        // Load shares from config file
+        for (String quotationKey : config.getConfigurationSection("shares").getKeys(false)) {
+            Set<Share> shares = new HashSet<>();
+
+            for (String shareKey : config.getConfigurationSection("shares." + quotationKey).getKeys(false))
+                shares.add(new Share(config.getConfigurationSection("shares." + quotationKey + "." + shareKey)));
+
+            if (!shares.isEmpty())
+                this.shares.put(quotationKey, shares);
+        }
+    }
+
+    public void saveInConfig(FileConfiguration config) {
+
+        // Remove old shares
+        config.set("shares", null);
+
+        // Save newest
+        for (String quotationId : shares.keySet())
+            for (Share share : this.shares.get(quotationId)) {
+                String path = "shares." + quotationId + "." + share.getUniqueId();
+                config.createSection(path);
+                share.saveInConfig(config.getConfigurationSection(path));
+            }
+    }
+
+    public UUID getUniqueId() {
+        return uuid;
     }
 
     public Player getPlayer() {
@@ -56,6 +91,13 @@ public class PlayerData {
 
     public Set<Share> getShares(Quotation quotation) {
         return shares.getOrDefault(quotation.getId(), new HashSet<>());
+    }
+
+    /**
+     * @return IDs of quotations the player has some shares of which
+     */
+    public Set<String> getShareKeys() {
+        return shares.keySet();
     }
 
     public Share getShareById(Quotation quotation, UUID uuid) {

@@ -27,6 +27,7 @@ import java.util.logging.Level;
 
 public class Stonks extends JavaPlugin {
     public static Stonks plugin;
+
     public PlaceholderParser placeholderParser = new DefaultPlaceholderParser();
     public ServerVersion version;
     public final ConfigManager configManager = new ConfigManager();
@@ -70,9 +71,6 @@ public class Stonks extends JavaPlugin {
         // Update checker, TODO change when plugin is on Spigot
         /*new SpigotPlugin(11111, this).checkForUpdate();*/
 
-        // Load player data of online players
-        Bukkit.getOnlinePlayers().forEach(online -> playerManager.setup(online));
-
         // Reload config BEFORE config is reloaded
         saveDefaultConfig();
 
@@ -80,6 +78,9 @@ public class Stonks extends JavaPlugin {
         configManager.reload();
         quotationManager.load();
         boardManager.reload();
+
+        // Load player data of online players
+        Bukkit.getOnlinePlayers().forEach(online -> playerManager.setup(online));
 
         // PlaceholderAPI compatibility
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -93,19 +94,18 @@ public class Stonks extends JavaPlugin {
         getCommand("stonks").setTabCompleter(new StonksCommandCompletion());
         getCommand("boarddisplay").setExecutor(new BoardDisplayCommand());
         getCommand("removeboard").setExecutor(new RemoveBoardCommand());
+
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 
-
-        //Create scheduler to refresh boards
+        // Create scheduler to refresh boards
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> boardManager.refreshBoards(), 0, 20L * this.configManager.boardRefreshTime);
     }
 
     @Override
     public void onDisable() {
-
-        // We save the Manager data
         boardManager.save();
+        playerManager.save();
     }
 
     /**
