@@ -4,6 +4,7 @@ import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
 import fr.lezoo.stonks.command.BoardDisplayCommand;
 import fr.lezoo.stonks.command.StonksCommand;
+import fr.lezoo.stonks.command.completion.RemoveBoardCommand;
 import fr.lezoo.stonks.command.completion.StonksCommandCompletion;
 import fr.lezoo.stonks.comp.placeholder.DefaultPlaceholderParser;
 import fr.lezoo.stonks.comp.placeholder.PlaceholderAPIParser;
@@ -97,13 +98,13 @@ public class Stonks extends JavaPlugin {
         getCommand("stonks").setExecutor(new StonksCommand());
         getCommand("stonks").setTabCompleter(new StonksCommandCompletion());
         getCommand("boarddisplay").setExecutor(new BoardDisplayCommand());
-
+        getCommand("removeboard").setExecutor(new RemoveBoardCommand());
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 
 
         //Create scheduler to refresh boards
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this,()->boardManager.refreshBoards(),0,this.configManager.refreshTime);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this,()->boardManager.refreshBoards(),0,20L*this.configManager.boardRefreshTime);
     }
 
     @Override

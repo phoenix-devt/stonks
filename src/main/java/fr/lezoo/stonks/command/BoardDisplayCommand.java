@@ -3,6 +3,8 @@ package fr.lezoo.stonks.command;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -59,9 +61,10 @@ public class BoardDisplayCommand implements CommandExecutor {
             face = BlockFace.EAST;
             val = direction.dot(face.getDirection());
         }
-
+        //We work with integer
+        Location location = new Location(player.getWorld(), Math.floor(player.getLocation().getX()), Math.floor(player.getLocation().getY()), Math.floor(player.getLocation().getX()));
         Quotation quotation = Stonks.plugin.quotationManager.get(args[0]);
-        quotation.createQuotationBoard(player, face, Integer.valueOf(args[1]), Integer.valueOf(args[2]), Integer.valueOf(args[3]));
+        quotation.createQuotationBoard(false, player.getLocation().add(face.getDirection()), face, Integer.valueOf(args[1]), Integer.valueOf(args[2]), Integer.valueOf(args[3]));
         return true;
     }
 }

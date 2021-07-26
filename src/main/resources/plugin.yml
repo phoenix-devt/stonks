@@ -14,6 +14,9 @@ commands:
     description : 'Display a board'
     usage : "Problem with boarddisplay command"
 
+  removeboard :
+    description : "allow to remove a board"
+    usage : "problem with remove command"
 permissions:
   stonks.admin:
     default: op

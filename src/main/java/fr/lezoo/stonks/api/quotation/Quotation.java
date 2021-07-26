@@ -6,12 +6,10 @@ import fr.lezoo.stonks.api.NBTItem;
 import fr.lezoo.stonks.api.util.Utils;
 import fr.lezoo.stonks.version.ItemTag;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -20,14 +18,18 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nullable;
 import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Place where players can buy and sell shares
@@ -272,11 +274,13 @@ public class Quotation {
      * Creates a 5x5 map of the Quotation to the player
      * gives the player all the maps in his inventory
      */
-    public void createQuotationBoard(boolean hasBeenCreated,Location location, BlockFace blockFace, int NUMBER_DATA, int BOARD_WIDTH, int BOARD_HEIGHT) {
+    public void createQuotationBoard(boolean hasBeenCreated, Location initiallocation, BlockFace blockFace, int NUMBER_DATA, int BOARD_WIDTH, int BOARD_HEIGHT) {
         BufferedImage image = getQuotationBoardImage(NUMBER_DATA, BOARD_WIDTH, BOARD_HEIGHT);
 
+        //We make sure to not chang the location given in argument
+        Location location = initiallocation.clone();
         //We create the wall to have the board with ItemFrames on it
-
+        location.add(0.5, 0.5, 0.5);
         //We get the direction to build horizontally and vertically
         Vector verticalBuildDirection = new Vector(0, 1, 0);
         Vector horizontalBuildDirection = blockFace.getDirection();
@@ -284,50 +288,70 @@ public class Quotation {
         //We need to clone to have deepmemory of it
         Vector horizontalLineReturn = horizontalBuildDirection.clone();
         horizontalLineReturn.multiply(-BOARD_WIDTH);
-        location = location.add(horizontalBuildDirection);
+
+
         Vector itemFrameDirection = getItemFrameDirection(blockFace);
 
         //if the board has never been created we register it
-        if(!hasBeenCreated)
-            Stonks.plugin.boardManager.register(new Board(this,BOARD_HEIGHT,BOARD_WIDTH,location.add(horizontalBuildDirection),NUMBER_DATA,blockFace));
+        if (!hasBeenCreated) {
+            Stonks.plugin.boardManager.register(new Board(this, BOARD_HEIGHT, BOARD_WIDTH, initiallocation, NUMBER_DATA, blockFace));
+        }
+
+        //We get the board corresponding to the one we are creating or updating
+        Board board = Stonks.plugin.boardManager.getBoard(initiallocation, blockFace);
 
         for (int i = 0; i < BOARD_HEIGHT; i++) {
             //i stands for the line of the board and j the column
 
             for (int j = 0; j < BOARD_WIDTH; j++) {
 
+                if (!hasBeenCreated)
+                    location.getBlock().setType(Material.DARK_OAK_WOOD);
+                //We check if there is a block to build the frames on
+                if (location.getBlock().getType().isBlock()) {
 
-                //we create the block
-                location.getBlock().setType(Material.DARK_OAK_WOOD);
-                location.add(itemFrameDirection);
+                    //We catch the IllegalArgumentException of spawnEntity method
+                    try {
+                        location.add(itemFrameDirection);
+                        location.getWorld().getNearbyEntities(location, 0.5, 0.5, 0.5, entity -> entity instanceof ItemFrame).forEach(entity -> entity.remove());
+                        //If there is a problem at onz point we stop entirely the creation of the board
+                        ItemFrame itemFrame = (ItemFrame) location.getWorld().spawnEntity(location, EntityType.ITEM_FRAME);
+                        //We create the map that will go in the itemframe
+                        ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
+                        MapMeta meta = (MapMeta) mapItem.getItemMeta();
+                        MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
+                        mapView.getRenderers().clear();
+                        //j=0 ->x=0 but i=0 ->i =BOARD_HEIGHT because of how graphics 2D works
+                        mapView.addRenderer(new QuotationBoardRenderer(image.getSubimage(128 * j, 128 * (BOARD_HEIGHT - i - 1), 128, 128)));
+                        mapView.setTrackingPosition(false);
+                        mapView.setUnlimitedTracking(false);
+                        meta.setMapView(mapView);
+                        mapItem.setItemMeta(meta);
+                        //We store the UUID of the board within each ItemFrame of the board
+                        NBTItem nbtItem = NBTItem.get(mapItem);
+                        ItemTag itemTag = new ItemTag("boarduuid", board.getUuid().toString());
+                        nbtItem.addTag(itemTag);
+                        mapItem = nbtItem.toItem();
+                        itemFrame.setItem(mapItem);
+                        location.subtract(itemFrameDirection);
+                    } catch (IllegalArgumentException e) {
+                        board.destroy();
+                        e.printStackTrace();
+                        return;
+                    }
 
-                //We create the item frame
-                ItemFrame itemFrame = (ItemFrame) location.getWorld().spawnEntity(location, EntityType.ITEM_FRAME);
+                }
 
-
-                //We create the map that will go in the itemframe
-                ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
-                MapMeta meta = (MapMeta) mapItem.getItemMeta();
-                MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
-                mapView.getRenderers().clear();
-                //j=0 ->x=0 but i=0 ->i =BOARD_HEIGHT because of how graphics 2D works
-                mapView.addRenderer(new QuotationBoardRenderer(image.getSubimage(128 * j, 128 * (BOARD_HEIGHT - i - 1), 128, 128)));
-                mapView.setTrackingPosition(false);
-                mapView.setUnlimitedTracking(false);
-                meta.setMapView(mapView);
-                mapItem.setItemMeta(meta);
-
-
-                itemFrame.setItem(mapItem);
-                location.subtract(itemFrameDirection);
                 location.add(horizontalBuildDirection);
             }
+
             location.add(verticalBuildDirection);
             location.add(horizontalLineReturn);
         }
 
 
     }
+
 
     public static final String MAP_ITEM_TAG_PATH = "StonksQuotationMap";
 
