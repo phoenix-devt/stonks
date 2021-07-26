@@ -2,15 +2,13 @@ package fr.lezoo.stonks.listener;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.NBTItem;
-import fr.lezoo.stonks.api.quotation.Board;
+import fr.lezoo.stonks.api.quotation.board.Board;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;

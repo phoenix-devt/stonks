@@ -24,12 +24,11 @@ import java.util.List;
 
 /**
  * Displays the list of all quotations, when clicking one
- * you get the menu where you can buy or sell shares
- * using the custom {@link QuotationShareMenu} GUI
+ * you open a {@link SpecificPortfolio}
  */
-public class QuotationList extends EditableInventory {
-    public QuotationList() {
-        super("quotation-list");
+public class PortfolioList extends EditableInventory {
+    public PortfolioList() {
+        super("portfolio-list");
     }
 
     @Override
@@ -48,17 +47,17 @@ public class QuotationList extends EditableInventory {
     }
 
     public GeneratedInventory generate(PlayerData player) {
-        return new GeneratedQuotationList(player, this);
+        return new GeneratedPortfolioList(player, this);
     }
 
-    public class GeneratedQuotationList extends GeneratedInventory {
+    public class GeneratedPortfolioList extends GeneratedInventory {
         private final List<Quotation> quotations = new ArrayList<>();
         private final int maxPage;
 
         // Page indexing arbitrarily starts at 0
         private int page = 0;
 
-        public GeneratedQuotationList(PlayerData playerData, EditableInventory editable) {
+        public GeneratedPortfolioList(PlayerData playerData, EditableInventory editable) {
             super(playerData, editable);
 
             int perPage = editable.getByFunction("quotation").getSlots().size();
@@ -95,7 +94,7 @@ public class QuotationList extends EditableInventory {
                 Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
                 Validate.notNull(quotation, "Could not find quotation with ID '" + quotationId + "'");
 
-                Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, quotation).open();
+                Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(playerData, quotation).open();
             }
         }
 
@@ -105,29 +104,29 @@ public class QuotationList extends EditableInventory {
         }
     }
 
-    public class NextPageItem extends SimplePlaceholderItem<GeneratedQuotationList> {
+    public class NextPageItem extends SimplePlaceholderItem<GeneratedPortfolioList> {
         public NextPageItem(ConfigurationSection config) {
             super(config);
         }
 
         @Override
-        public boolean isDisplayed(GeneratedQuotationList inv) {
+        public boolean isDisplayed(GeneratedPortfolioList inv) {
             return inv.page < inv.maxPage;
         }
     }
 
-    public class PreviousPageItem extends SimplePlaceholderItem<GeneratedQuotationList> {
+    public class PreviousPageItem extends SimplePlaceholderItem<GeneratedPortfolioList> {
         public PreviousPageItem(ConfigurationSection config) {
             super(config);
         }
 
         @Override
-        public boolean isDisplayed(GeneratedQuotationList inv) {
+        public boolean isDisplayed(GeneratedPortfolioList inv) {
             return inv.page > 0;
         }
     }
 
-    public class QuotationItem extends PlaceholderItem<GeneratedQuotationList> {
+    public class QuotationItem extends PlaceholderItem<GeneratedPortfolioList> {
         private final SimplePlaceholderItem noQuotation;
 
         public QuotationItem(ConfigurationSection config) {
@@ -137,7 +136,7 @@ public class QuotationList extends EditableInventory {
         }
 
         @Override
-        public ItemStack getDisplayedItem(GeneratedQuotationList inv, int n) {
+        public ItemStack getDisplayedItem(GeneratedPortfolioList inv, int n) {
             int index = getSlots().size() * inv.page + n;
 
             // If above quotation number, display 'No quotation'
@@ -158,7 +157,7 @@ public class QuotationList extends EditableInventory {
         }
 
         @Override
-        public Placeholders getPlaceholders(GeneratedQuotationList inv, int n) {
+        public Placeholders getPlaceholders(GeneratedPortfolioList inv, int n) {
             int index = getSlots().size() * inv.page + n;
             Quotation quotation = inv.quotations.get(index);
 
@@ -173,6 +172,8 @@ public class QuotationList extends EditableInventory {
             holders.register("week-high", format.format(quotation.getHighest(QuotationInfo.WEEK_TIME_OUT)));
             holders.register("month-low", format.format(quotation.getLowest(QuotationInfo.MONTH_TIME_OUT)));
             holders.register("month-high", format.format(quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
+
+            holders.register("owned", "" + inv.getPlayerData().countShares(quotation));
 
             return holders;
         }

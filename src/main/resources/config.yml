@@ -10,5 +10,9 @@ stock-price-decimal-format: '0.##'
 # How the amount of shares are displayed in messages
 shares-decimal-format: '0.#'
 
-#The time between 2 boards refresh
-board-refresh-time : 10
+# The time between 2 boards refresh
+board-refresh-time: 10
+
+# The way dates are formatted in the plugin
+# Check out 'DateFormat java' onlien for more info
+date-format: 'EEE, d MMM yyyy HH:mm:ss'

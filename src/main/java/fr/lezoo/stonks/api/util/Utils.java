@@ -1,5 +1,8 @@
 package fr.lezoo.stonks.api.util;
 
+import org.bukkit.block.BlockFace;
+import org.bukkit.util.Vector;
+
 import java.text.DecimalFormat;
 
 public class Utils {
@@ -24,5 +27,24 @@ public class Utils {
     public static double truncate(double x, int decimals) {
         double pow = Math.pow(10, decimals);
         return Math.floor(x * pow) / pow;
+    }
+
+    /**
+     * @return The direction to follow to place the item frames
+     * on a quotation board
+     */
+    public static Vector getItemFrameDirection(BlockFace blockFace) {
+        switch (blockFace) {
+            case NORTH:
+                return BlockFace.EAST.getDirection();
+            case EAST:
+                return BlockFace.SOUTH.getDirection();
+            case SOUTH:
+                return BlockFace.WEST.getDirection();
+            case WEST:
+                return BlockFace.NORTH.getDirection();
+            default:
+                throw new IllegalArgumentException("Could not match any direction");
+        }
     }
 }

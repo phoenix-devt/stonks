@@ -25,7 +25,9 @@ public class ConfigManager {
     // Accessible public GUIs
     public final QuotationList QUOTATION_LIST = new QuotationList();
     public final QuotationShareMenu QUOTATION_SHARE = new QuotationShareMenu();
-    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE};
+    public final QuotationShareMenu PORTFOLIO_LIST = new QuotationShareMenu();
+    public final QuotationShareMenu SPECIFIC_PORTFOLIO = new QuotationShareMenu();
+    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, PORTFOLIO_LIST, SPECIFIC_PORTFOLIO};
 
     // Accessible public config fields
     public DecimalFormat stockPriceFormat, shareFormat;
@@ -41,9 +43,11 @@ public class ConfigManager {
         stockPriceFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("stock-price-decimal-format"));
         shareFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("shares-decimal-format"));
         boardRefreshTime = Stonks.plugin.getConfig().getLong("board-refresh-time");
+
         // Copy default files
         for (DefaultFile def : DefaultFile.values())
             def.checkFile();
+
         // Reload items
         FileConfiguration config = new ConfigFile("/language", "items").getConfig();
         for (String id : itemIds)
@@ -73,6 +77,8 @@ public class ConfigManager {
 
         GUI_QUOTATION_LIST("language/gui", "quotation-list.yml"),
         GUI_SHARE_MENU("language/gui", "share-menu.yml"),
+        GUI_PORTFOLIO_LIST("language/gui", "portfolio-list.yml"),
+        GUI_SPECIFIC_PORTFOLIO("language/gui", "specific-portfolio.yml"),
         ;
 
         private final String folderName, fileName;

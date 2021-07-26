@@ -1,5 +1,5 @@
 # GUI display name
-name: 'Quotations ({page}/{max})'
+name: 'Bought Shares'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -31,7 +31,7 @@ items:
       - ''
       - '&7Owned Shares: &f{owned}'
       - ''
-      - '&eClick to open the share menu.'
+      - '&eClick to see your shares.'
     no-quotation:
       name: '&aNo Quotation'
       item: PAPER

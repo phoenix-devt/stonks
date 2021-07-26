@@ -21,7 +21,7 @@ import java.util.logging.Level;
 public class SpigotPlugin {
     private final JavaPlugin plugin;
     private final int id;
-    
+
     private String version;
 
     public SpigotPlugin(int id, JavaPlugin plugin) {
@@ -49,8 +49,8 @@ public class SpigotPlugin {
             plugin.getLogger().log(Level.INFO, "Download it here: " + getResourceUrl());
 
             /*
-             * registers the event to notify op players when they join only if
-             * the corresponding option is enabled
+             * Registers the event to notify op players when they
+             * join only if the corresponding option is enabled
              */
             if (plugin.getConfig().getBoolean("update-notify"))
                 Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().registerEvents(new Listener() {

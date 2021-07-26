@@ -1,24 +1,24 @@
 package fr.lezoo.stonks.api.event;
 
 import fr.lezoo.stonks.api.PlayerData;
-import fr.lezoo.stonks.api.share.Share;
 import fr.lezoo.stonks.api.quotation.Quotation;
+import fr.lezoo.stonks.api.share.Share;
 import org.bukkit.event.HandlerList;
 
-public class PlayerSellShareEvent extends PlayerDataEvent {
+public class PlayerCloseShareEvent extends PlayerDataEvent {
     private final Quotation quotation;
     private final Share share;
 
     private static final HandlerList handlers = new HandlerList();
 
     /**
-     * Called when a player sells a share from a certain quotation
+     * Called when a player closes a share from a certain quotation
      *
-     * @param playerData Player selling the share
+     * @param playerData Player closing the share
      * @param quotation  Quotation from which the share was sold
-     * @param share      Share sold
+     * @param share      Share closed
      */
-    public PlayerSellShareEvent(PlayerData playerData, Quotation quotation, Share share) {
+    public PlayerCloseShareEvent(PlayerData playerData, Quotation quotation, Share share) {
         super(playerData);
 
         this.quotation = quotation;

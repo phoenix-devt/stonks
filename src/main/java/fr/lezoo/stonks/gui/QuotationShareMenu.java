@@ -4,7 +4,6 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
-import fr.lezoo.stonks.api.share.Share;
 import fr.lezoo.stonks.api.share.ShareType;
 import fr.lezoo.stonks.api.util.ChatInput;
 import fr.lezoo.stonks.api.util.Utils;
@@ -22,6 +21,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import java.text.DecimalFormat;
 
+/**
+ * Menu where you can buy or short shares for a specific quotation.
+ */
 public class QuotationShareMenu extends EditableInventory {
     public QuotationShareMenu() {
         super("share-menu");
@@ -95,6 +97,7 @@ public class QuotationShareMenu extends EditableInventory {
 
             if (item instanceof CustomActionItem) {
                 ShareType type = item.getFunction().equalsIgnoreCase("buy-custom") ? ShareType.POSITIVE : ShareType.SHORT;
+                (type == ShareType.POSITIVE ? Message.BUY_CUSTOM_ASK : Message.SELL_CUSTOM_ASK).format().send(player);
 
                 new ChatInput(this, (playerData, input) -> {
                     double amount;
@@ -105,13 +108,13 @@ public class QuotationShareMenu extends EditableInventory {
                         return false;
                     }
 
-                    tryAndBuy(type, amount);
+                    playerData.buyShare(quotation, type, amount);
                     return true;
                 });
             }
 
             if (item instanceof AmountActionItem)
-                tryAndBuy(item instanceof BuyShareItem ? ShareType.POSITIVE : ShareType.SHORT, ((AmountActionItem) item).getAmount());
+                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.POSITIVE : ShareType.SHORT, ((AmountActionItem) item).getAmount());
         }
 
         @Override
@@ -119,27 +122,7 @@ public class QuotationShareMenu extends EditableInventory {
             // Nothing
         }
 
-        private void tryAndBuy(ShareType type, double amount) {
-            double price = quotation.getPrice() * amount;
 
-            // Check for balance
-            double bal = Stonks.plugin.economy.getBalance(player);
-            if (bal < price) {
-                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", Stonks.plugin.configManager.stockPriceFormat.format(price - bal)).send(player);
-                return;
-            }
-
-            // Remove from balance and buy shares
-            Share share = new Share(type, playerData.getLeverage(), amount);
-            playerData.addShare(quotation, share);
-            Stonks.plugin.economy.withdrawPlayer(player, price);
-
-            // Send player message
-            (type == ShareType.POSITIVE ? Message.BUY_SHARES : Message.SELL_SHARES).format(
-                    "shares", Stonks.plugin.configManager.shareFormat.format(amount),
-                    "price", Stonks.plugin.configManager.stockPriceFormat.format(price),
-                    "company", quotation.getCompanyName()).send(player);
-        }
     }
 
     /**

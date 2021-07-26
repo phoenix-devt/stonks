@@ -1,5 +1,5 @@
 # GUI display name
-name: 'Quotations ({page}/{max})'
+name: 'Bought Shares'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -16,22 +16,22 @@ items:
     function: 'previous-page'
     name: '&aPrevious Page'
     item: ARROW
-  quotation:
+  share:
     slots: [ 10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34 ]
-    function: quotation
+    function: share
     name: '&a{stock-name}'
-    item: BOOK
+    item: PAPER
     lore:
       - ''
-      - '&7Company Name: &f{company-name}'
-      - '&7Current Price: &f${price}'
+      - '&7Shares: &f{amount}'
+      - '&7Leverage: &fx{leverage}'
       - ''
-      - '&71 Week Extrema: &c${week-low} &7- &a${week-high}'
-      - '&71 Month Extrema: &c${month-low} &7- &a${month-high}'
+      - '&7Current Stock Price: &f${current-stock}'
+      - '&7Initial Stock Price: &f${initial-stock}'
       - ''
-      - '&7Owned Shares: &f{owned}'
+      - '&7Initial Share Price: {initial-share}'
+      - '&7Gain if sold now: {gain}'
       - ''
       - '&eClick to open the share menu.'
-    no-quotation:
-      name: '&aNo Quotation'
-      item: PAPER
+    no-share:
+      item: AIR
