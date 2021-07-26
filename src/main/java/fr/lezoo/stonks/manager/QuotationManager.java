@@ -11,16 +11,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.logging.Level;
 
-public class QuotationManager {
+public class QuotationManager implements FileManager {
     private final Map<String, Quotation> map = new HashMap<>();
 
+    @Override
     public void load() {
 
         // Register test quotation
         List<QuotationInfo> quot = new ArrayList<>();
         for (int i = 0; i < 10; i++)
             quot.add(new QuotationInfo(System.currentTimeMillis() + 10000 * i, Math.log(1 + i)));
-        Quotation quotationTest = new Quotation("aaa", "ooo", "hiiii", quot);
+        Quotation quotationTest = new Quotation("aaa", "ooo", "hiiii", null, quot);
         register(quotationTest);
 
         FileConfiguration config = new ConfigFile("quotations").getConfig();
@@ -30,6 +31,11 @@ public class QuotationManager {
             } catch (IllegalArgumentException exception) {
                 Stonks.plugin.getLogger().log(Level.WARNING, "Could not load quotation '" + key + "': " + exception.getMessage());
             }
+    }
+
+    @Override
+    public void save() {
+        // Nothing to do here
     }
 
     @NotNull

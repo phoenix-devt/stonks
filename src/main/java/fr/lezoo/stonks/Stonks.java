@@ -10,10 +10,7 @@ import fr.lezoo.stonks.comp.placeholder.PlaceholderAPIParser;
 import fr.lezoo.stonks.comp.placeholder.PlaceholderParser;
 import fr.lezoo.stonks.comp.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.PlayerListener;
-import fr.lezoo.stonks.manager.BoardManager;
-import fr.lezoo.stonks.manager.ConfigManager;
-import fr.lezoo.stonks.manager.PlayerDataManager;
-import fr.lezoo.stonks.manager.QuotationManager;
+import fr.lezoo.stonks.manager.*;
 import fr.lezoo.stonks.version.ServerVersion;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper_1_17_R1;
@@ -31,6 +28,7 @@ public class Stonks extends JavaPlugin {
     public PlaceholderParser placeholderParser = new DefaultPlaceholderParser();
     public ServerVersion version;
     public final ConfigManager configManager = new ConfigManager();
+    public final ShareManager shareManager = new ShareManager();
     public Economy economy;
 
     // TODO fixer l'initialisation de ces classes
@@ -77,10 +75,9 @@ public class Stonks extends JavaPlugin {
         // Initialize managers
         configManager.reload();
         quotationManager.load();
-        boardManager.reload();
-
-        // Load player data of online players
-        Bukkit.getOnlinePlayers().forEach(online -> playerManager.setup(online));
+        shareManager.load();
+        boardManager.load();
+        playerManager.load();
 
         // PlaceholderAPI compatibility
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -106,6 +103,7 @@ public class Stonks extends JavaPlugin {
     public void onDisable() {
         boardManager.save();
         playerManager.save();
+        shareManager.save();
     }
 
     /**

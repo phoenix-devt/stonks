@@ -31,7 +31,9 @@ import java.util.List;
  */
 public class Quotation {
     private final String id, companyName, stockName;
-    private List<QuotationInfo> quotationData = new ArrayList<>();
+    private final Dividends dividends;
+    private final List<QuotationInfo> quotationData;
+
     // Refresh time of the quotation in milliseconds
     private final static int REFRESH_TIME = 1000;
 
@@ -40,25 +42,34 @@ public class Quotation {
      */
     private double price;
 
-    public Quotation(String id, String companyName, String stockName, List<QuotationInfo> quotationData) {
+    /**
+     * Public constructor to create and register a quotation
+     *
+     * @param id            Internal quotation id
+     * @param companyName   Name of the concerned company
+     * @param stockName     Name of the stock
+     * @param dividends     Whether or not this quotations gives dividends to investers
+     * @param quotationData Stock data so far
+     */
+    public Quotation(String id, String companyName, String stockName, Dividends dividends, List<QuotationInfo> quotationData) {
         this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.companyName = companyName;
         this.stockName = stockName;
+        this.dividends = dividends;
         this.quotationData = quotationData;
     }
 
+    /**
+     * Loads a quotation from a config section
+     */
     public Quotation(ConfigurationSection config) {
         this.id = config.getName();
         this.companyName = config.getString("company-name");
         this.stockName = config.getString("stock-name");
-        // TODO
-    }
+        this.dividends = config.contains("dividends") ? new Dividends(config.getConfigurationSection("dividends")) : null;
+        this.quotationData = new ArrayList<>();
 
-
-    public Quotation(String id, String companyName, String stockName) {
-        this.id = id;
-        this.companyName = companyName;
-        this.stockName = stockName;
+        // TODO load quotation data
     }
 
     public String getId() {
@@ -77,10 +88,13 @@ public class Quotation {
         return price;
     }
 
+    public boolean hasDividends() {
+        return dividends != null;
+    }
+
     public List<QuotationInfo> getQuotationData() {
         return quotationData;
     }
-
 
     /**
      * @param timeOut The delay in the past in millis on which the lowest value

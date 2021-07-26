@@ -29,3 +29,7 @@ close-time:
   to:
     hour: 4
     min: 0
+
+# Maximum amount of shares owned per player.
+# Set to 0 for no limit.
+max-shares: 0

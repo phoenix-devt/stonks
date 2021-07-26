@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class BoardManager {
+public class BoardManager implements FileManager {
     private final Map<UUID, Board> boards = new HashMap<UUID, Board>();
 
     public Board getBoard(UUID uuid) {
@@ -35,7 +35,8 @@ public class BoardManager {
         throw new IllegalArgumentException("Could not find baord with such location");
     }
 
-    public void reload() {
+    @Override
+    public void load() {
         FileConfiguration config = new ConfigFile("boarddata").getConfig();
         for (String key : config.getKeys(false))
             try {
@@ -49,6 +50,7 @@ public class BoardManager {
         boards.values().forEach(board -> board.refreshBoard());
     }
 
+    @Override
     public void save() {
         ConfigFile configfile = new ConfigFile("boarddata");
 

@@ -2,6 +2,7 @@ package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.api.ConfigFile;
 import fr.lezoo.stonks.api.PlayerData;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -9,11 +10,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerDataManager {
+public class PlayerDataManager implements FileManager {
     private final Map<UUID, PlayerData> map = new HashMap<>();
 
     public PlayerData get(OfflinePlayer player) {
         return map.get(player.getUniqueId());
+    }
+
+    @Override
+    public void load() {
+
+        // Load player data of online players
+        Bukkit.getOnlinePlayers().forEach(player -> map.put(player.getUniqueId(), new PlayerData(player)));
     }
 
     /**
@@ -26,6 +34,7 @@ public class PlayerDataManager {
             map.put(player.getUniqueId(), new PlayerData(player));
     }
 
+    @Override
     public void save() {
 
         // Save player data

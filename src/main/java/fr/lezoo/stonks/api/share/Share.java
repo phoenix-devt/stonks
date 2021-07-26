@@ -1,5 +1,6 @@
 package fr.lezoo.stonks.api.share;
 
+import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -12,8 +13,9 @@ import java.util.UUID;
  * parameter and the date at which it was bought
  */
 public class Share {
-    private final UUID uuid = UUID.randomUUID();
+    private final UUID uuid;
     private final ShareType type;
+    private final Quotation quotation;
     private final long timeStamp;
     private final double initialPrice;
 
@@ -21,25 +23,34 @@ public class Share {
     private double leverage, shares;
 
     /**
-     * Public constructor when buying or shorting a share.
-     * The time stamp is the time at which this instance was created
+     * Used when shares are being created, bought or shorted.
+     *
+     * @param type      Type of share
+     * @param quotation Quotation
+     * @param leverage  Multiplicative factor for the money made out of,
+     *                  or lost by a share purchase
+     * @param shares    Amount of shares purchased
      */
     public Share(ShareType type, Quotation quotation, double leverage, double shares) {
-        this(type, quotation.getPrice(), leverage, shares, System.currentTimeMillis());
+        this(UUID.randomUUID(), type, quotation, quotation.getPrice(), leverage, shares, System.currentTimeMillis());
     }
 
     /**
-     * Used when shares are being created
+     * Public construtor
      *
+     * @param uuid         Share unique identifier
      * @param type         Type of share
-     * @param initialPrice Initial stock price
+     * @param quotation    Quotation the share is from
+     * @param initialPrice Stock price when quotation was created
      * @param leverage     Multiplicative factor for the money made out of,
      *                     or lost by a share purchase
      * @param shares       Amount of shares purchased
-     * @param timeStamp    When the share was bought (millis)
+     * @param timeStamp    Time of share creation (millis)
      */
-    public Share(ShareType type, double initialPrice, double leverage, double shares, long timeStamp) {
+    public Share(UUID uuid, ShareType type, Quotation quotation, double initialPrice, double leverage, double shares, long timeStamp) {
+        this.uuid = uuid;
         this.type = type;
+        this.quotation = quotation;
         this.initialPrice = initialPrice;
         this.leverage = leverage;
         this.shares = shares;
@@ -50,19 +61,22 @@ public class Share {
      * Loads a share from a config file
      */
     public Share(ConfigurationSection config) {
+        this.uuid = UUID.fromString(config.getName());
         this.type = ShareType.valueOf(config.getString("type"));
-        this.leverage = config.getDouble("leverage");
+        this.quotation = Stonks.plugin.quotationManager.get(config.getString("quotation"));
         this.shares = config.getDouble("shares");
+        this.leverage = config.getDouble("leverage");
         this.timeStamp = config.getLong("timestamp");
         this.initialPrice = config.getLong("initial");
     }
 
     public void saveInConfig(ConfigurationSection config) {
-        config.set("type", type.name());
-        config.set("leverage", leverage);
-        config.set("shares", shares);
-        config.set("timestamp", timeStamp);
-        config.set("initial-price", initialPrice);
+        config.set(uuid.toString() + ".type", type.name());
+        config.set(uuid.toString() + ".quotation", quotation.getId());
+        config.set(uuid.toString() + ".shares", shares);
+        config.set(uuid.toString() + ".leverage", leverage);
+        config.set(uuid.toString() + ".timestamp", timeStamp);
+        config.set(uuid.toString() + ".initial", initialPrice);
     }
 
     public UUID getUniqueId() {
@@ -71,6 +85,10 @@ public class Share {
 
     public ShareType getType() {
         return type;
+    }
+
+    public Quotation getQuotation() {
+        return quotation;
     }
 
     public double getLeverage() {

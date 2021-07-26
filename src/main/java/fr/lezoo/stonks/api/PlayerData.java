@@ -25,6 +25,11 @@ public class PlayerData {
      */
     private final Map<String, Set<Share>> shares = new HashMap<>();
 
+    /**
+     * The last time a player claimed dividends from a specific quotation
+     */
+    private final Map<String, Long> lastDividendClaim = new HashMap<>();
+
     public PlayerData(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();
@@ -38,12 +43,16 @@ public class PlayerData {
         for (String quotationKey : config.getConfigurationSection("shares").getKeys(false)) {
             Set<Share> shares = new HashSet<>();
 
-            for (String shareKey : config.getConfigurationSection("shares." + quotationKey).getKeys(false))
-                shares.add(new Share(config.getConfigurationSection("shares." + quotationKey + "." + shareKey)));
+            for (String shareKey : config.getStringList("shares." + quotationKey))
+                shares.add(Stonks.plugin.shareManager.get(UUID.fromString(shareKey)));
 
             if (!shares.isEmpty())
                 this.shares.put(quotationKey, shares);
         }
+
+        // Load dividends claim
+        for (String quotationKey : config.getConfigurationSection("dividends").getKeys(false))
+            lastDividendClaim.put(quotationKey, config.getLong("dividends." + quotationKey));
     }
 
     public void saveInConfig(FileConfiguration config) {
@@ -52,12 +61,16 @@ public class PlayerData {
         config.set("shares", null);
 
         // Save newest
-        for (String quotationId : shares.keySet())
-            for (Share share : this.shares.get(quotationId)) {
-                String path = "shares." + quotationId + "." + share.getUniqueId();
-                config.createSection(path);
-                share.saveInConfig(config.getConfigurationSection(path));
-            }
+        for (String quotationId : shares.keySet()) {
+            List<String> toList = new ArrayList<>();
+            shares.get(quotationId).forEach(share -> toList.add(share.getUniqueId().toString()));
+            if (!toList.isEmpty())
+                config.set("shares." + quotationId, toList);
+        }
+
+        // Save dividends claim
+        for (String quotationId : lastDividendClaim.keySet())
+            config.set("dividends." + quotationId, lastDividendClaim.get(quotationId));
     }
 
     public UUID getUniqueId() {
@@ -78,7 +91,6 @@ public class PlayerData {
 
         this.shares.get(quotation.getId()).add(share);
     }
-
 
     public double getLeverage() {
         return leverage;
@@ -117,6 +129,19 @@ public class PlayerData {
 
         for (Share share : getShares(quotation))
             total += share.getAmount();
+
+        return total;
+    }
+
+    /**
+     * @return Counts the shares the player owns
+     */
+    public double countShares() {
+        double total = 0;
+
+        for (String quotationId : shares.keySet())
+            for (Share share : shares.get(quotationId))
+                total += share.getAmount();
 
         return total;
     }
