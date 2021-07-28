@@ -8,12 +8,12 @@ api-version: 1.13
 commands:
   stonks:
     description: 'Main plugin command.'
-
   boarddisplay:
     description: 'Display quotation info on an item frame board.'
-
   removeboard:
     description: 'Removes a quotation display board.'
+  redeemdividends:
+    description: 'Claims dividends from owned shares.'
 permissions:
   stonks.admin:
     default: op

@@ -43,8 +43,11 @@ public class PlayerData {
         for (String quotationKey : config.getConfigurationSection("shares").getKeys(false)) {
             Set<Share> shares = new HashSet<>();
 
-            for (String shareKey : config.getStringList("shares." + quotationKey))
-                shares.add(Stonks.plugin.shareManager.get(UUID.fromString(shareKey)));
+            for (String shareKey : config.getStringList("shares." + quotationKey)) {
+                Share share = Stonks.plugin.shareManager.get(UUID.fromString(shareKey));
+                if (share != null)
+                    shares.add(share);
+            }
 
             if (!shares.isEmpty())
                 this.shares.put(quotationKey, shares);
@@ -85,13 +88,6 @@ public class PlayerData {
         this.player = player;
     }
 
-    public void addShare(Quotation quotation, Share share) {
-        if (!shares.containsKey(quotation.getId()))
-            shares.put(quotation.getId(), new HashSet<>());
-
-        this.shares.get(quotation.getId()).add(share);
-    }
-
     public double getLeverage() {
         return leverage;
     }
@@ -101,8 +97,45 @@ public class PlayerData {
         this.leverage = leverage;
     }
 
+    /**
+     * @return Owned shares from a specific quotation
+     */
     public Set<Share> getShares(Quotation quotation) {
         return shares.getOrDefault(quotation.getId(), new HashSet<>());
+    }
+
+    /**
+     * @return Owned shares from all quotations
+     */
+    public Set<Share> getAllShares() {
+        Set<Share> total = new HashSet<>();
+
+        for (String key : shares.keySet())
+            total.addAll(shares.get(key));
+
+        return total;
+    }
+
+    public void giveShare(Share share) {
+        if (!shares.containsKey(share.getQuotation().getId()))
+            shares.put(share.getQuotation().getId(), new HashSet<>());
+
+        // Register share (throws IAE and cancel if any error)
+        Stonks.plugin.shareManager.register(share);
+
+        // Add to shares list
+        this.shares.get(share.getQuotation().getId()).add(share);
+    }
+
+    public void unregisterShare(Share share) {
+        if (!shares.containsKey(share.getQuotation().getId()))
+            return;
+
+        // Unregister share from manager
+        Stonks.plugin.shareManager.unregister(share);
+
+        // Remove from list
+        this.shares.get(share.getQuotation().getId()).remove(share);
     }
 
     /**
@@ -173,7 +206,7 @@ public class PlayerData {
             return false;
 
         // Remove from balance and buy shares
-        addShare(quotation, share);
+        giveShare(share);
         Stonks.plugin.economy.withdrawPlayer(player, price);
 
         // Send player message

@@ -4,6 +4,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.ConfigFile;
 import fr.lezoo.stonks.api.CustomItem;
 import fr.lezoo.stonks.api.util.ConfigSchedule;
+import fr.lezoo.stonks.api.util.message.Message;
 import fr.lezoo.stonks.gui.QuotationList;
 import fr.lezoo.stonks.gui.QuotationShareMenu;
 import fr.lezoo.stonks.gui.api.EditableInventory;
@@ -53,6 +54,15 @@ public class ConfigManager {
         // Copy default files
         for (DefaultFile def : DefaultFile.values())
             def.checkFile();
+
+        // Reload messages
+        FileConfiguration messages = new ConfigFile("/language", "messages").getConfig();
+        for (Message message : Message.values())
+            try {
+                message.update(messages.getConfigurationSection(message.getPath()));
+            } catch (IllegalArgumentException exception) {
+                Stonks.plugin.getLogger().log(Level.WARNING, "Could not reload message " + message.name() + ": " + exception.getMessage());
+            }
 
         // Reload items
         FileConfiguration config = new ConfigFile("/language", "items").getConfig();

@@ -2,6 +2,7 @@ package fr.lezoo.stonks;
 
 import fr.lezoo.stonks.api.util.ConfigSchedule;
 import fr.lezoo.stonks.command.BoardDisplayCommand;
+import fr.lezoo.stonks.command.RedeemDividendsCommand;
 import fr.lezoo.stonks.command.StonksCommand;
 import fr.lezoo.stonks.command.completion.RemoveBoardCommand;
 import fr.lezoo.stonks.command.completion.StonksCommandCompletion;
@@ -91,6 +92,7 @@ public class Stonks extends JavaPlugin {
         getCommand("stonks").setTabCompleter(new StonksCommandCompletion());
         getCommand("boarddisplay").setExecutor(new BoardDisplayCommand());
         getCommand("removeboard").setExecutor(new RemoveBoardCommand());
+        getCommand("redeemdividends").setExecutor(new RedeemDividendsCommand());
 
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);

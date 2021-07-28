@@ -2,6 +2,7 @@ package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.ConfigFile;
+import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.share.Share;
 import org.apache.commons.lang.Validate;
@@ -61,10 +62,28 @@ public class ShareManager {
         return shares;
     }
 
+    /**
+     * Registers a player share in the share registry. This
+     * does NOT add the share to the player's mapped shares list
+     * which must be done using {@link PlayerData#giveShare(Share)}
+     *
+     * @param share Share to register
+     */
     public void register(Share share) {
         Validate.isTrue(!mapped.containsKey(share.getUniqueId()), "Cannot register two shares with the same ID");
 
         mapped.put(share.getUniqueId(), share);
+    }
+
+    /**
+     * Unregisters a player share from the share registry. This
+     * does NOT remove the share from the {@link PlayerData}'s
+     * mapped shares list. This must be done using {@link PlayerData#unregisterShare(Share)}
+     *
+     * @param share Share to unregister
+     */
+    public void unregister(Share share) {
+        mapped.remove(share.getUniqueId());
     }
 
     public Share get(UUID uuid) {

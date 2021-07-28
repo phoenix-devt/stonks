@@ -14,6 +14,9 @@ public enum Message {
     SELL_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou short-sold {shares} shares from {company} for ${price}."),
     CLOSE_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou closed {shares} shares from {company} for a final gain of ${gain}."),
 
+    CLAIM_DIVIDENDS(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou successfully redeemed &f${amount} &efrom your dividends."),
+    NO_DIVIDENDS_TO_CLAIM("&cYou don't have any dividends to claim."),
+
     MARKET_CLOSING("&cThe stock market is closed for now."),
 
     BUY_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eWrite in the chat the amount of shares you would like to buy."),

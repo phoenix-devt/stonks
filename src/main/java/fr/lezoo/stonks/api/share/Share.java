@@ -2,6 +2,7 @@ package fr.lezoo.stonks.api.share;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.quotation.Quotation;
+import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
@@ -122,12 +123,18 @@ public class Share {
         return wallet;
     }
 
+    public void setWallet(double wallet) {
+        this.wallet = wallet;
+    }
+
     /**
      * Called when dividends are applied to the share.
      *
      * @param gain Money that can be claimed by the player.
      */
     public void addToWallet(double gain) {
+        Validate.isTrue(gain >= 0, "Gain must be positive");
+
         wallet += gain;
     }
 
