@@ -5,6 +5,7 @@ author: [ GMF, Indyuce ]
 depend: [ Vault ]
 description: ${project.description}
 api-version: 1.13
+
 commands:
   stonks:
     description: 'Main plugin command.'
@@ -14,6 +15,10 @@ commands:
     description: 'Removes a quotation display board.'
   redeemdividends:
     description: 'Claims dividends from owned shares.'
+
 permissions:
   stonks.admin:
+    default: op
+  stonks.quotation-list:
+    description: 'Ability to use /quotations'
     default: op

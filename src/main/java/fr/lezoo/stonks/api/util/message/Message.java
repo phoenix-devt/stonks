@@ -24,6 +24,7 @@ public enum Message {
 
     NOT_VALID_NUMBER("&c{input} is not a valid number."),
     NOT_VALID_LEVERAGE("&cThe leverage must be a positive number"),
+    NOT_ENOUGH_PERMISSIONS("&cYou don't have enough permissions."),
     ;
 
     private List<String> message;

@@ -17,7 +17,21 @@ public class StonksCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (args.length > 0 && args[0].equals("stonks")) {
+        // Test command
+        if (args.length == 0) {
+
+
+            Quotation quotation = Stonks.plugin.quotationManager.getQuotations().stream().findAny().get();
+            player.getInventory().addItem(quotation.createQuotationMap(50));
+
+            return true;
+        }
+
+        if (args[0].equals("shareitem")) {
+
+
+
+
 
             // debug
             PlayerData playerData = PlayerData.get(player);
@@ -26,7 +40,14 @@ public class StonksCommand implements CommandExecutor {
             return true;
         }
 
-        Quotation quotation = Stonks.plugin.quotationManager.getQuotations().stream().findAny().get();
+        if (args[0].equals("stonks")) {
+
+            // debug
+            PlayerData playerData = PlayerData.get(player);
+            Stonks.plugin.configManager.QUOTATION_LIST.generate(playerData).open();
+
+            return true;
+        }
 
         return true;
     }

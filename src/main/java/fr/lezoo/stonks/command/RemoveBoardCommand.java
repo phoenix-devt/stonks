@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.command.completion;
+package fr.lezoo.stonks.command;
 
 
 import fr.lezoo.stonks.Stonks;

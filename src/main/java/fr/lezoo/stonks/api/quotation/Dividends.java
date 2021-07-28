@@ -12,7 +12,6 @@ public class Dividends {
     private final String formula;
     private final long period;
 
-
     /**
      * Last time dividends were given to players
      */

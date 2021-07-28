@@ -6,13 +6,11 @@ A RAJOUTER
 - afficher les STONKS sur une MAP
 - option pour acheter automatiquement ou vendre auto en fonction de certaines conditions des stocks
 - option pour changer le taux de comission d'une personne
-- custom GUI pour modifier les quotations en temps réel
-- commande pour simple pour rajouter un boarddisplay
+- quotation creation GUI
 
 PROBLEMES AVEC L'ANCIEN PLUGIN
 - Afficher les stocks sur DES PANNEAUX pour voir en temps réel !!
 - option de stocks max par personne
-- les dividendes
 - placeholder pour le top des portfolios
 - commande pour donner des stocks à tous les gens?
 - TRANSFORMER UN STOCK EN UN OBJET CLIQUABLE que l'on peut redeem au NPC
@@ -21,6 +19,8 @@ PROBLEMES AVEC L'ANCIEN PLUGIN
 https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-other-stocks-on
 
 OK
+- commande pour simple pour rajouter un boarddisplay
+- les dividendes
 - GUIs que l'on peut modifier (api déjà existante)
 - NPC pour ouvrir le menu des stocks
 - option pour visualiser nos stocks ce qu'on appelle le "portfolio"
