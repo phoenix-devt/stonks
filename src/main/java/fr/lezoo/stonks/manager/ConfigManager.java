@@ -47,7 +47,7 @@ public class ConfigManager {
         stockPriceFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("stock-price-decimal-format"));
         shareFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("shares-decimal-format"));
         boardRefreshTime = Stonks.plugin.getConfig().getLong("board-refresh-time");
-        closeTimeEnabled = Stonks.plugin.getConfig().getBoolean("close-time.enaabled");
+        closeTimeEnabled = Stonks.plugin.getConfig().getBoolean("close-time.enabled");
         closeTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.from"));
         openTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.to"));
 
@@ -55,11 +55,28 @@ public class ConfigManager {
         for (DefaultFile def : DefaultFile.values())
             def.checkFile();
 
+        // Save default messages
+        ConfigFile messages = new ConfigFile("/language", "messages");
+        for (Message key : Message.values()) {
+            String path = key.getPath();
+            if (!messages.getConfig().contains(path)) {
+                messages.getConfig().set(path + ".format", key.getDefault());
+                if (key.hasSound()) {
+                    messages.getConfig().set(path + ".sound.name", key.getSound().getSound().name());
+                    messages.getConfig().set(path + ".sound.vol", key.getSound().getVolume());
+                    messages.getConfig().set(path + ".sound.pitch", key.getSound().getPitch());
+                }
+            }
+
+            key.update(messages.getConfig().getConfigurationSection(path));
+        }
+        messages.save();
+
         // Reload messages
-        FileConfiguration messages = new ConfigFile("/language", "messages").getConfig();
+        FileConfiguration messagesConfig = new ConfigFile("/language", "messages").getConfig();
         for (Message message : Message.values())
             try {
-                message.update(messages.getConfigurationSection(message.getPath()));
+                message.update(messagesConfig.getConfigurationSection(message.name()));
             } catch (IllegalArgumentException exception) {
                 Stonks.plugin.getLogger().log(Level.WARNING, "Could not reload message " + message.name() + ": " + exception.getMessage());
             }
@@ -88,7 +105,6 @@ public class ConfigManager {
      */
     public enum DefaultFile {
         ITEMS("language", "items.yml"),
-        MESSAGES("language", "messages.yml"),
         QUOTATIONS("", "quotations.yml"),
 
         GUI_QUOTATION_LIST("language/gui", "quotation-list.yml"),
