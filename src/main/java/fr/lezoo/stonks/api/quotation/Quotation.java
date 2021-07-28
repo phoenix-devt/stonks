@@ -30,13 +30,10 @@ import java.util.Objects;
 /**
  * Place where players can buy and sell shares
  */
-public class Quotation {
-    private final String id, companyName, stockName;
-    private final Dividends dividends;
-    private final List<QuotationInfo> quotationData;
-
-    // Refresh time of the quotation in milliseconds
-    private final static int REFRESH_TIME = 1000;
+public abstract class Quotation {
+    protected final String id, companyName, stockName;
+    protected List<QuotationInfo> quotationData = new ArrayList<>();
+    private Dividends dividends;
 
     /**
      * Current price, not final because it is updated every so often
@@ -63,15 +60,25 @@ public class Quotation {
     /**
      * Loads a quotation from a config section
      */
+
     public Quotation(ConfigurationSection config) {
         this.id = config.getName();
         this.companyName = config.getString("company-name");
         this.stockName = config.getString("stock-name");
-        this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
+        this.dividends = config.contains("dividends") ? new Dividends(this,config.getConfigurationSection("dividends")) : null;
         this.quotationData = new ArrayList<>();
 
-        // TODO load quotation data
     }
+
+
+    public Quotation(String id, String companyName, String stockName, Dividends dividends) {
+        this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
+        this.companyName = companyName;
+        this.stockName = stockName;
+        this.dividends = dividends;
+        this.quotationData = new ArrayList<QuotationInfo>();
+    }
+    // TODO load quotation data
 
     public String getId() {
         return id;

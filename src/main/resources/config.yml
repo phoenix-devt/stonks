@@ -13,6 +13,17 @@ shares-decimal-format: '0.#'
 # The time between 2 boards refresh
 board-refresh-time: 10
 
+
+quotation-refresh-time : 10
+
+
+#The impact of the offer and demand on the stock price 1 : maximal and 0 not any impact
+offer-demand-impact : 0.5
+
+#The volatily of the stocks 0 is no volatility and 1 is very volatile
+#With max volatily and max demandimpact the stocks can change by 10% in 1 hour in the worst case
+volatility : 0.5
+
 # The way dates are formatted in the plugin
 # Check out 'DateFormat java' online for more info
 date-format: 'EEE, d MMM yyyy HH:mm:ss'

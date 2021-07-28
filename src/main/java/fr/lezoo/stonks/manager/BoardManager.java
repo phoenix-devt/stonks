@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class BoardManager implements FileManager {
-    private final Map<UUID, Board> boards = new HashMap<UUID, Board>();
+    private final Map<UUID, Board> boards = new HashMap<>();
 
     public Board getBoard(UUID uuid) {
         return boards.get(uuid);
@@ -23,17 +23,22 @@ public class BoardManager implements FileManager {
         boards.remove(uuid);
     }
 
+
     /**
      * The location and direction of the board is a key for the boards that we can use
+     * @return
      */
-    public Board getBoard(Location location, BlockFace direction) {
-        for (Board board : boards.values())
-            if (board.getLocation().equals(location) && board.getDirection() == direction)
-                return board;
 
-        // If the boards doesn't exist
-        throw new IllegalArgumentException("Could not find baord with such location");
+    public Board getBoard(Location location, BlockFace direction) {
+        for (Board board : boards.values()) {
+            if (board.getLocation() == location && board.getDirection() == direction)
+                return board;
+        }
+        //If the boards doesn't exist
+        Stonks.plugin.getLogger().log(Level.WARNING, "You tried to get a board that doesn't exist");
+        return null;
     }
+
 
     @Override
     public void load() {

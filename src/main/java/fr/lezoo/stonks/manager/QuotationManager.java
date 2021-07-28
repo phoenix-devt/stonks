@@ -4,6 +4,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.ConfigFile;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
+import fr.lezoo.stonks.api.quotation.VirtualQuotation;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,11 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class QuotationManager implements FileManager {
-    private final Map<String, Quotation> map = new HashMap<>();
+    private final Map<String, VirtualQuotation> virtualMap = new HashMap<>();
+
+    public void refreshQuotations() {
+        virtualMap.values().forEach((q)->q.refreshQuotation());
+    }
 
     @Override
     public void load() {
@@ -21,13 +26,13 @@ public class QuotationManager implements FileManager {
         List<QuotationInfo> quot = new ArrayList<>();
         for (int i = 0; i < 10; i++)
             quot.add(new QuotationInfo(System.currentTimeMillis() + 10000 * i, Math.log(1 + i)));
-        Quotation quotationTest = new Quotation("aaa", "ooo", "hiiii", null, quot);
+        VirtualQuotation quotationTest = new VirtualQuotation("aaa", "ooo", "hiiii", null, quot);
         register(quotationTest);
 
         FileConfiguration config = new ConfigFile("quotations").getConfig();
         for (String key : config.getKeys(false))
             try {
-                register(new Quotation(config.getConfigurationSection(key)));
+                register(new VirtualQuotation(config.getConfigurationSection(key)));
             } catch (IllegalArgumentException exception) {
                 Stonks.plugin.getLogger().log(Level.WARNING, "Could not load quotation '" + key + "': " + exception.getMessage());
             }
@@ -39,7 +44,7 @@ public class QuotationManager implements FileManager {
     }
 
     public boolean has(String id) {
-        return map.containsKey(formatId(id));
+        return virtualMap.containsKey(formatId(id));
     }
 
     /**
@@ -50,18 +55,18 @@ public class QuotationManager implements FileManager {
      */
     @NotNull
     public Quotation get(String id) {
-        Validate.isTrue(map.containsKey(formatId(id)), "No quotation found with ID '" + formatId(id) + "'");
-        return map.get(formatId(id));
+        Validate.isTrue(virtualMap.containsKey(formatId(id)), "No quotation found with ID '" + formatId(id) + "'");
+        return virtualMap.get(formatId(id));
     }
 
-    public void register(Quotation quotation) {
-        Validate.isTrue(!map.containsKey(quotation.getId()), "There is already a quotation with ID '" + quotation.getId() + "'");
+    public void register(VirtualQuotation virtualQuotation) {
+        Validate.isTrue(!virtualMap.containsKey(virtualQuotation.getId()), "There is already a quotation with ID '" + virtualQuotation.getId() + "'");
 
-        map.put(quotation.getId(), quotation);
+        virtualMap.put(virtualQuotation.getId(), virtualQuotation);
     }
 
-    public Collection<Quotation> getQuotations() {
-        return map.values();
+    public Collection<VirtualQuotation> getQuotations() {
+        return virtualMap.values();
     }
 
     private String formatId(String str) {
