@@ -3,16 +3,16 @@ package fr.lezoo.stonks.api.util;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.gui.api.PluginInventory;
+import fr.lezoo.stonks.listener.temp.TemporaryListener;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.function.BiFunction;
 
-public class ChatInput implements Listener {
+public class ChatInput implements TemporaryListener {
     private final PluginInventory inv;
     private final BiFunction<PlayerData, String, Boolean> inputHandler;
 
@@ -33,11 +33,10 @@ public class ChatInput implements Listener {
         Bukkit.getPluginManager().registerEvents(this, Stonks.plugin);
     }
 
-    /**
-     * Called when the chat input mecanism needs to be stopped
-     */
-    private void close() {
+    @Override
+    public void close() {
         AsyncPlayerChatEvent.getHandlerList().unregister(this);
+        InventoryOpenEvent.getHandlerList().unregister(this);
     }
 
     public PlayerData getPlayer() {

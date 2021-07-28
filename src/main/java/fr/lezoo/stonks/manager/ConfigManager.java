@@ -8,6 +8,7 @@ import fr.lezoo.stonks.api.util.message.Message;
 import fr.lezoo.stonks.gui.QuotationList;
 import fr.lezoo.stonks.gui.QuotationShareMenu;
 import fr.lezoo.stonks.gui.api.EditableInventory;
+import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -35,9 +37,11 @@ public class ConfigManager {
     public DecimalFormat stockPriceFormat, shareFormat;
     public ConfigSchedule closeTime, openTime;
     public boolean closeTimeEnabled;
+    public List<String> displaySignFormat;
+    public int dividendsRedeemHour;
 
     public long boardRefreshTime, quotationRefreshTime;
-    public double offerDemandImpact,volatility;
+    public double offerDemandImpact, volatility;
 
 
     public void reload() {
@@ -53,8 +57,14 @@ public class ConfigManager {
         closeTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.from"));
         openTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.to"));
         quotationRefreshTime = Stonks.plugin.getConfig().getLong("quotation-refresh-time");
-        offerDemandImpact=Stonks.plugin.getConfig().getDouble("offer-demand-impact");
-        volatility=Stonks.plugin.getConfig().getDouble("volatility");
+        offerDemandImpact = Stonks.plugin.getConfig().getDouble("offer-demand-impact");
+        volatility = Stonks.plugin.getConfig().getDouble("volatility");
+        displaySignFormat = Stonks.plugin.getConfig().getStringList("");
+        dividendsRedeemHour = Stonks.plugin.getConfig().getInt("dividends-redeem-hour");
+
+        // Useful checks
+        Validate.isTrue(displaySignFormat.size() == 4, "Display sign format should be of length 4");
+
         // Copy default files
         for (DefaultFile def : DefaultFile.values())
             def.checkFile();

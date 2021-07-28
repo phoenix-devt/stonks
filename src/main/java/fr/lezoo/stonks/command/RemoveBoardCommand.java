@@ -2,15 +2,13 @@ package fr.lezoo.stonks.command;
 
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.listener.RemoveBoardListener;
+import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
 //TODO : CustomPermission and not isOp()
 public class RemoveBoardCommand implements CommandExecutor {
@@ -26,14 +24,9 @@ public class RemoveBoardCommand implements CommandExecutor {
         }
         player.sendMessage(ChatColor.YELLOW + "You HAve 5 seconds to break the block!");
         RemoveBoardListener removeBoardListener = new RemoveBoardListener(player);
-        Bukkit.getPluginManager().registerEvents(removeBoardListener, Stonks.plugin);
 
-        //After 5 s the listener is unregistered with Handler.unregisterAll(listener)
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Stonks.plugin, () -> {
-                    HandlerList.unregisterAll(removeBoardListener);
-                    player.sendMessage(ChatColor.RED + "You didn't break the block in time");
-                }
-                , 100L);
+        // After 5s the listener is unregistered with HandlerList.unregisterAll(listener)
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Stonks.plugin, () -> removeBoardListener.close(), 100L);
         return true;
     }
 }

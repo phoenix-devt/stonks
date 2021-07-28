@@ -32,13 +32,14 @@ import java.util.Objects;
  */
 public abstract class Quotation {
     protected final String id, companyName, stockName;
-    protected List<QuotationInfo> quotationData = new ArrayList<>();
-    private Dividends dividends;
+    protected final List<QuotationInfo> quotationData;
+    private final Dividends dividends;
 
     /**
      * Current price, not final because it is updated every so often
      */
     private double price;
+
 
     /**
      * Public constructor to create and register a quotation
@@ -57,28 +58,23 @@ public abstract class Quotation {
         this.quotationData = quotationData;
     }
 
+    public Quotation(String id, String companyName, String stockName, Dividends dividends) {
+        this(id, companyName, stockName, dividends, new ArrayList<>());
+    }
+
     /**
      * Loads a quotation from a config section
      */
-
     public Quotation(ConfigurationSection config) {
         this.id = config.getName();
         this.companyName = config.getString("company-name");
         this.stockName = config.getString("stock-name");
-        this.dividends = config.contains("dividends") ? new Dividends(this,config.getConfigurationSection("dividends")) : null;
+        this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
         this.quotationData = new ArrayList<>();
 
+        // TODO load quotation data
     }
 
-
-    public Quotation(String id, String companyName, String stockName, Dividends dividends) {
-        this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
-        this.companyName = companyName;
-        this.stockName = stockName;
-        this.dividends = dividends;
-        this.quotationData = new ArrayList<QuotationInfo>();
-    }
-    // TODO load quotation data
 
     public String getId() {
         return id;
@@ -196,7 +192,6 @@ public abstract class Quotation {
 
         return closest;
     }
-
 
     /**
      * Creates a 5x5 map of the Quotation to the player

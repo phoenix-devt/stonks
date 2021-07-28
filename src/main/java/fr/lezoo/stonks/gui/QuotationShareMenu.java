@@ -14,7 +14,6 @@ import fr.lezoo.stonks.gui.api.item.InventoryItem;
 import fr.lezoo.stonks.gui.api.item.PlaceholderItem;
 import fr.lezoo.stonks.gui.api.item.Placeholders;
 import fr.lezoo.stonks.gui.api.item.SimplePlaceholderItem;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -250,22 +249,12 @@ public class QuotationShareMenu extends EditableInventory {
             holders.register("month-high", format.format(inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
 
             // TODO instead of comparing to 1 day ago, compare to the beginning of the day, same with month, year..
-            holders.register("hour-evolution", formatEvolution(inv.quotation.getEvolution(QuotationInfo.HOUR_TIME_OUT)));
-            holders.register("day-evolution", formatEvolution(inv.quotation.getEvolution(QuotationInfo.DAY_TIME_OUT)));
-            holders.register("week-evolution", formatEvolution(inv.quotation.getEvolution(QuotationInfo.WEEK_TIME_OUT)));
-            holders.register("month-evolution", formatEvolution(inv.quotation.getEvolution(QuotationInfo.MONTH_TIME_OUT)));
+            holders.register("hour-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationInfo.HOUR_TIME_OUT)));
+            holders.register("day-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationInfo.DAY_TIME_OUT)));
+            holders.register("week-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationInfo.WEEK_TIME_OUT)));
+            holders.register("month-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationInfo.MONTH_TIME_OUT)));
 
             return holders;
         }
-    }
-
-    private String formatEvolution(double growthRate) {
-        if (growthRate == 0)
-            return ChatColor.WHITE + "0";
-
-        DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
-        if (growthRate < 0)
-            return ChatColor.RED + format.format(growthRate) + "%";
-        return ChatColor.GREEN + "+" + format.format(growthRate) + "%";
     }
 }

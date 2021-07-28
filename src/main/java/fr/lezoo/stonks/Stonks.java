@@ -1,13 +1,16 @@
 package fr.lezoo.stonks;
 
 import fr.lezoo.stonks.api.util.ConfigSchedule;
-import fr.lezoo.stonks.command.*;
-
+import fr.lezoo.stonks.command.QuotationsCommand;
+import fr.lezoo.stonks.command.RedeemDividendsCommand;
+import fr.lezoo.stonks.command.RemoveBoardCommand;
+import fr.lezoo.stonks.command.StonksCommand;
 import fr.lezoo.stonks.command.completion.StonksCommandCompletion;
 import fr.lezoo.stonks.comp.placeholder.DefaultPlaceholderParser;
 import fr.lezoo.stonks.comp.placeholder.PlaceholderAPIParser;
 import fr.lezoo.stonks.comp.placeholder.PlaceholderParser;
 import fr.lezoo.stonks.comp.placeholder.StonksPlaceholders;
+import fr.lezoo.stonks.listener.DisplaySignListener;
 import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.manager.*;
 import fr.lezoo.stonks.version.ServerVersion;
@@ -28,6 +31,7 @@ public class Stonks extends JavaPlugin {
     public ServerVersion version;
     public final ConfigManager configManager = new ConfigManager();
     public final ShareManager shareManager = new ShareManager();
+    public final SignManager signManager = new SignManager();
     public Economy economy;
 
     // TODO fixer l'initialisation de ces classes
@@ -88,16 +92,18 @@ public class Stonks extends JavaPlugin {
         // Register commands
         getCommand("stonks").setExecutor(new StonksCommand());
         getCommand("stonks").setTabCompleter(new StonksCommandCompletion());
-        getCommand("boarddisplay").setExecutor(new BoardDisplayCommand());
         getCommand("removeboard").setExecutor(new RemoveBoardCommand());
         getCommand("redeemdividends").setExecutor(new RedeemDividendsCommand());
         getCommand("quotations").setExecutor(new QuotationsCommand());
 
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        Bukkit.getPluginManager().registerEvents(new DisplaySignListener(), this);
 
         // Create scheduler to refresh boards
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> boardManager.refreshBoards(), 0, 20L * this.configManager.boardRefreshTime);
+
+
     }
 
     @Override

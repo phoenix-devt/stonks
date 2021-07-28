@@ -1,5 +1,7 @@
 package fr.lezoo.stonks.api.util;
 
+import fr.lezoo.stonks.Stonks;
+import org.bukkit.ChatColor;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
@@ -46,5 +48,15 @@ public class Utils {
             default:
                 throw new IllegalArgumentException("Could not match any direction");
         }
+    }
+
+    public static final String formatRate(double growthRate) {
+        if (growthRate == 0)
+            return ChatColor.WHITE + "0";
+
+        DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
+        if (growthRate < 0)
+            return ChatColor.RED + format.format(growthRate) + "%";
+        return ChatColor.GREEN + "+" + format.format(growthRate) + "%";
     }
 }
