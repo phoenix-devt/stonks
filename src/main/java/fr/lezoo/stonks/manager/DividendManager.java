@@ -5,6 +5,8 @@ import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.share.Share;
 import org.bukkit.Bukkit;
 
+import java.time.LocalDateTime;
+
 public class DividendManager {
 
     /**
@@ -25,7 +27,11 @@ public class DividendManager {
 
     public void checkForDividends() {
 
-        // Check for quotations
+        // Check if it's the right schedule
+        if (LocalDateTime.now().getHour() != Stonks.plugin.configManager.dividendsRedeemHour)
+            return;
+
+        // Loop through quotations with dividends support
         for (Quotation quotation : Stonks.plugin.quotationManager.getQuotations())
             if (quotation.hasDividends() && quotation.getDividends().canGiveDividends()) {
 

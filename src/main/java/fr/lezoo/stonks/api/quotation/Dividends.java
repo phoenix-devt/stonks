@@ -36,7 +36,7 @@ public class Dividends {
     }
 
     /**
-     * Loads information about stock dividens from a config
+     * Loads information about stock dividends from a config
      */
     public Dividends(Quotation quotation, ConfigurationSection config) {
         this.quotation = quotation;
