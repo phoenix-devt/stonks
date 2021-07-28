@@ -25,11 +25,6 @@ public class PlayerData {
      */
     private final Map<String, Set<Share>> shares = new HashMap<>();
 
-    /**
-     * The last time a player claimed dividends from a specific quotation
-     */
-    private final Map<String, Long> lastDividendClaim = new HashMap<>();
-
     public PlayerData(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();
@@ -40,22 +35,19 @@ public class PlayerData {
     public void loadFromConfig(FileConfiguration config) {
 
         // Load shares from config file
-        for (String quotationKey : config.getConfigurationSection("shares").getKeys(false)) {
-            Set<Share> shares = new HashSet<>();
+        if (config.contains("shares"))
+            for (String quotationKey : config.getConfigurationSection("shares").getKeys(false)) {
+                Set<Share> shares = new HashSet<>();
 
-            for (String shareKey : config.getStringList("shares." + quotationKey)) {
-                Share share = Stonks.plugin.shareManager.get(UUID.fromString(shareKey));
-                if (share != null)
-                    shares.add(share);
+                for (String shareKey : config.getStringList("shares." + quotationKey)) {
+                    Share share = Stonks.plugin.shareManager.get(UUID.fromString(shareKey));
+                    if (share != null)
+                        shares.add(share);
+                }
+
+                if (!shares.isEmpty())
+                    this.shares.put(quotationKey, shares);
             }
-
-            if (!shares.isEmpty())
-                this.shares.put(quotationKey, shares);
-        }
-
-        // Load dividends claim
-        for (String quotationKey : config.getConfigurationSection("dividends").getKeys(false))
-            lastDividendClaim.put(quotationKey, config.getLong("dividends." + quotationKey));
     }
 
     public void saveInConfig(FileConfiguration config) {
@@ -70,10 +62,6 @@ public class PlayerData {
             if (!toList.isEmpty())
                 config.set("shares." + quotationId, toList);
         }
-
-        // Save dividends claim
-        for (String quotationId : lastDividendClaim.keySet())
-            config.set("dividends." + quotationId, lastDividendClaim.get(quotationId));
     }
 
     public UUID getUniqueId() {
