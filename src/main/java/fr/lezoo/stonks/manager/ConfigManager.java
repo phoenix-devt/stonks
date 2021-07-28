@@ -36,7 +36,9 @@ public class ConfigManager {
     public ConfigSchedule closeTime, openTime;
     public boolean closeTimeEnabled;
 
-    public long boardRefreshTime;
+    public long boardRefreshTime, quotationRefreshTime;
+    public double offerDemandImpact,volatility;
+
 
     public void reload() {
 
@@ -50,7 +52,9 @@ public class ConfigManager {
         closeTimeEnabled = Stonks.plugin.getConfig().getBoolean("close-time.enabled");
         closeTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.from"));
         openTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.to"));
-
+        quotationRefreshTime = Stonks.plugin.getConfig().getLong("quotation-refresh-time");
+        offerDemandImpact=Stonks.plugin.getConfig().getDouble("offer-demand-impact");
+        volatility=Stonks.plugin.getConfig().getDouble("volatility");
         // Copy default files
         for (DefaultFile def : DefaultFile.values())
             def.checkFile();
@@ -76,7 +80,7 @@ public class ConfigManager {
         FileConfiguration messagesConfig = new ConfigFile("/language", "messages").getConfig();
         for (Message message : Message.values())
             try {
-                message.update(messagesConfig.getConfigurationSection(message.name()));
+                message.update(messagesConfig.getConfigurationSection(message.getPath()));
             } catch (IllegalArgumentException exception) {
                 Stonks.plugin.getLogger().log(Level.WARNING, "Could not reload message " + message.name() + ": " + exception.getMessage());
             }

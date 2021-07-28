@@ -15,7 +15,8 @@ commands:
     description: 'Removes a quotation display board.'
   redeemdividends:
     description: 'Claims dividends from owned shares.'
-
+  quotations:
+    description: 'Displays the list of quotations'
 permissions:
   stonks.admin:
     default: op

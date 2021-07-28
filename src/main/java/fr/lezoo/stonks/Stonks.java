@@ -1,11 +1,8 @@
 package fr.lezoo.stonks;
 
 import fr.lezoo.stonks.api.util.ConfigSchedule;
-import fr.lezoo.stonks.command.BoardDisplayCommand;
-import fr.lezoo.stonks.command.QuotationsCommand;
-import fr.lezoo.stonks.command.RedeemDividendsCommand;
-import fr.lezoo.stonks.command.StonksCommand;
-import fr.lezoo.stonks.command.RemoveBoardCommand;
+import fr.lezoo.stonks.command.*;
+
 import fr.lezoo.stonks.command.completion.StonksCommandCompletion;
 import fr.lezoo.stonks.comp.placeholder.DefaultPlaceholderParser;
 import fr.lezoo.stonks.comp.placeholder.PlaceholderAPIParser;
