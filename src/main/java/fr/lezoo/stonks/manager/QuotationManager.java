@@ -38,14 +38,20 @@ public class QuotationManager implements FileManager {
         // Nothing to do here
     }
 
+    public boolean has(String id) {
+        return map.containsKey(formatId(id));
+    }
+
+    /**
+     * Gets the quotation with corresponding ID, or throws an IAE
+     *
+     * @param id Quotation identifier
+     * @return Corresponding quotation
+     */
     @NotNull
     public Quotation get(String id) {
         Validate.isTrue(map.containsKey(formatId(id)), "No quotation found with ID '" + formatId(id) + "'");
         return map.get(formatId(id));
-    }
-
-    public boolean has(String id) {
-        return map.containsKey(formatId(id));
     }
 
     public void register(Quotation quotation) {

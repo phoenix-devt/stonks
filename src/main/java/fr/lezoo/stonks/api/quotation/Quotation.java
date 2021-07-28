@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Place where players can buy and sell shares
@@ -66,7 +67,7 @@ public class Quotation {
         this.id = config.getName();
         this.companyName = config.getString("company-name");
         this.stockName = config.getString("stock-name");
-        this.dividends = config.contains("dividends") ? new Dividends(config.getConfigurationSection("dividends")) : null;
+        this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
         this.quotationData = new ArrayList<>();
 
         // TODO load quotation data
@@ -90,6 +91,10 @@ public class Quotation {
 
     public boolean hasDividends() {
         return dividends != null;
+    }
+
+    public Dividends getDividends() {
+        return dividends;
     }
 
     public List<QuotationInfo> getQuotationData() {
@@ -296,5 +301,18 @@ public class Quotation {
         NBTItem nbtItem = NBTItem.get(mapItem);
         nbtItem.addTag(new ItemTag(MAP_ITEM_TAG_PATH, true));
         return nbtItem.toItem();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Quotation quotation = (Quotation) o;
+        return id.equals(quotation.id) && companyName.equals(quotation.companyName) && stockName.equals(quotation.stockName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, companyName, stockName);
     }
 }

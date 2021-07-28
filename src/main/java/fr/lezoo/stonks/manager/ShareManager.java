@@ -2,13 +2,12 @@ package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.ConfigFile;
+import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.share.Share;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class ShareManager {
@@ -41,14 +40,31 @@ public class ShareManager {
         config.save();
     }
 
+    public boolean has(UUID uuid) {
+        return mapped.containsKey(uuid);
+    }
+
+    public Collection<Share> getShares() {
+        return mapped.values();
+    }
+
+    /**
+     * @return All shares from that quotation
+     */
+    public Set<Share> getByQuotation(Quotation quotation) {
+        Set<Share> shares = new HashSet<>();
+
+        for (Share checked : mapped.values())
+            if (checked.getQuotation().equals(quotation))
+                shares.add(checked);
+
+        return shares;
+    }
+
     public void register(Share share) {
         Validate.isTrue(!mapped.containsKey(share.getUniqueId()), "Cannot register two shares with the same ID");
 
         mapped.put(share.getUniqueId(), share);
-    }
-
-    public boolean has(UUID uuid) {
-        return mapped.containsKey(uuid);
     }
 
     public Share get(UUID uuid) {

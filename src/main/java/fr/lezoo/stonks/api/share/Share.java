@@ -22,6 +22,8 @@ public class Share {
     // These can be modified by other plugins freely
     private double leverage, shares;
 
+    private double wallet;
+
     /**
      * Used when shares are being created, bought or shorted.
      *
@@ -68,6 +70,7 @@ public class Share {
         this.leverage = config.getDouble("leverage");
         this.timeStamp = config.getLong("timestamp");
         this.initialPrice = config.getLong("initial");
+        this.wallet = config.getDouble("wallet");
     }
 
     public void saveInConfig(ConfigurationSection config) {
@@ -77,6 +80,7 @@ public class Share {
         config.set(uuid.toString() + ".leverage", leverage);
         config.set(uuid.toString() + ".timestamp", timeStamp);
         config.set(uuid.toString() + ".initial", initialPrice);
+        config.set(uuid.toString() + ".wallet", wallet);
     }
 
     public UUID getUniqueId() {
@@ -112,7 +116,23 @@ public class Share {
     }
 
     /**
-     * @param quotation The quotation the share was from bought
+     * @return Money given by dividends waiting to be claimed by the player
+     */
+    public double getWallet() {
+        return wallet;
+    }
+
+    /**
+     * Called when dividends are applied to the share.
+     *
+     * @param gain Money that can be claimed by the player.
+     */
+    public void addToWallet(double gain) {
+        wallet += gain;
+    }
+
+    /**
+     * @param quotation The quotation the share was bought from
      * @return Money earned by the player if he were to close
      * this share right now. This might return a negative
      */

@@ -8,15 +8,12 @@ api-version: 1.13
 commands:
   stonks:
     description: 'Main plugin command.'
-    usage : "Problem with Stonks command"
 
-  boarddisplay :
-    description : 'Display a board'
-    usage : "Problem with boarddisplay command"
+  boarddisplay:
+    description: 'Display quotation info on an item frame board.'
 
-  removeboard :
-    description : "allow to remove a board"
-    usage : "problem with remove command"
+  removeboard:
+    description: 'Removes a quotation display board.'
 permissions:
   stonks.admin:
     default: op
