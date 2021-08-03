@@ -3,6 +3,7 @@ package fr.lezoo.stonks.manager;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.ConfigFile;
 import fr.lezoo.stonks.api.CustomItem;
+import fr.lezoo.stonks.api.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.api.util.ConfigSchedule;
 import fr.lezoo.stonks.api.util.message.Message;
 import fr.lezoo.stonks.gui.QuotationList;
@@ -42,7 +43,8 @@ public class ConfigManager {
 
     public long boardRefreshTime, quotationRefreshTime;
     public double offerDemandImpact, volatility;
-
+    public int quotationDataNumber;
+    public String currentPriceText,lowestPriceText,highestPriceText,evolutionText,companyNameText,stockNameText,timeVisualizedText,quotationTypeText,quotationMapNameText;
 
     public void reload() {
 
@@ -56,11 +58,26 @@ public class ConfigManager {
         closeTimeEnabled = Stonks.plugin.getConfig().getBoolean("close-time.enabled");
         closeTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.from"));
         openTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.to"));
-        quotationRefreshTime = Stonks.plugin.getConfig().getLong("quotation-refresh-time");
         offerDemandImpact = Stonks.plugin.getConfig().getDouble("offer-demand-impact");
         volatility = Stonks.plugin.getConfig().getDouble("volatility");
-        displaySignFormat = Stonks.plugin.getConfig().getStringList("");
+        displaySignFormat = Stonks.plugin.getConfig().getStringList("custom-sign-format");
         dividendsRedeemHour = Stonks.plugin.getConfig().getInt("dividends-redeem-hour");
+        quotationDataNumber = Stonks.plugin.getConfig().getInt("quotation-data-number");
+        quotationRefreshTime = QuotationTimeDisplay.QUARTERHOUR.getTime()/quotationDataNumber;
+
+        currentPriceText=Stonks.plugin.getConfig().getString("currentpricetext");
+        lowestPriceText=Stonks.plugin.getConfig().getString("lowestpricetext");
+        highestPriceText=Stonks.plugin.getConfig().getString("highestpricetext");
+        evolutionText=Stonks.plugin.getConfig().getString("evolutiontext");
+        companyNameText=Stonks.plugin.getConfig().getString("companynametext");
+        stockNameText=Stonks.plugin.getConfig().getString("stocknametext");
+        timeVisualizedText=Stonks.plugin.getConfig().getString("timevisualizedtext");
+        quotationTypeText=Stonks.plugin.getConfig().getString("quotationtypetext");
+        quotationMapNameText=Stonks.plugin.getConfig().getString("quotationmapnametext");
+
+
+
+
 
         // Useful checks
         Validate.isTrue(displaySignFormat.size() == 4, "Display sign format should be of length 4");

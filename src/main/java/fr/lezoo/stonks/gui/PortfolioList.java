@@ -5,6 +5,7 @@ import fr.lezoo.stonks.api.NBTItem;
 import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
+import fr.lezoo.stonks.api.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
@@ -168,10 +169,10 @@ public class PortfolioList extends EditableInventory {
             holders.register("company-name", quotation.getCompanyName());
             holders.register("stock-name", quotation.getStockName());
             holders.register("price", format.format(quotation.getPrice()));
-            holders.register("week-low", format.format(quotation.getLowest(QuotationInfo.WEEK_TIME_OUT)));
-            holders.register("week-high", format.format(quotation.getHighest(QuotationInfo.WEEK_TIME_OUT)));
-            holders.register("month-low", format.format(quotation.getLowest(QuotationInfo.MONTH_TIME_OUT)));
-            holders.register("month-high", format.format(quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
+            holders.register("week-low", format.format(quotation.getLowest(QuotationTimeDisplay.WEEK)));
+            holders.register("week-high", format.format(quotation.getHighest(QuotationTimeDisplay.WEEK)));
+            holders.register("month-low", format.format(quotation.getLowest(QuotationTimeDisplay.MONTH)));
+            holders.register("month-high", format.format(quotation.getHighest(QuotationTimeDisplay.MONTH)));
 
             holders.register("owned", "" + inv.getPlayerData().countShares(quotation));
 

@@ -31,6 +31,8 @@ public class Utils {
         return Math.floor(x * pow) / pow;
     }
 
+
+
     /**
      * @return The direction to follow to place the item frames
      * on a quotation board

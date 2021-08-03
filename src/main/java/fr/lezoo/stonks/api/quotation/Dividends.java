@@ -78,7 +78,7 @@ public class Dividends {
 
         String parsed = new String(formula).replace("{amount}", String.valueOf(share.getAmount()))
                 .replace("{random}", String.valueOf(random))
-                .replace("{price}", String.valueOf(quotation.getPrice()));
+                .replace("{price}", String.valueOf(quotation.getQuarterHourData().get(quotation.getQuarterHourData().size()-1).getPrice()));
 
         return Parser.simpleEval(parsed);
     }

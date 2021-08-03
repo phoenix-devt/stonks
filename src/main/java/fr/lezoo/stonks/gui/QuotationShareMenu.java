@@ -4,6 +4,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
+import fr.lezoo.stonks.api.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.api.share.ShareType;
 import fr.lezoo.stonks.api.util.ChatInput;
 import fr.lezoo.stonks.api.util.Utils;
@@ -243,16 +244,16 @@ public class QuotationShareMenu extends EditableInventory {
             holders.register("company-name", inv.quotation.getCompanyName());
             holders.register("stock-name", inv.quotation.getStockName());
 
-            holders.register("week-low", format.format(inv.quotation.getLowest(QuotationInfo.WEEK_TIME_OUT)));
-            holders.register("week-high", format.format(inv.quotation.getHighest(QuotationInfo.WEEK_TIME_OUT)));
-            holders.register("month-low", format.format(inv.quotation.getLowest(QuotationInfo.MONTH_TIME_OUT)));
-            holders.register("month-high", format.format(inv.quotation.getHighest(QuotationInfo.MONTH_TIME_OUT)));
+            holders.register("week-low", format.format(inv.quotation.getLowest(QuotationTimeDisplay.WEEK)));
+            holders.register("week-high", format.format(inv.quotation.getHighest(QuotationTimeDisplay.WEEK)));
+            holders.register("month-low", format.format(inv.quotation.getLowest(QuotationTimeDisplay.MONTH)));
+            holders.register("month-high", format.format(inv.quotation.getHighest(QuotationTimeDisplay.MONTH)));
 
             // TODO instead of comparing to 1 day ago, compare to the beginning of the day, same with month, year..
-            holders.register("hour-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationInfo.HOUR_TIME_OUT)));
-            holders.register("day-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationInfo.DAY_TIME_OUT)));
-            holders.register("week-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationInfo.WEEK_TIME_OUT)));
-            holders.register("month-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationInfo.MONTH_TIME_OUT)));
+            holders.register("hour-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationTimeDisplay.HOUR)));
+            holders.register("day-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationTimeDisplay.DAY)));
+            holders.register("week-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationTimeDisplay.WEEK)));
+            holders.register("month-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationTimeDisplay.MONTH)));
 
             return holders;
         }

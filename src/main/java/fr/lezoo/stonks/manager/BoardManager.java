@@ -6,10 +6,9 @@ import fr.lezoo.stonks.api.quotation.board.Board;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class BoardManager implements FileManager {
@@ -26,16 +25,18 @@ public class BoardManager implements FileManager {
 
     /**
      * The location and direction of the board is a key for the boards that we can use
+     *
      * @return
      */
-
+    @Nullable
     public Board getBoard(Location location, BlockFace direction) {
         for (Board board : boards.values()) {
-            if (board.getLocation() == location && board.getDirection() == direction)
+            if (board.getLocation().equals(location) && board.getDirection().equals(direction))
                 return board;
         }
         //If the boards doesn't exist
         Stonks.plugin.getLogger().log(Level.WARNING, "You tried to get a board that doesn't exist");
+        save();
         return null;
     }
 
@@ -52,7 +53,9 @@ public class BoardManager implements FileManager {
     }
 
     public void refreshBoards() {
-        boards.values().forEach(board -> board.refreshBoard());
+        //We avoid ConcurrentModificationException
+        for (UUID key : boards.keySet())
+            boards.get(key).refreshBoard();
     }
 
     @Override

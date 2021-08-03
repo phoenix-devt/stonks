@@ -10,11 +10,16 @@ stock-price-decimal-format: '0.##'
 # How the amount of shares are displayed in messages
 shares-decimal-format: '0.#'
 
-# The time between 2 boards refresh
-board-refresh-time: 10
+# The time between 2 boards refresh in seconds
+board-refresh-time: 30
 
 
-quotation-refresh-time: 10
+
+
+
+#The number of data that can be visualised when you see a board/map!
+#Also defines the refresh time of the quotation, lower it if your server is overloaded
+quotation-data-number : 400
 
 
 #The impact of the offer and demand on the stock price 1 : maximal and 0 not any impact
@@ -54,3 +59,15 @@ custom-sign-format:
   - '${price}'
   - ''
   - '{day-evolution}'
+  -
+#Custom names for what will displayed in maps, boards and signs
+currentpricetext : Current Price
+lowestpricetext: Lowest Price
+highestpricetext: Highest Price
+evolutiontext: Evolution
+companynametext : Company Name
+stocknametext: Stock Name
+timevisualizedtext: Time Visualized
+quotationtypetext : Quotation Type
+#Adds the name of the company after it
+quotationmapnametext : Stock paper of

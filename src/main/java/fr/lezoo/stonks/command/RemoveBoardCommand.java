@@ -22,11 +22,17 @@ public class RemoveBoardCommand implements CommandExecutor {
             player.sendMessage(ChatColor.RED + "You don't have the right to use this command");
             return true;
         }
-        player.sendMessage(ChatColor.YELLOW + "You HAve 5 seconds to break the block!");
-        RemoveBoardListener removeBoardListener = new RemoveBoardListener(player);
+        if (args.length == 0) {
+            player.sendMessage(ChatColor.YELLOW + "You Have 5 seconds to break the block!");
+            RemoveBoardListener removeBoardListener = new RemoveBoardListener(player);
 
-        // After 5s the listener is unregistered with HandlerList.unregisterAll(listener)
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Stonks.plugin, () -> removeBoardListener.close(), 100L);
+            // After 5s the listener is unregistered with HandlerList.unregisterAll(listener)
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Stonks.plugin, () -> removeBoardListener.close(), 100L);
+            return true;
+        }
+        else {
+            player.sendMessage(ChatColor.RED + "You didn't use the command properly");
+        }
         return true;
     }
 }

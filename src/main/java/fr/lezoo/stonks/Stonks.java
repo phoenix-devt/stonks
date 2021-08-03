@@ -21,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Level;
 
@@ -92,7 +93,6 @@ public class Stonks extends JavaPlugin {
         // Register commands
         getCommand("stonks").setExecutor(new StonksCommand());
         getCommand("stonks").setTabCompleter(new StonksCommandCompletion());
-        getCommand("removeboard").setExecutor(new RemoveBoardCommand());
         getCommand("redeemdividends").setExecutor(new RedeemDividendsCommand());
         getCommand("quotations").setExecutor(new QuotationsCommand());
 
@@ -100,14 +100,31 @@ public class Stonks extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplaySignListener(), this);
 
-        // Create scheduler to refresh boards
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> boardManager.refreshBoards(), 0, 20L * this.configManager.boardRefreshTime);
+        // Refresh boards
+        new BukkitRunnable() {
+            //We refresh the board only if people are online.
+            @Override
+            public void run() {
+                if(Bukkit.getOnlinePlayers().size()>0)
+                boardManager.refreshBoards();
+            }
+        }.runTaskTimer(this,0,20L*this.configManager.boardRefreshTime);
+
+        //Refresh quotation prices
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                quotationManager.refreshQuotations();
+
+            }
+        }.runTaskTimer(this,0,20L*configManager.quotationRefreshTime/1000);
 
 
     }
 
     @Override
     public void onDisable() {
+        quotationManager.save();
         boardManager.save();
         playerManager.save();
         shareManager.save();

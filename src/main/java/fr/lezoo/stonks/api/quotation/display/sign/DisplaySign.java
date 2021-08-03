@@ -4,6 +4,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.Position;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
+import fr.lezoo.stonks.api.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.api.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
@@ -59,7 +60,7 @@ public class DisplaySign {
         return input.replace("{stock-name}", quotation.getStockName())
                 .replace("{company-name}", quotation.getCompanyName())
                 .replace("{price}", Stonks.plugin.configManager.stockPriceFormat.format(quotation.getPrice()))
-                .replace("{day-evolution}", Utils.formatRate(quotation.getEvolution(QuotationInfo.DAY_TIME_OUT)))
-                .replace("{week-evolution}", Utils.formatRate(quotation.getEvolution(QuotationInfo.WEEK_TIME_OUT)));
+                .replace("{day-evolution}", Utils.formatRate(quotation.getEvolution(QuotationTimeDisplay.DAY)))
+                .replace("{week-evolution}", Utils.formatRate(quotation.getEvolution(QuotationTimeDisplay.WEEK)));
     }
 }
