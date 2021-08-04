@@ -37,25 +37,29 @@ public class RemoveBoardListener implements TemporaryListener {
             return;
         Player removingPlayer = (Player) event.getRemover();
         if(!removingPlayer.equals(player)) {
-            removingPlayer.sendMessage("You are not ");
             return;
         }
 
         if (!(event.getEntity() instanceof ItemFrame))
             return;
 
-        Bukkit.broadcastMessage("BRU");
+
 
         ItemFrame itemFrame = (ItemFrame) event.getEntity();
         PersistentDataContainer container = itemFrame.getPersistentDataContainer();
 
         //We check if the itemFrame belongs to the board and get the board associated
-        if (container.has(new NamespacedKey(Stonks.plugin, "uuid"), PersistentDataType.STRING)) {
+        if (container.has(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING)) {
+
             Board board = Stonks.plugin.boardManager.getBoard(
-                    UUID.fromString(container.get(new NamespacedKey(Stonks.plugin, "uuid"), PersistentDataType.STRING)));
+                    UUID.fromString(container.get(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING)));
             board.destroy();
             //We unregister the listener
             close();
         }
+
+
+
+
     }
 }

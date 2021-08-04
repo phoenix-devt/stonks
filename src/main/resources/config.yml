@@ -19,7 +19,7 @@ board-refresh-time: 30
 
 #The number of data that can be visualised when you see a board/map!
 #Also defines the refresh time of the quotation, lower it if your server is overloaded
-quotation-data-number : 400
+quotation-data-number: 400
 
 
 #The impact of the offer and demand on the stock price 1 : maximal and 0 not any impact
@@ -59,15 +59,28 @@ custom-sign-format:
   - '${price}'
   - ''
   - '{day-evolution}'
-  -
+#Max interaction distance for a player to click a button on the board
+maxinteractiondistance : 20
 #Custom names for what will displayed in maps, boards and signs
-currentpricetext : Current Price
+currentpricetext: Current Price
 lowestpricetext: Lowest Price
 highestpricetext: Highest Price
 evolutiontext: Evolution
-companynametext : Company Name
+companynametext: Company Name
 stocknametext: Stock Name
 timevisualizedtext: Time Visualized
-quotationtypetext : Quotation Type
-#Adds the name of the company after it
-quotationmapnametext : Stock paper of
+quotationtypetext: Quotation Type
+
+#Adds the name of the company after it for the name of the quotation map
+quotationmapnametext: Stock paper of
+
+#The name of the trading book
+tradingbookname: Trading Book
+tradingbooklore :
+  - 'This book enables you to trade with boards'
+
+
+bookexplanationtext :
+  - "1)Money paid"
+  - "2)Maxprice before auto-selling"
+  - "3)Minprice before auto-selling"

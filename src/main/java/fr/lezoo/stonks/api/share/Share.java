@@ -14,14 +14,16 @@ import java.util.UUID;
  * parameter and the date at which it was bought
  */
 public class Share {
-    private final UUID uuid;
+    private final UUID uuid, ownerUuid;
     private final ShareType type;
     private final Quotation quotation;
     private final long timeStamp;
     private final double initialPrice;
 
+
+    //maxPrice and minPrice corresponds to the prices where it sells of automatically
     // These can be modified by other plugins freely
-    private double leverage, shares;
+    private double leverage, shares, maxPrice, minPrice;
 
     private double wallet;
 
@@ -34,8 +36,8 @@ public class Share {
      *                  or lost by a share purchase
      * @param shares    Amount of shares purchased
      */
-    public Share(ShareType type, Quotation quotation, double leverage, double shares) {
-        this(UUID.randomUUID(), type, quotation, quotation.getPrice(), leverage, shares, System.currentTimeMillis());
+    public Share(ShareType type, UUID ownerUuid, Quotation quotation, double leverage, double shares, double minPrice, double maxPrice) {
+        this(UUID.randomUUID(), ownerUuid, type, quotation, quotation.getPrice(), leverage, shares, minPrice, maxPrice, System.currentTimeMillis());
     }
 
     /**
@@ -50,13 +52,16 @@ public class Share {
      * @param shares       Amount of shares purchased
      * @param timeStamp    Time of share creation (millis)
      */
-    public Share(UUID uuid, ShareType type, Quotation quotation, double initialPrice, double leverage, double shares, long timeStamp) {
+    public Share(UUID uuid, UUID ownerUuid, ShareType type, Quotation quotation, double initialPrice, double leverage, double shares, double maxPrice, double minPrice, long timeStamp) {
         this.uuid = uuid;
+        this.ownerUuid = ownerUuid;
         this.type = type;
         this.quotation = quotation;
         this.initialPrice = initialPrice;
         this.leverage = leverage;
         this.shares = shares;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
         this.timeStamp = timeStamp;
     }
 
@@ -65,27 +70,37 @@ public class Share {
      */
     public Share(ConfigurationSection config) {
         this.uuid = UUID.fromString(config.getName());
+        this.ownerUuid = UUID.fromString(config.getString("owneruuid"));
         this.type = ShareType.valueOf(config.getString("type"));
         this.quotation = Stonks.plugin.quotationManager.get(config.getString("quotation"));
         this.shares = config.getDouble("shares");
         this.leverage = config.getDouble("leverage");
         this.timeStamp = config.getLong("timestamp");
-        this.initialPrice = config.getLong("initial");
+        this.initialPrice = config.getDouble("initial");
+        this.maxPrice=config.getDouble("maxprice");
+        this.maxPrice=config.getDouble("minprice");
         this.wallet = config.getDouble("wallet");
     }
 
     public void saveInConfig(ConfigurationSection config) {
         config.set(uuid.toString() + ".type", type.name());
+        config.set(uuid.toString() + ".owneruuid", ownerUuid.toString());
         config.set(uuid.toString() + ".quotation", quotation.getId());
         config.set(uuid.toString() + ".shares", shares);
         config.set(uuid.toString() + ".leverage", leverage);
         config.set(uuid.toString() + ".timestamp", timeStamp);
         config.set(uuid.toString() + ".initial", initialPrice);
+        config.set(uuid.toString() + ".maxPrice", maxPrice);
+        config.set(uuid.toString() + ".minPrice", minPrice);
         config.set(uuid.toString() + ".wallet", wallet);
     }
 
     public UUID getUniqueId() {
         return uuid;
+    }
+
+    public UUID getOwnerUuid() {
+        return ownerUuid;
     }
 
     public ShareType getType() {
@@ -122,6 +137,15 @@ public class Share {
     public double getWallet() {
         return wallet;
     }
+
+    public double getMaxPrice() {
+        return maxPrice;
+    }
+
+    public double getMinPrice() {
+        return minPrice;
+    }
+
 
     public void setWallet(double wallet) {
         this.wallet = wallet;

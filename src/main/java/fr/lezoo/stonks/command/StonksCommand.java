@@ -8,6 +8,7 @@ import fr.lezoo.stonks.api.quotation.QuotationInfo;
 import fr.lezoo.stonks.api.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.api.util.message.Message;
 import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
+import fr.lezoo.stonks.manager.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -39,6 +40,11 @@ public class StonksCommand implements CommandExecutor {
             player.sendMessage(ChatColor.RED+"Authorized commands : givemap adddisplay createquotation removeboard removequotation ");
             return true;
         }
+
+        if(args[0].equalsIgnoreCase("givetradingbook")) {
+            player.getInventory().addItem(Stonks.plugin.itemManager.createTradingBook());
+        }
+
 
         if(args[0].equalsIgnoreCase("removequotation")) {
             if(args.length!=2) {

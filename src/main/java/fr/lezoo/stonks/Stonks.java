@@ -3,7 +3,6 @@ package fr.lezoo.stonks;
 import fr.lezoo.stonks.api.util.ConfigSchedule;
 import fr.lezoo.stonks.command.QuotationsCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
-import fr.lezoo.stonks.command.RemoveBoardCommand;
 import fr.lezoo.stonks.command.StonksCommand;
 import fr.lezoo.stonks.command.completion.StonksCommandCompletion;
 import fr.lezoo.stonks.comp.placeholder.DefaultPlaceholderParser;
@@ -12,6 +11,7 @@ import fr.lezoo.stonks.comp.placeholder.PlaceholderParser;
 import fr.lezoo.stonks.comp.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.DisplaySignListener;
 import fr.lezoo.stonks.listener.PlayerListener;
+import fr.lezoo.stonks.listener.TradingInteractListener;
 import fr.lezoo.stonks.manager.*;
 import fr.lezoo.stonks.version.ServerVersion;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper;
@@ -40,7 +40,12 @@ public class Stonks extends JavaPlugin {
     public PlayerDataManager playerManager = new PlayerDataManager();
     public QuotationManager quotationManager = new QuotationManager();
     public BoardManager boardManager = new BoardManager();
+    public ItemManager itemManager = new ItemManager();
 
+
+    /*TODO Comment obtenir les lives de trading
+    TODO Signs ,playerdata avec les shares
+    */
     public void onLoad() {
         plugin = this;
     }
@@ -99,16 +104,16 @@ public class Stonks extends JavaPlugin {
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplaySignListener(), this);
-
+        Bukkit.getPluginManager().registerEvents(new TradingInteractListener(), this);
         // Refresh boards
         new BukkitRunnable() {
             //We refresh the board only if people are online.
             @Override
             public void run() {
-                if(Bukkit.getOnlinePlayers().size()>0)
-                boardManager.refreshBoards();
+                if (Bukkit.getOnlinePlayers().size() > 0)
+                    boardManager.refreshBoards();
             }
-        }.runTaskTimer(this,0,20L*this.configManager.boardRefreshTime);
+        }.runTaskTimer(this, 0, 20L * this.configManager.boardRefreshTime);
 
         //Refresh quotation prices
         new BukkitRunnable() {
@@ -117,7 +122,7 @@ public class Stonks extends JavaPlugin {
                 quotationManager.refreshQuotations();
 
             }
-        }.runTaskTimer(this,0,20L*configManager.quotationRefreshTime/1000);
+        }.runTaskTimer(this, 0, 20L * configManager.quotationRefreshTime / 1000);
 
 
     }

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +44,11 @@ public class ConfigManager {
 
     public long boardRefreshTime, quotationRefreshTime;
     public double offerDemandImpact, volatility;
-    public int quotationDataNumber;
-    public String currentPriceText,lowestPriceText,highestPriceText,evolutionText,companyNameText,stockNameText,timeVisualizedText,quotationTypeText,quotationMapNameText;
+    public int quotationDataNumber, maxInteractionDistance;
+    public String currentPriceText, lowestPriceText, highestPriceText, evolutionText, companyNameText,
+            stockNameText, timeVisualizedText, quotationTypeText, quotationMapName, tradingBookName,bookExplanationText;
+    public List<String> tradingBookLore;
+
 
     public void reload() {
 
@@ -63,22 +67,29 @@ public class ConfigManager {
         displaySignFormat = Stonks.plugin.getConfig().getStringList("custom-sign-format");
         dividendsRedeemHour = Stonks.plugin.getConfig().getInt("dividends-redeem-hour");
         quotationDataNumber = Stonks.plugin.getConfig().getInt("quotation-data-number");
-        quotationRefreshTime = QuotationTimeDisplay.QUARTERHOUR.getTime()/quotationDataNumber;
-
-        currentPriceText=Stonks.plugin.getConfig().getString("currentpricetext");
-        lowestPriceText=Stonks.plugin.getConfig().getString("lowestpricetext");
-        highestPriceText=Stonks.plugin.getConfig().getString("highestpricetext");
-        evolutionText=Stonks.plugin.getConfig().getString("evolutiontext");
-        companyNameText=Stonks.plugin.getConfig().getString("companynametext");
-        stockNameText=Stonks.plugin.getConfig().getString("stocknametext");
-        timeVisualizedText=Stonks.plugin.getConfig().getString("timevisualizedtext");
-        quotationTypeText=Stonks.plugin.getConfig().getString("quotationtypetext");
-        quotationMapNameText=Stonks.plugin.getConfig().getString("quotationmapnametext");
+        quotationRefreshTime = QuotationTimeDisplay.QUARTERHOUR.getTime() / quotationDataNumber;
+        maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
 
 
+        currentPriceText = Stonks.plugin.getConfig().getString("currentpricetext");
+        lowestPriceText = Stonks.plugin.getConfig().getString("lowestpricetext");
+        highestPriceText = Stonks.plugin.getConfig().getString("highestpricetext");
+        evolutionText = Stonks.plugin.getConfig().getString("evolutiontext");
+        companyNameText = Stonks.plugin.getConfig().getString("companynametext");
+        stockNameText = Stonks.plugin.getConfig().getString("stocknametext");
+        timeVisualizedText = Stonks.plugin.getConfig().getString("timevisualizedtext");
+        quotationTypeText = Stonks.plugin.getConfig().getString("quotationtypetext");
+        quotationMapName = Stonks.plugin.getConfig().getString("quotationmapnametext");
+        tradingBookName= Stonks.plugin.getConfig().getString("tradingbookname");
+        tradingBookLore = Stonks.plugin.getConfig().getStringList("tradingbooklore");
+        StringBuilder builder = new StringBuilder();
+        for(int i=0;i< Stonks.plugin.getConfig().getStringList("bookexplanationtext").size();i++) {
+            builder.append(Stonks.plugin.getConfig().getStringList("bookexplanationtext").get(i));
+            if(i < Stonks.plugin.getConfig().getStringList("bookexplanationtext").size()-1)
+                builder.append(" \n ");
+        }
 
-
-
+        bookExplanationText= builder.toString();
         // Useful checks
         Validate.isTrue(displaySignFormat.size() == 4, "Display sign format should be of length 4");
 

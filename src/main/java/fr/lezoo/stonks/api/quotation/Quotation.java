@@ -282,7 +282,7 @@ public abstract class Quotation {
 
                     //We store the uuid of the board into the entity
                     PersistentDataContainer container = itemFrame.getPersistentDataContainer();
-                    container.set(new NamespacedKey(Stonks.plugin, "uuid"), PersistentDataType.STRING, board.getUuid().toString());
+                    container.set(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING, board.getUuid().toString());
 
                     // We create the map that will go in the itemframe
                     ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
@@ -324,7 +324,7 @@ public abstract class Quotation {
 
         // We cast the ItemMeta into MapMeta
         MapMeta meta = (MapMeta) mapItem.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + Stonks.plugin.configManager.quotationMapNameText + " : " + companyName);
+        meta.setDisplayName(ChatColor.RED + Stonks.plugin.configManager.quotationMapName + " : " + companyName);
         //Description of the map
         meta.setLore(Arrays.asList(Stonks.plugin.configManager.companyNameText + " : " + companyName,
                 Stonks.plugin.configManager.stockNameText + " : " + stockName,
