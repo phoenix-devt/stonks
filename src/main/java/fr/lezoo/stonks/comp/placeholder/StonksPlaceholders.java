@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.comp.placeholder;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

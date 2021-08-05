@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.api.ConfigFile;
-import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

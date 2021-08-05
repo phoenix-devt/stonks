@@ -1,6 +1,6 @@
 package fr.lezoo.stonks.api.event;
 
-import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.player.PlayerEvent;
 

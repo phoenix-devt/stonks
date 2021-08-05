@@ -36,8 +36,8 @@ public class Share {
      *                  or lost by a share purchase
      * @param shares    Amount of shares purchased
      */
-    public Share(ShareType type, UUID ownerUuid, Quotation quotation, double leverage, double shares, double minPrice, double maxPrice) {
-        this(UUID.randomUUID(), ownerUuid, type, quotation, quotation.getPrice(), leverage, shares, minPrice, maxPrice, System.currentTimeMillis());
+    public Share(ShareType type, UUID ownerUuid, Quotation quotation, double leverage, double shares, double maxPrice, double minPrice) {
+        this(UUID.randomUUID(), ownerUuid, type, quotation, quotation.getPrice(), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
     }
 
     /**

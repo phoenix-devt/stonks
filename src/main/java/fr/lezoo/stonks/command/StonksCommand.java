@@ -1,14 +1,13 @@
 package fr.lezoo.stonks.command;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import fr.lezoo.stonks.api.quotation.CreatedQuotation;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.quotation.QuotationInfo;
 import fr.lezoo.stonks.api.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.api.util.message.Message;
 import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
-import fr.lezoo.stonks.manager.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,8 +17,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-
-import java.util.Locale;
 
 public class StonksCommand implements CommandExecutor {
 

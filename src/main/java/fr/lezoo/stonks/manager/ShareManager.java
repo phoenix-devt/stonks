@@ -2,7 +2,7 @@ package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.ConfigFile;
-import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.share.Share;
 import org.apache.commons.lang.Validate;

@@ -1,6 +1,6 @@
 package fr.lezoo.stonks.api.event;
 
-import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import fr.lezoo.stonks.api.share.Share;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import org.bukkit.event.HandlerList;

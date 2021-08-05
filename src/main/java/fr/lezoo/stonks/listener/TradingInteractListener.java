@@ -1,8 +1,11 @@
 package fr.lezoo.stonks.listener;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import fr.lezoo.stonks.api.quotation.board.Board;
+import fr.lezoo.stonks.api.share.ShareType;
 import fr.lezoo.stonks.api.util.Utils;
+import fr.lezoo.stonks.api.util.message.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -29,6 +32,7 @@ public class TradingInteractListener implements Listener {
     private double verticalOffset;
     private double horizontalOffset;
     private Player player;
+    private Board board;
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
@@ -70,7 +74,7 @@ public class TradingInteractListener implements Listener {
             //If it is not a Stonks itemFrame we return nothing
             if (!container.has(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING))
                 return;
-            Board board = Stonks.plugin.boardManager.getBoard(UUID.fromString(container.get(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING)));
+            board = Stonks.plugin.boardManager.getBoard(UUID.fromString(container.get(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING)));
 
             //We get the perpendicular straight line
             Vector perpendicular = Utils.getItemFrameDirection(board.getDirection());
@@ -117,7 +121,13 @@ public class TradingInteractListener implements Listener {
             //We do nothing if there is a problem
             if (readBook() == null)
                 return;
-            player.sendMessage("You bought action");
+            // Market is closing!
+            if (Stonks.plugin.isClosed()) {
+                Message.MARKET_CLOSING.format().send(player);
+                return;
+            }
+            PlayerData playerData =Stonks.plugin.playerManager.get(player);
+            playerData.buyShare(board.getQuotation(), ShareType.POSITIVE,readBook()[0],readBook()[1],readBook()[2]);
         }
     }
 
@@ -127,7 +137,13 @@ public class TradingInteractListener implements Listener {
             //We do nothing if there is a problem
             if (readBook() == null)
                 return;
-            player.sendMessage("You shorted action");
+            // Market is closing!
+            if (Stonks.plugin.isClosed()) {
+                Message.MARKET_CLOSING.format().send(player);
+                return;
+            }
+            PlayerData playerData =Stonks.plugin.playerManager.get(player);
+            playerData.buyShare(board.getQuotation(), ShareType.SHORT,readBook()[0],readBook()[1],readBook()[2]);
         }
     }
 

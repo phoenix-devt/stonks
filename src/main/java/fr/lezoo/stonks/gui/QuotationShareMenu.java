@@ -1,9 +1,8 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import fr.lezoo.stonks.api.quotation.Quotation;
-import fr.lezoo.stonks.api.quotation.QuotationInfo;
 import fr.lezoo.stonks.api.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.api.share.ShareType;
 import fr.lezoo.stonks.api.util.ChatInput;
@@ -53,6 +52,8 @@ public class QuotationShareMenu extends EditableInventory {
     public GeneratedInventory generate(PlayerData player, Quotation quotation) {
         return new GeneratedShareMenu(player, this, quotation);
     }
+
+
 
     public class GeneratedShareMenu extends GeneratedInventory {
         private final Quotation quotation;

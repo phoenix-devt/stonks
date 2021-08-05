@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.command;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import fr.lezoo.stonks.api.util.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

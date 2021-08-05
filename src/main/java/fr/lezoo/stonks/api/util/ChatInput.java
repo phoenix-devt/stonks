@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.api.util;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.PlayerData;
+import fr.lezoo.stonks.api.playerdata.PlayerData;
 import fr.lezoo.stonks.gui.api.PluginInventory;
 import fr.lezoo.stonks.listener.temp.TemporaryListener;
 import org.bukkit.Bukkit;

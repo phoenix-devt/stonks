@@ -1,6 +1,7 @@
-package fr.lezoo.stonks.api;
+package fr.lezoo.stonks.api.playerdata;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.api.ConfigFile;
 import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
 import fr.lezoo.stonks.api.quotation.Quotation;
 import fr.lezoo.stonks.api.share.Share;
@@ -16,7 +17,7 @@ import java.util.*;
 public class PlayerData {
     private final UUID uuid;
     private Player player;
-
+    private PlayerStatus playerStatus;
     // Data not saved when logging off
     private double leverage = 1;
 
@@ -28,12 +29,11 @@ public class PlayerData {
     public PlayerData(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();
-
         loadFromConfig(new ConfigFile("/userdata", uuid.toString()).getConfig());
     }
 
     public void loadFromConfig(FileConfiguration config) {
-
+        playerStatus=PlayerStatus.valueOf(config.getString("player-status").toUpperCase());
         // Load shares from config file
         if (config.contains("shares"))
             for (String quotationKey : config.getConfigurationSection("shares").getKeys(false)) {
@@ -54,7 +54,7 @@ public class PlayerData {
 
         // Remove old shares
         config.set("shares", null);
-
+        config.set("player-status",playerStatus.toString().toLowerCase());
         // Save newest
         for (String quotationId : shares.keySet()) {
             List<String> toList = new ArrayList<>();
@@ -176,7 +176,7 @@ public class PlayerData {
      * @param amount    Amount of shares bought
      * @return If the share was successfully bought or not
      */
-    public boolean buyShare(Quotation quotation, ShareType type, double amount) {
+    public boolean buyShare(Quotation quotation, ShareType type, double amount,double maxPrice,double minPrice) {
         double price = quotation.getPrice() * amount;
 
         // Check for balance
@@ -187,7 +187,8 @@ public class PlayerData {
         }
 
         // Check for Bukkit event
-        Share share = new Share(type, quotation, leverage, amount);
+        Share share = new Share(type,player.getUniqueId(), quotation, leverage, amount,minPrice,maxPrice);
+
         PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, quotation, share);
         Bukkit.getPluginManager().callEvent(called);
         if (called.isCancelled())

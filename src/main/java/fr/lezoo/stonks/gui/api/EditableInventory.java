@@ -11,7 +11,6 @@ import java.util.logging.Level;
 
 public abstract class EditableInventory {
     private final String id;
-
     private String name;
     private int slots;
 
