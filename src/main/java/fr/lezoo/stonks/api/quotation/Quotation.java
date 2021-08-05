@@ -29,32 +29,22 @@ import java.util.logging.Level;
  */
 public abstract class Quotation {
     protected final String id, companyName, stockName;
-
-    //We create a list of data for the quotation for different durations.
-    //Allows to store just the data needed and not have 10 s timeStamp to visualize data from 1 year ago
-    protected List<QuotationInfo> quarterHourData = new ArrayList<>();
-    protected List<QuotationInfo> hourData = new ArrayList<>();
-    protected List<QuotationInfo> dayData = new ArrayList<>();
-    protected List<QuotationInfo> weekData = new ArrayList<>();
-    protected List<QuotationInfo> monthData = new ArrayList<>();
-    protected List<QuotationInfo> yearData = new ArrayList<>();
-
     private final Dividends dividends;
 
+    /**
+     * List of data for every scale. Allows to store just the right
+     * amount of data needed so that there aren't 10s timestamps on the yearly scale.
+     */
+    protected final Map<QuotationTimeDisplay, List<QuotationInfo>> quotationData = new HashMap<>();
 
-    public Quotation(String id, String companyName, String stockName, List<QuotationInfo> quarterHourData, List<QuotationInfo> hourData,
-                     List<QuotationInfo> dayData, List<QuotationInfo> weekData, List<QuotationInfo> monthData, List<QuotationInfo> yearData, Dividends dividends) {
+    public Quotation(String id, String companyName, String stockName, Dividends dividends) {
         this.id = id;
         this.companyName = companyName;
         this.stockName = stockName;
-        this.quarterHourData = quarterHourData;
-        this.hourData = hourData;
-        this.dayData = dayData;
-        this.weekData = weekData;
-        this.monthData = monthData;
-        this.yearData = yearData;
         this.dividends = dividends;
 
+        for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
+            quotationData.put(disp, new ArrayList<>());
     }
 
     /**
@@ -71,13 +61,9 @@ public abstract class Quotation {
         this.companyName = companyName;
         this.stockName = stockName;
         this.dividends = dividends;
-        quarterHourData.add(firstQuotationData);
-        hourData.add(firstQuotationData);
-        dayData.add(firstQuotationData);
-        weekData.add(firstQuotationData);
-        monthData.add(firstQuotationData);
-        yearData.add(firstQuotationData);
 
+        for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
+            quotationData.put(disp, Arrays.asList(firstQuotationData));
     }
 
     /**
@@ -89,23 +75,20 @@ public abstract class Quotation {
         this.stockName = config.getString("stock-name");
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
 
-        //We load the different data from the yml
-
+        // We load the different data from the yml
         for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
             int i = 0;
-            List<QuotationInfo> workingQuotation = this.getCorrespondingData(time);
+            List<QuotationInfo> workingQuotation = this.getData(time);
 
             while (config.contains(time.toString().toLowerCase() + "data." + i)) {
                 workingQuotation.add(new QuotationInfo(config.getConfigurationSection(time.toString().toLowerCase() + "data." + i)));
                 i++;
             }
 
-            //We change the attribute
+            // We change the attribute
             this.setCorrespondingData(time, workingQuotation);
-
         }
     }
-
 
     public String getId() {
         return id;
@@ -119,7 +102,6 @@ public abstract class Quotation {
         return stockName;
     }
 
-
     public boolean hasDividends() {
         return dividends != null;
     }
@@ -128,28 +110,8 @@ public abstract class Quotation {
         return dividends;
     }
 
-    public List<QuotationInfo> getQuarterHourData() {
-        return quarterHourData;
-    }
-
-    public List<QuotationInfo> getHourData() {
-        return hourData;
-    }
-
-    public List<QuotationInfo> getDayData() {
-        return dayData;
-    }
-
-    public List<QuotationInfo> getWeekData() {
-        return weekData;
-    }
-
-    public List<QuotationInfo> getMonthData() {
-        return monthData;
-    }
-
-    public List<QuotationInfo> getYearData() {
-        return yearData;
+    public List<QuotationInfo> getData(QuotationTimeDisplay disp) {
+        return quotationData.get(disp);
     }
 
     /**
@@ -159,80 +121,41 @@ public abstract class Quotation {
      * @param quotationData the data we want to update
      */
     public void setCorrespondingData(QuotationTimeDisplay time, List<QuotationInfo> quotationData) {
-        switch (time) {
-            case QUARTERHOUR:
-                quarterHourData = quotationData;
-                break;
-            case HOUR:
-                hourData = quotationData;
-                break;
-            case DAY:
-                dayData = quotationData;
-                break;
-            case WEEK:
-                weekData = quotationData;
-                break;
-            case MONTH:
-                monthData = quotationData;
-                break;
-            case YEAR:
-                yearData = quotationData;
-                break;
-        }
+        this.quotationData.put(time, quotationData);
     }
-
-    /**
-     * return the data set corresponding to the QuotationTimeDisplay tiem given
-     */
-    public List<QuotationInfo> getCorrespondingData(QuotationTimeDisplay time) {
-        switch (time) {
-            case QUARTERHOUR:
-                return quarterHourData;
-            case HOUR:
-                return hourData;
-            case DAY:
-                return dayData;
-            case WEEK:
-                return weekData;
-            case MONTH:
-                return monthData;
-            case YEAR:
-                return yearData;
-        }
-        return null;
-    }
-
 
     /**
      * This method compares the current price with the info which time
      * stamp matches the most the time stamp given as parameter
-     * <p>
      *
      * @param time Difference of time in the past, in millis
      * @return Growth rate compared to some time ago
      */
     public double getEvolution(QuotationTimeDisplay time) {
-        List<QuotationInfo> quotationData = this.getCorrespondingData(time);
+        List<QuotationInfo> quotationData = this.getData(time);
 
-        //We take the last information in the list and the first one to have the evolution for the timedelay given
-        // Check if no division by zero?
-        double growthRate = 100 * Math.abs((quotationData.get(quotationData.size() - 1).getPrice() - quotationData.get(0).getPrice()) / quotationData.get(0).getPrice());
+        /*
+         * Last information in the list corresponds to the latest information.
+         * First information corresponds to the oldest, which gives us the growth rate.
+         *
+         * We need a division by zero check?
+         */
+        double oldest = quotationData.get(0).getPrice();
+        double latest = quotationData.get(quotationData.size() - 1).getPrice();
 
-        return Utils.truncate(growthRate, 1);
+        return Utils.truncate(100 * (latest - oldest) / oldest, 1);
     }
-
 
     /**
      * Creates a 5x5 map of the Quotation to the player
      * gives the player all the maps in his inventory
      */
-    public void createQuotationBoard(boolean hasBeenCreated, Location initiallocation, BlockFace
+    public Board createQuotationBoard(boolean hasBeenCreated, Location initiallocation, BlockFace
             blockFace, QuotationTimeDisplay time, int BOARD_WIDTH, int BOARD_HEIGHT) {
 
         // We get the board corresponding to the one we are creating or updating
         Board board = !hasBeenCreated ? new Board(this, BOARD_HEIGHT, BOARD_WIDTH, initiallocation, time, blockFace)
                 : Stonks.plugin.boardManager.getBoard(initiallocation, blockFace);
-
 
         //If there is no blocks in the board it destroys itself
         boolean isEmpty = true;
@@ -310,12 +233,15 @@ public abstract class Quotation {
         }
         if (isEmpty)
             board.destroy();
+
+        return board;
     }
 
     public static final String MAP_ITEM_TAG_PATH = "StonksQuotationMap";
 
     /**
      * This map is never updated you have to get another one to get new informations
+     *
      * @param time the time the map looks backwards
      * @return A map where we can see the quotation
      */
@@ -348,8 +274,8 @@ public abstract class Quotation {
 
     public void save(FileConfiguration config) {
 
-        //If the quotation is empty we destroy it to not overload memory and avoid errors
-        if (quarterHourData.size() == 0) {
+        // If the quotation is empty we destroy it to not overload memory and avoid errors
+        if (quotationData.get(QuotationTimeDisplay.QUARTERHOUR).size() == 0) {
             config.set(id + ".company-name", null);
             config.set(id + ".stock-name", null);
             return;
@@ -359,17 +285,54 @@ public abstract class Quotation {
         config.set(id + ".stock-name", stockName);
         //We save the information of the data
         for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
-            List<QuotationInfo> quotationData = this.getCorrespondingData(time);
+            List<QuotationInfo> quotationData = this.getData(time);
             //We load the data needed
             for (int i = 0; i < quotationData.size(); i++) {
                 config.set(id + "." + time.toString().toLowerCase() + "data." + i + ".price", quotationData.get(i).getPrice());
                 config.set(id + "." + time.toString().toLowerCase() + "data." + i + ".timestamp", quotationData.get(i).getTimeStamp());
             }
         }
-
-
     }
 
+    /**
+     * @param time The time we want to look back for the quotation
+     * @return Lowest price for the given time
+     */
+    public double getLowest(QuotationTimeDisplay time) {
+        List<QuotationInfo> quotationData = this.getData(time);
+        if (quotationData.size() == 0)
+            Stonks.plugin.getLogger().log(Level.WARNING, "Can't get lowest value of quotation '" + id + "' as data is empty");
+
+        double min = quotationData.get(0).getPrice();
+        for (QuotationInfo quotationInfo : quotationData)
+            if (quotationInfo.getPrice() < min)
+                min = quotationInfo.getPrice();
+        return min;
+    }
+
+    /**
+     * @param time The time we want to look back for the quotation
+     * @return Highest price for the given time
+     */
+    public double getHighest(QuotationTimeDisplay time) {
+        List<QuotationInfo> quotationData = this.getData(time);
+        if (quotationData.size() == 0)
+            Stonks.plugin.getLogger().log(Level.WARNING, "Can't get highest value of quotation '" + id + "' as data is empty");
+
+        double max = quotationData.get(0).getPrice();
+        for (QuotationInfo quotationInfo : quotationData)
+            if (quotationInfo.getPrice() > max)
+                max = quotationInfo.getPrice();
+        return max;
+    }
+
+    /**
+     * @return Current quotation price
+     */
+    public double getPrice() {
+        List<QuotationInfo> latest = quotationData.get(QuotationTimeDisplay.QUARTERHOUR);
+        return latest.get(latest.size() - 1).getPrice();
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -377,56 +340,6 @@ public abstract class Quotation {
         if (o == null || getClass() != o.getClass()) return false;
         Quotation quotation = (Quotation) o;
         return id.equals(quotation.id) && companyName.equals(quotation.companyName) && stockName.equals(quotation.stockName);
-    }
-
-    /**
-     * @param time the time we want to look back for the quotation
-     * @return the lowest price for the given time
-     */
-    public double getLowest(QuotationTimeDisplay time) {
-        List<QuotationInfo> quotationData = this.getCorrespondingData(time);
-        if (quotationData.size() == 0) {
-            Bukkit.getServer().getLogger().log(Level.WARNING, "Can get the lowest,the quotationdata is empty");
-        }
-
-        double min = quotationData.get(0).getPrice();
-        for (QuotationInfo quotationInfo : quotationData) {
-            if (quotationInfo.getPrice() < min)
-                min = quotationInfo.getPrice();
-        }
-        return min;
-    }
-
-
-    /**
-     * @param time the time we want to look back for the quotation
-     * @return the highest price for the given time
-     */
-    public double getHighest(QuotationTimeDisplay time) {
-        List<QuotationInfo> quotationData = this.getCorrespondingData(time);
-        if (quotationData.size() == 0) {
-            Bukkit.getServer().getLogger().log(Level.WARNING, "Can get the lowest,the quotationdata is empty");
-        }
-
-        double max = quotationData.get(0).getPrice();
-        for (QuotationInfo quotationInfo : quotationData) {
-            if (quotationInfo.getPrice() > max)
-                max = quotationInfo.getPrice();
-        }
-        return max;
-    }
-
-
-
-
-
-
-
-    /**
-     * @return the current price of the quotation
-     */
-    public double getPrice() {
-        return quarterHourData.get(quarterHourData.size() - 1).getPrice();
     }
 
     @Override

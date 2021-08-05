@@ -14,7 +14,7 @@ import java.util.UUID;
  * parameter and the date at which it was bought
  */
 public class Share {
-    private final UUID uuid, ownerUuid;
+    private final UUID uuid, owner;
     private final ShareType type;
     private final Quotation quotation;
     private final long timeStamp;
@@ -36,14 +36,15 @@ public class Share {
      *                  or lost by a share purchase
      * @param shares    Amount of shares purchased
      */
-    public Share(ShareType type, UUID ownerUuid, Quotation quotation, double leverage, double shares, double maxPrice, double minPrice) {
-        this(UUID.randomUUID(), ownerUuid, type, quotation, quotation.getPrice(), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
+    public Share(ShareType type, UUID owner, Quotation quotation, double leverage, double shares, double maxPrice, double minPrice) {
+        this(UUID.randomUUID(), owner, type, quotation, quotation.getPrice(), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
     }
 
     /**
      * Public construtor
      *
      * @param uuid         Share unique identifier
+     * @param owner        Share owner (player) UUID
      * @param type         Type of share
      * @param quotation    Quotation the share is from
      * @param initialPrice Stock price when quotation was created
@@ -52,9 +53,9 @@ public class Share {
      * @param shares       Amount of shares purchased
      * @param timeStamp    Time of share creation (millis)
      */
-    public Share(UUID uuid, UUID ownerUuid, ShareType type, Quotation quotation, double initialPrice, double leverage, double shares, double maxPrice, double minPrice, long timeStamp) {
+    public Share(UUID uuid, UUID owner, ShareType type, Quotation quotation, double initialPrice, double leverage, double shares, double maxPrice, double minPrice, long timeStamp) {
         this.uuid = uuid;
-        this.ownerUuid = ownerUuid;
+        this.owner = owner;
         this.type = type;
         this.quotation = quotation;
         this.initialPrice = initialPrice;
@@ -70,28 +71,28 @@ public class Share {
      */
     public Share(ConfigurationSection config) {
         this.uuid = UUID.fromString(config.getName());
-        this.ownerUuid = UUID.fromString(config.getString("owneruuid"));
+        this.owner = UUID.fromString(config.getString("owner"));
         this.type = ShareType.valueOf(config.getString("type"));
         this.quotation = Stonks.plugin.quotationManager.get(config.getString("quotation"));
         this.shares = config.getDouble("shares");
         this.leverage = config.getDouble("leverage");
         this.timeStamp = config.getLong("timestamp");
         this.initialPrice = config.getDouble("initial");
-        this.maxPrice=config.getDouble("maxprice");
-        this.maxPrice=config.getDouble("minprice");
+        this.maxPrice = config.getDouble("max-price");
+        this.maxPrice = config.getDouble("min-price");
         this.wallet = config.getDouble("wallet");
     }
 
     public void saveInConfig(ConfigurationSection config) {
         config.set(uuid.toString() + ".type", type.name());
-        config.set(uuid.toString() + ".owneruuid", ownerUuid.toString());
+        config.set(uuid.toString() + ".owner", owner.toString());
         config.set(uuid.toString() + ".quotation", quotation.getId());
         config.set(uuid.toString() + ".shares", shares);
         config.set(uuid.toString() + ".leverage", leverage);
         config.set(uuid.toString() + ".timestamp", timeStamp);
         config.set(uuid.toString() + ".initial", initialPrice);
-        config.set(uuid.toString() + ".maxPrice", maxPrice);
-        config.set(uuid.toString() + ".minPrice", minPrice);
+        config.set(uuid.toString() + ".max-price", maxPrice);
+        config.set(uuid.toString() + ".min-price", minPrice);
         config.set(uuid.toString() + ".wallet", wallet);
     }
 
@@ -99,8 +100,8 @@ public class Share {
         return uuid;
     }
 
-    public UUID getOwnerUuid() {
-        return ownerUuid;
+    public UUID getOwner() {
+        return owner;
     }
 
     public ShareType getType() {
@@ -145,7 +146,6 @@ public class Share {
     public double getMinPrice() {
         return minPrice;
     }
-
 
     public void setWallet(double wallet) {
         this.wallet = wallet;

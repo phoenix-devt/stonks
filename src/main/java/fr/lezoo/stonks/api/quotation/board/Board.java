@@ -150,7 +150,7 @@ public class Board {
         // If not enough data on quotation data we take care of avoiding IndexOutOfBounds
         BufferedImage image = new BufferedImage(BOARD_WIDTH, BOARD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) image.getGraphics();
-        List<QuotationInfo> quotationData = quotation.getCorrespondingData(time);
+        List<QuotationInfo> quotationData = quotation.getData(time);
         //If the quotation is Empty we print an error
         Validate.isTrue(quotationData.size()!=0,"The quotation : "+quotation.getId()+" has no values!!");
 

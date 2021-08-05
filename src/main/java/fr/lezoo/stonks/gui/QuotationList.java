@@ -84,7 +84,7 @@ public class QuotationList extends EditableInventory {
             }
 
             // Next Page
-            if (item instanceof PreviousPageItem && page < maxPage) {
+            if (item instanceof NextPageItem && page < maxPage) {
                 page++;
                 open();
                 return;
@@ -101,7 +101,6 @@ public class QuotationList extends EditableInventory {
                 NBTItem nbt = NBTItem.get(event.getCurrentItem());
                 String quotationId = nbt.getString("quotationId");
                 Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
-                Validate.notNull(quotation, "Could not find quotation with ID '" + quotationId + "'");
 
                 Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, quotation).open();
             }

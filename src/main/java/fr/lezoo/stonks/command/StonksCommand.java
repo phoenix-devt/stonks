@@ -141,7 +141,7 @@ public class StonksCommand implements CommandExecutor {
 
             if (args[1].equalsIgnoreCase("board")) {
                 if (args.length != 6) {
-                    player.sendMessage(ChatColor.RED + "Usage: /stonks display board <quotation> <quotation-time-display> <width> <height>");
+                    player.sendMessage(ChatColor.RED + "Usage: /stonks adddisplay board <quotation> <quotation-time-display> <width> <height>");
                     return true;
                 }
 
