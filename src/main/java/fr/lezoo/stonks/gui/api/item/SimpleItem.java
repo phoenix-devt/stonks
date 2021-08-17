@@ -2,13 +2,14 @@ package fr.lezoo.stonks.gui.api.item;
 
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.Inventory;
 
 /**
  * An inventory item that has no particular placeholder
  * yet it DOES support PAPI placeholders.
  */
-public class SimplePlaceholderItem<T extends GeneratedInventory> extends PlaceholderItem<T> {
-    public SimplePlaceholderItem(ConfigurationSection config) {
+public class SimpleItem<T extends GeneratedInventory> extends InventoryItem<T> {
+    public SimpleItem(ConfigurationSection config) {
         super(config);
     }
 

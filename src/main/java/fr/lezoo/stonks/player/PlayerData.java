@@ -1,11 +1,11 @@
 package fr.lezoo.stonks.player;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
+import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.message.Message;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -176,7 +176,7 @@ public class PlayerData {
      * @param amount    Amount of shares bought
      * @return If the share was successfully bought or not
      */
-    public boolean buyShare(Quotation quotation, ShareType type, double amount,double maxPrice,double minPrice) {
+    public boolean buyShare(Quotation quotation, ShareType type, double amount, double maxPrice, double minPrice) {
         double price = quotation.getPrice() * amount;
 
         // Check for balance
@@ -187,7 +187,7 @@ public class PlayerData {
         }
 
         // Check for Bukkit event
-        Share share = new Share(type,player.getUniqueId(), quotation, leverage, amount,minPrice,maxPrice);
+        Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, minPrice, maxPrice);
 
         PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, quotation, share);
         Bukkit.getPluginManager().callEvent(called);

@@ -10,6 +10,7 @@ import java.util.Set;
 /**
  * Class used to manipulate item NBT tags.
  */
+@Deprecated
 public abstract class NBTItem {
     private final ItemStack item;
 

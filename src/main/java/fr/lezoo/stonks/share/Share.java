@@ -20,9 +20,10 @@ public class Share {
     private final long timeStamp;
     private final double initialPrice;
 
-
-    //maxPrice and minPrice corresponds to the prices where it sells of automatically
-    // These can be modified by other plugins freely
+    /*
+     * These fields can be modified by other plugins freely. maxPrice
+     * and minPrice corresponds to the prices where it sells automatically
+     */
     private double leverage, shares, maxPrice, minPrice;
 
     private double wallet;

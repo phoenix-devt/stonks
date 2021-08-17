@@ -8,14 +8,14 @@ import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
-import fr.lezoo.stonks.gui.api.item.PlaceholderItem;
 import fr.lezoo.stonks.gui.api.item.Placeholders;
-import fr.lezoo.stonks.gui.api.item.SimplePlaceholderItem;
+import fr.lezoo.stonks.gui.api.item.SimpleItem;
 import fr.lezoo.stonks.version.ItemTag;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
@@ -43,7 +43,7 @@ public class PortfolioList extends EditableInventory {
         if (function.equalsIgnoreCase("previous-page"))
             return new PreviousPageItem(config);
 
-        return new SimplePlaceholderItem(config);
+        return new SimpleItem(config);
     }
 
     public GeneratedInventory generate(PlayerData player) {
@@ -104,7 +104,7 @@ public class PortfolioList extends EditableInventory {
         }
     }
 
-    public class NextPageItem extends SimplePlaceholderItem<GeneratedPortfolioList> {
+    public class NextPageItem extends SimpleItem<GeneratedPortfolioList> {
         public NextPageItem(ConfigurationSection config) {
             super(config);
         }
@@ -115,7 +115,7 @@ public class PortfolioList extends EditableInventory {
         }
     }
 
-    public class PreviousPageItem extends SimplePlaceholderItem<GeneratedPortfolioList> {
+    public class PreviousPageItem extends SimpleItem<GeneratedPortfolioList> {
         public PreviousPageItem(ConfigurationSection config) {
             super(config);
         }
@@ -126,13 +126,13 @@ public class PortfolioList extends EditableInventory {
         }
     }
 
-    public class QuotationItem extends PlaceholderItem<GeneratedPortfolioList> {
-        private final SimplePlaceholderItem noQuotation;
+    public class QuotationItem extends InventoryItem<GeneratedPortfolioList> {
+        private final SimpleItem noQuotation;
 
         public QuotationItem(ConfigurationSection config) {
             super(config);
 
-            noQuotation = new SimplePlaceholderItem(config.getConfigurationSection("no-quotation"));
+            noQuotation = new SimpleItem(config.getConfigurationSection("no-quotation"));
         }
 
         @Override

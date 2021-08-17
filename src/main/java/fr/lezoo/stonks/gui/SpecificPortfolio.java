@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.version.NBTItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.api.event.PlayerCloseShareEvent;
@@ -10,9 +11,8 @@ import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
-import fr.lezoo.stonks.gui.api.item.PlaceholderItem;
 import fr.lezoo.stonks.gui.api.item.Placeholders;
-import fr.lezoo.stonks.gui.api.item.SimplePlaceholderItem;
+import fr.lezoo.stonks.gui.api.item.SimpleItem;
 import fr.lezoo.stonks.version.ItemTag;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -46,7 +46,7 @@ public class SpecificPortfolio extends EditableInventory {
         if (function.equalsIgnoreCase("previous-page"))
             return new PreviousPageItem(config);
 
-        return new SimplePlaceholderItem(config);
+        return new SimpleItem(config);
     }
 
     public GeneratedInventory generate(PlayerData player, Quotation quotation) {
@@ -108,7 +108,7 @@ public class SpecificPortfolio extends EditableInventory {
                 double gain = share.calculateGain(quotation), earned = share.getCloseEarning(quotation);
                 Message.CLOSE_SHARES.format("shares", "" + share.getAmount(),
                         "company", quotation.getCompanyName(),
-                        "gain", formatGain(gain)).send(player);
+                        "gain", Utils.formatGain(gain)).send(player);
                 Stonks.plugin.economy.depositPlayer(player, earned);
                 playerData.getShares(quotation).remove(share);
 
@@ -122,7 +122,7 @@ public class SpecificPortfolio extends EditableInventory {
         }
     }
 
-    public class NextPageItem extends SimplePlaceholderItem<GeneratedSpecificPortfolio> {
+    public class NextPageItem extends SimpleItem<GeneratedSpecificPortfolio> {
         public NextPageItem(ConfigurationSection config) {
             super(config);
         }
@@ -133,7 +133,7 @@ public class SpecificPortfolio extends EditableInventory {
         }
     }
 
-    public class PreviousPageItem extends SimplePlaceholderItem<GeneratedSpecificPortfolio> {
+    public class PreviousPageItem extends SimpleItem<GeneratedSpecificPortfolio> {
         public PreviousPageItem(ConfigurationSection config) {
             super(config);
         }
@@ -144,13 +144,13 @@ public class SpecificPortfolio extends EditableInventory {
         }
     }
 
-    public class ShareItem extends PlaceholderItem<GeneratedSpecificPortfolio> {
-        private final SimplePlaceholderItem noShare;
+    public class ShareItem extends InventoryItem<GeneratedSpecificPortfolio> {
+        private final SimpleItem noShare;
 
         public ShareItem(ConfigurationSection config) {
             super(config);
 
-            noShare = new SimplePlaceholderItem(config.getConfigurationSection("no-share"));
+            noShare = new SimpleItem(config.getConfigurationSection("no-share"));
         }
 
         @Override
@@ -194,13 +194,5 @@ public class SpecificPortfolio extends EditableInventory {
 
             return holders;
         }
-    }
-
-    private String formatGain(double gain) {
-        if (gain == 0)
-            return "0";
-        if (gain < 0)
-            return ChatColor.RED + Stonks.plugin.configManager.stockPriceFormat.format(gain);
-        return ChatColor.GREEN + "+" + Stonks.plugin.configManager.stockPriceFormat.format(gain);
     }
 }

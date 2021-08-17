@@ -1,6 +1,11 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.gui.api.EditableInventory;
+import fr.lezoo.stonks.gui.api.GeneratedInventory;
+import fr.lezoo.stonks.gui.api.item.InventoryItem;
+import fr.lezoo.stonks.gui.api.item.Placeholders;
+import fr.lezoo.stonks.gui.api.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
@@ -8,12 +13,6 @@ import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.ChatInput;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
-import fr.lezoo.stonks.gui.api.EditableInventory;
-import fr.lezoo.stonks.gui.api.GeneratedInventory;
-import fr.lezoo.stonks.gui.api.item.InventoryItem;
-import fr.lezoo.stonks.gui.api.item.PlaceholderItem;
-import fr.lezoo.stonks.gui.api.item.Placeholders;
-import fr.lezoo.stonks.gui.api.item.SimplePlaceholderItem;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -46,14 +45,12 @@ public class QuotationShareMenu extends EditableInventory {
         if (function.startsWith("sell"))
             return new SellShareItem(config);
 
-        return new SimplePlaceholderItem(config);
+        return new SimpleItem(config);
     }
 
     public GeneratedInventory generate(PlayerData player, Quotation quotation) {
         return new GeneratedShareMenu(player, this, quotation);
     }
-
-
 
     public class GeneratedShareMenu extends GeneratedInventory {
         private final Quotation quotation;
@@ -116,13 +113,13 @@ public class QuotationShareMenu extends EditableInventory {
                         return false;
                     }
 
-                    playerData.buyShare(quotation, type, amount);
+                    playerData.buyShare(quotation, type, amount, -1, -1);
                     return true;
                 });
             }
 
             if (item instanceof AmountActionItem)
-                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.POSITIVE : ShareType.SHORT, ((AmountActionItem) item).getAmount());
+                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.POSITIVE : ShareType.SHORT, ((AmountActionItem) item).getAmount(), -1, -1);
         }
 
         @Override
@@ -143,7 +140,7 @@ public class QuotationShareMenu extends EditableInventory {
     /**
      * Item when selling a specific amount of shares
      */
-    public class SellShareItem extends PlaceholderItem<GeneratedShareMenu> implements AmountActionItem {
+    public class SellShareItem extends InventoryItem<GeneratedShareMenu> implements AmountActionItem {
         private final int amount;
 
         public SellShareItem(ConfigurationSection config) {
@@ -172,7 +169,7 @@ public class QuotationShareMenu extends EditableInventory {
     /**
      * Item when buying a specific amount of shares
      */
-    public class BuyShareItem extends PlaceholderItem<GeneratedShareMenu> implements AmountActionItem {
+    public class BuyShareItem extends InventoryItem<GeneratedShareMenu> implements AmountActionItem {
         private final int amount;
 
         public BuyShareItem(ConfigurationSection config) {
@@ -201,7 +198,7 @@ public class QuotationShareMenu extends EditableInventory {
     /**
      * Item when buying or short selling a custom amount of shares
      */
-    public class CustomActionItem extends PlaceholderItem<GeneratedShareMenu> {
+    public class CustomActionItem extends InventoryItem<GeneratedShareMenu> {
         public CustomActionItem(ConfigurationSection config) {
             super(config);
         }
@@ -216,7 +213,7 @@ public class QuotationShareMenu extends EditableInventory {
         }
     }
 
-    public class LeverageItem extends PlaceholderItem<GeneratedShareMenu> {
+    public class LeverageItem extends InventoryItem<GeneratedShareMenu> {
         public LeverageItem(ConfigurationSection config) {
             super(config);
         }
@@ -231,7 +228,7 @@ public class QuotationShareMenu extends EditableInventory {
         }
     }
 
-    public class QuotationInfoItem extends PlaceholderItem<GeneratedShareMenu> {
+    public class QuotationInfoItem extends InventoryItem<GeneratedShareMenu> {
         public QuotationInfoItem(ConfigurationSection config) {
             super(config);
         }

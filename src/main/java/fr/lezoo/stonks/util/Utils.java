@@ -8,7 +8,6 @@ import org.bukkit.util.Vector;
 import java.text.DecimalFormat;
 
 public class Utils {
-
     public static DecimalFormat singleDigit = new DecimalFormat("0.#");
 
     /**
@@ -31,8 +30,6 @@ public class Utils {
         return Math.floor(x * pow) / pow;
     }
 
-
-
     /**
      * @return The direction to follow to place the item frames
      * on a quotation board
@@ -52,13 +49,15 @@ public class Utils {
         }
     }
 
-    public static final String formatRate(double growthRate) {
-        if (growthRate == 0)
+    public static String formatRate(double growthRate) {
+        return formatGain(growthRate) + "%";
+    }
+
+    public static String formatGain(double d) {
+        if (d == 0)
             return ChatColor.WHITE + "0";
 
         DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
-        if (growthRate < 0)
-            return ChatColor.RED + format.format(growthRate) + "%";
-        return ChatColor.GREEN + "+" + format.format(growthRate) + "%";
+        return d < 0 ? ChatColor.RED + format.format(d) : ChatColor.GREEN + "+" + format.format(d);
     }
 }

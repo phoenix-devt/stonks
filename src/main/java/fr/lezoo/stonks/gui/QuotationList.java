@@ -9,9 +9,8 @@ import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
-import fr.lezoo.stonks.gui.api.item.PlaceholderItem;
 import fr.lezoo.stonks.gui.api.item.Placeholders;
-import fr.lezoo.stonks.gui.api.item.SimplePlaceholderItem;
+import fr.lezoo.stonks.gui.api.item.SimpleItem;
 import fr.lezoo.stonks.version.ItemTag;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -44,7 +43,7 @@ public class QuotationList extends EditableInventory {
         if (function.equalsIgnoreCase("previous-page"))
             return new PreviousPageItem(config);
 
-        return new SimplePlaceholderItem(config);
+        return new SimpleItem(config);
     }
 
     public GeneratedInventory generate(PlayerData player) {
@@ -111,7 +110,7 @@ public class QuotationList extends EditableInventory {
         }
     }
 
-    public class NextPageItem extends SimplePlaceholderItem<GeneratedQuotationList> {
+    public class NextPageItem extends SimpleItem<GeneratedQuotationList> {
         public NextPageItem(ConfigurationSection config) {
             super(config);
         }
@@ -122,7 +121,7 @@ public class QuotationList extends EditableInventory {
         }
     }
 
-    public class PreviousPageItem extends SimplePlaceholderItem<GeneratedQuotationList> {
+    public class PreviousPageItem extends SimpleItem<GeneratedQuotationList> {
         public PreviousPageItem(ConfigurationSection config) {
             super(config);
         }
@@ -133,13 +132,13 @@ public class QuotationList extends EditableInventory {
         }
     }
 
-    public class QuotationItem extends PlaceholderItem<GeneratedQuotationList> {
-        private final SimplePlaceholderItem noQuotation;
+    public class QuotationItem extends InventoryItem<GeneratedQuotationList> {
+        private final SimpleItem noQuotation;
 
         public QuotationItem(ConfigurationSection config) {
             super(config);
 
-            noQuotation = new SimplePlaceholderItem(config.getConfigurationSection("no-quotation"));
+            noQuotation = new SimpleItem(config.getConfigurationSection("no-quotation"));
         }
 
         @Override
