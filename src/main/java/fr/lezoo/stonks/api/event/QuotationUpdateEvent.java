@@ -1,6 +1,6 @@
 package fr.lezoo.stonks.api.event;
 
-import fr.lezoo.stonks.api.quotation.Quotation;
+import fr.lezoo.stonks.quotation.Quotation;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

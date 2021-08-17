@@ -1,14 +1,14 @@
 package fr.lezoo.stonks;
 
-import fr.lezoo.stonks.api.util.ConfigSchedule;
+import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.command.QuotationsCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
 import fr.lezoo.stonks.command.StonksCommand;
 import fr.lezoo.stonks.command.completion.StonksCommandCompletion;
-import fr.lezoo.stonks.comp.placeholder.DefaultPlaceholderParser;
-import fr.lezoo.stonks.comp.placeholder.PlaceholderAPIParser;
-import fr.lezoo.stonks.comp.placeholder.PlaceholderParser;
-import fr.lezoo.stonks.comp.placeholder.StonksPlaceholders;
+import fr.lezoo.stonks.compat.placeholder.DefaultPlaceholderParser;
+import fr.lezoo.stonks.compat.placeholder.PlaceholderAPIParser;
+import fr.lezoo.stonks.compat.placeholder.PlaceholderParser;
+import fr.lezoo.stonks.compat.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.DisplaySignListener;
 import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.listener.TradingInteractListener;

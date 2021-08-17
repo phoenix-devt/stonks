@@ -1,9 +1,9 @@
 package fr.lezoo.stonks.command;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.playerdata.PlayerData;
-import fr.lezoo.stonks.api.share.Share;
-import fr.lezoo.stonks.api.util.message.Message;
+import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

@@ -1,10 +1,10 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.ConfigFile;
-import fr.lezoo.stonks.api.playerdata.PlayerData;
-import fr.lezoo.stonks.api.quotation.Quotation;
-import fr.lezoo.stonks.api.share.Share;
+import fr.lezoo.stonks.util.ConfigFile;
+import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.share.Share;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.file.FileConfiguration;
 

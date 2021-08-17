@@ -1,15 +1,13 @@
 package fr.lezoo.stonks.listener.temp;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.NBTItem;
-import fr.lezoo.stonks.api.quotation.board.Board;
+import fr.lezoo.stonks.quotation.board.Board;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 

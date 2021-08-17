@@ -1,6 +1,6 @@
 package fr.lezoo.stonks.version.wrapper;
 
-import fr.lezoo.stonks.api.NBTItem;
+import fr.lezoo.stonks.version.NBTItem;
 import org.bukkit.inventory.ItemStack;
 
 /**

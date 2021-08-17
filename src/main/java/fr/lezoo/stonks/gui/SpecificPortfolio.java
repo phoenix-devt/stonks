@@ -1,12 +1,12 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.NBTItem;
-import fr.lezoo.stonks.api.playerdata.PlayerData;
+import fr.lezoo.stonks.version.NBTItem;
+import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.api.event.PlayerCloseShareEvent;
-import fr.lezoo.stonks.api.quotation.Quotation;
-import fr.lezoo.stonks.api.share.Share;
-import fr.lezoo.stonks.api.util.message.Message;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;

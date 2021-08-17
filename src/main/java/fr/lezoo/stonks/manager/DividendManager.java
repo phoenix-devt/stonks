@@ -1,8 +1,8 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.quotation.Quotation;
-import fr.lezoo.stonks.api.share.Share;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.share.Share;
 import org.bukkit.Bukkit;
 
 import java.time.LocalDateTime;

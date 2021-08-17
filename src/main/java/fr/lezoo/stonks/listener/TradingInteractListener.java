@@ -1,12 +1,11 @@
 package fr.lezoo.stonks.listener;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.playerdata.PlayerData;
-import fr.lezoo.stonks.api.quotation.board.Board;
-import fr.lezoo.stonks.api.share.ShareType;
-import fr.lezoo.stonks.api.util.Utils;
-import fr.lezoo.stonks.api.util.message.Message;
-import org.bukkit.Bukkit;
+import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.quotation.board.Board;
+import fr.lezoo.stonks.share.ShareType;
+import fr.lezoo.stonks.util.Utils;
+import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;

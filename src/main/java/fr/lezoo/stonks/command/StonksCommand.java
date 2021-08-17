@@ -1,12 +1,12 @@
 package fr.lezoo.stonks.command;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.playerdata.PlayerData;
-import fr.lezoo.stonks.api.quotation.CreatedQuotation;
-import fr.lezoo.stonks.api.quotation.Quotation;
-import fr.lezoo.stonks.api.quotation.QuotationInfo;
-import fr.lezoo.stonks.api.quotation.QuotationTimeDisplay;
-import fr.lezoo.stonks.api.util.message.Message;
+import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.quotation.CreatedQuotation;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.quotation.QuotationInfo;
+import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

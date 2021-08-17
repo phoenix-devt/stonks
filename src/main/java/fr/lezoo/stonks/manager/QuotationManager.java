@@ -1,10 +1,9 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.ConfigFile;
-import fr.lezoo.stonks.api.quotation.Quotation;
-import fr.lezoo.stonks.api.quotation.QuotationInfo;
-import fr.lezoo.stonks.api.quotation.CreatedQuotation;
+import fr.lezoo.stonks.util.ConfigFile;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.quotation.CreatedQuotation;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;

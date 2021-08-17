@@ -1,11 +1,11 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.ConfigFile;
-import fr.lezoo.stonks.api.CustomItem;
-import fr.lezoo.stonks.api.quotation.QuotationTimeDisplay;
-import fr.lezoo.stonks.api.util.ConfigSchedule;
-import fr.lezoo.stonks.api.util.message.Message;
+import fr.lezoo.stonks.util.ConfigFile;
+import fr.lezoo.stonks.util.CustomItem;
+import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.util.ConfigSchedule;
+import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.gui.QuotationList;
 import fr.lezoo.stonks.gui.QuotationShareMenu;
 import fr.lezoo.stonks.gui.api.EditableInventory;
@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

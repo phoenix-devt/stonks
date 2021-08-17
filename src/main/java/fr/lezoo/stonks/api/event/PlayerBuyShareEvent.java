@@ -1,8 +1,8 @@
 package fr.lezoo.stonks.api.event;
 
-import fr.lezoo.stonks.api.playerdata.PlayerData;
-import fr.lezoo.stonks.api.share.Share;
-import fr.lezoo.stonks.api.quotation.Quotation;
+import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.quotation.Quotation;
 import org.bukkit.event.HandlerList;
 
 public class PlayerBuyShareEvent extends PlayerDataEvent {

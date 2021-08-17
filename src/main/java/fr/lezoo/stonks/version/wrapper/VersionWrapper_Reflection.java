@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.version.wrapper;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.NBTItem;
+import fr.lezoo.stonks.version.NBTItem;
 import fr.lezoo.stonks.version.ItemTag;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.inventory.ItemStack;
