@@ -100,7 +100,7 @@ public class QuotationList extends EditableInventory {
                 NBTItem nbt = NBTItem.get(event.getCurrentItem());
                 String quotationId = nbt.getString("quotationId");
                 Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
-
+                Validate.notNull(quotation, "Could not find quotation with ID '" + quotationId + "'");
                 Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, quotation).open();
             }
         }
@@ -132,6 +132,7 @@ public class QuotationList extends EditableInventory {
             return inv.page > 0;
         }
     }
+
 
     public class QuotationItem extends PlaceholderItem<GeneratedQuotationList> {
         private final SimplePlaceholderItem noQuotation;

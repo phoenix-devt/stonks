@@ -26,8 +26,8 @@ quotation-data-number: 400
 offer-demand-impact: 0.5
 
 #The volatily of the stocks 0 is no volatility and 1 is very volatile
-#With max volatily and max demandimpact the stocks can change by 10% in 1 hour in the worst case
-volatility: 0.5
+#With volatality around 1 demandimpact the stocks can change by 10% in 1 hour in the worst case
+volatility: 0.01
 
 # The way dates are formatted in the plugin
 # Check out 'DateFormat java' online for more info

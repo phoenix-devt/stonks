@@ -67,6 +67,7 @@ public abstract class PlaceholderItem<T extends GeneratedInventory> extends Inve
 
     public abstract Placeholders getPlaceholders(T inv, int n);
 
+
     @Override
     public ItemStack getDisplayedItem(T inv, int n) {
 
