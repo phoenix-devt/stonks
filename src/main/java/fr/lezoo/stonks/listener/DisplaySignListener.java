@@ -2,7 +2,7 @@ package fr.lezoo.stonks.listener;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.QuotationUpdateEvent;
-import fr.lezoo.stonks.quotation.display.sign.DisplaySign;
+import fr.lezoo.stonks.display.sign.DisplaySign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

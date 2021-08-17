@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation.display.sign;
+package fr.lezoo.stonks.display.sign;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.util.Position;

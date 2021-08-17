@@ -2,7 +2,7 @@ package fr.lezoo.stonks.listener;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.quotation.board.Board;
+import fr.lezoo.stonks.display.board.Board;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
@@ -24,6 +24,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
+import java.util.List;
 import java.util.UUID;
 
 public class TradingInteractListener implements Listener {
@@ -110,7 +111,7 @@ public class TradingInteractListener implements Listener {
     //Does what need to be done when the top square is touched
     public void checkUpSquare() {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.21) && (verticalOffset > 0.02)) {
-            player.sendMessage("" + 0);
+
         }
     }
 
@@ -148,7 +149,7 @@ public class TradingInteractListener implements Listener {
 
     public void checkDownSquare() {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.95) && (verticalOffset > 0.75)) {
-            player.sendMessage("" + 3);
+            Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(Stonks.plugin.playerManager.get(player), board.getQuotation()).open();
         }
     }
 
@@ -157,34 +158,34 @@ public class TradingInteractListener implements Listener {
     private double[] readBook() {
         ItemStack book = player.getInventory().getItemInMainHand();
         BookMeta meta = (BookMeta) book.getItemMeta();
-        String[] lines = meta.getPages().get(0).split("\n");
+        List<String> pages =meta.getPages();
 
-        //We look at line4,5,6
+        
         double amount = 0;
-        if (lines.length == 3) {
+        if (pages.size() ==0) {
             player.sendMessage(ChatColor.RED+"You didn't enter anything, write after the instructions by coming back to the line");
             return null;
         }
         //We cast into double but want it to be an int, we cant lose half a diamond... easier to do so.
         try {
-            amount = (double) Integer.parseInt(lines[3]);
+            amount = (double) Integer.parseInt(pages.get(0));
         } catch (IllegalArgumentException e) {
             player.sendMessage(ChatColor.RED + "You didn't enter the money normally");
             return null;
         }
         double maxPrice = Float.POSITIVE_INFINITY;
         double minPrice = 0;
-        if (lines.length >= 5) {
+        if (pages.size() >= 2) {
             try {
-                maxPrice = Double.parseDouble(lines[4]);
+                maxPrice = Double.parseDouble(pages.get(1));
             } catch (IllegalArgumentException e) {
                 player.sendMessage(ChatColor.RED + "You didn't enter the maxPrice normally");
                 return null;
             }
         }
-        if (lines.length >= 6) {
+        if (pages.size() >= 3) {
             try {
-                minPrice = Double.parseDouble(lines[5]);
+                minPrice = Double.parseDouble(pages.get(2));
             } catch (IllegalArgumentException e) {
                 player.sendMessage(ChatColor.RED + "You didn't enter the minPrice normally");
                 return null;

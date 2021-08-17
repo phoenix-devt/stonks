@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation.board;
+package fr.lezoo.stonks.display.board;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;

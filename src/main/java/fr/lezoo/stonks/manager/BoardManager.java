@@ -2,7 +2,7 @@ package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.util.ConfigFile;
-import fr.lezoo.stonks.quotation.board.Board;
+import fr.lezoo.stonks.display.board.Board;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;

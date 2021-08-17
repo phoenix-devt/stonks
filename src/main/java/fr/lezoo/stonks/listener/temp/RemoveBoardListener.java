@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.listener.temp;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.quotation.board.Board;
+import fr.lezoo.stonks.display.board.Board;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ItemFrame;

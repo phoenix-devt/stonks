@@ -26,6 +26,7 @@ public class PlayerData {
      */
     private final Map<String, Set<Share>> shares = new HashMap<>();
 
+
     public PlayerData(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();

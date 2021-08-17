@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation.map;
+package fr.lezoo.stonks.display.map;
 
 
 import fr.lezoo.stonks.Stonks;

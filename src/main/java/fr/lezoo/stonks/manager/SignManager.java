@@ -2,7 +2,7 @@ package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.display.sign.DisplaySign;
+import fr.lezoo.stonks.display.sign.DisplaySign;
 import org.apache.commons.lang.Validate;
 
 import java.util.HashMap;

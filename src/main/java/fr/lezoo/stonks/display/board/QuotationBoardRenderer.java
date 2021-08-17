@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation.board;
+package fr.lezoo.stonks.display.board;
 
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;

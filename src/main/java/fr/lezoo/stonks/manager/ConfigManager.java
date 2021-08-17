@@ -1,12 +1,15 @@
 package fr.lezoo.stonks.manager;
 
+import com.sun.org.apache.xpath.internal.operations.Quo;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.gui.PortfolioList;
 import fr.lezoo.stonks.gui.QuotationList;
 import fr.lezoo.stonks.gui.QuotationShareMenu;
 import fr.lezoo.stonks.gui.SpecificPortfolio;
 import fr.lezoo.stonks.gui.api.EditableInventory;
+import fr.lezoo.stonks.item.QuotationMap;
 import fr.lezoo.stonks.item.SharePaper;
+import fr.lezoo.stonks.item.TradingBook;
 import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.ConfigSchedule;
@@ -28,6 +31,8 @@ public class ConfigManager {
 
     // List of items to reload
     public SharePaper sharePaper;
+    public TradingBook tradingBook;
+    public QuotationMap quotationMap;
 
     // Accessible public GUIs
     public final QuotationList QUOTATION_LIST = new QuotationList();
@@ -72,25 +77,6 @@ public class ConfigManager {
         quotationRefreshTime = QuotationTimeDisplay.QUARTERHOUR.getTime() / quotationDataNumber;
         maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
 
-        currentPriceText = Stonks.plugin.getConfig().getString("currentpricetext");
-        lowestPriceText = Stonks.plugin.getConfig().getString("lowestpricetext");
-        highestPriceText = Stonks.plugin.getConfig().getString("highestpricetext");
-        evolutionText = Stonks.plugin.getConfig().getString("evolutiontext");
-        companyNameText = Stonks.plugin.getConfig().getString("companynametext");
-        stockNameText = Stonks.plugin.getConfig().getString("stocknametext");
-        timeVisualizedText = Stonks.plugin.getConfig().getString("timevisualizedtext");
-        quotationTypeText = Stonks.plugin.getConfig().getString("quotationtypetext");
-        quotationMapName = Stonks.plugin.getConfig().getString("quotationmapnametext");
-        tradingBookName= Stonks.plugin.getConfig().getString("tradingbookname");
-        tradingBookLore = Stonks.plugin.getConfig().getStringList("tradingbooklore");
-        StringBuilder builder = new StringBuilder();
-        for(int i=0;i< Stonks.plugin.getConfig().getStringList("bookexplanationtext").size();i++) {
-            builder.append(Stonks.plugin.getConfig().getStringList("bookexplanationtext").get(i));
-            if(i < Stonks.plugin.getConfig().getStringList("bookexplanationtext").size()-1)
-                builder.append(" \n ");
-        }
-
-        bookExplanationText = builder.toString();
         // Useful checks
         Validate.isTrue(displaySignFormat.size() == 4, "Display sign format should be of length 4");
 
@@ -138,6 +124,10 @@ public class ConfigManager {
         // Reload items
         FileConfiguration config = new ConfigFile("/language", "items").getConfig();
         sharePaper = new SharePaper(config.getConfigurationSection("PHYSICAL_SHARE_BILL"));
+        quotationMap= new QuotationMap(config.getConfigurationSection("QUOTATION_MAP"));
+        tradingBook= new TradingBook(config.getConfigurationSection("TRADING_BOOK"));
+
+
 
         // Reload GUIs
         for (EditableInventory inv : guis)

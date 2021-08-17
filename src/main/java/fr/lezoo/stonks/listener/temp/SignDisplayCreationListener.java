@@ -3,7 +3,7 @@ package fr.lezoo.stonks.listener.temp;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.display.sign.DisplaySign;
+import fr.lezoo.stonks.display.sign.DisplaySign;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class SignDisplayCreationListener implements Listener {
+public class    SignDisplayCreationListener implements Listener {
     private final Quotation quotation;
     private final Player player;
 

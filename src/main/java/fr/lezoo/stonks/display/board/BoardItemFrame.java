@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation.board;
+package fr.lezoo.stonks.display.board;
 
 public class BoardItemFrame {
     private final Board board;

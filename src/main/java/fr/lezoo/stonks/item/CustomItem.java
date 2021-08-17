@@ -24,6 +24,22 @@ public abstract class CustomItem<T> {
         this.modelData = config.getInt("model-data");
     }
 
+    public Material getMaterial() {
+        return material;
+    }
+
+    public int getModelData() {
+        return modelData;
+    }
+
+    public List<String> getLore() {
+        return lore;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
     /**
      * Build an item using specific lore and name placeholders.
      *

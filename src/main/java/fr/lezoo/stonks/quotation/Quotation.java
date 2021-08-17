@@ -2,9 +2,9 @@ package fr.lezoo.stonks.quotation;
 
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.quotation.board.Board;
-import fr.lezoo.stonks.quotation.board.QuotationBoardRenderer;
-import fr.lezoo.stonks.quotation.map.QuotationMapRenderer;
+import fr.lezoo.stonks.display.board.Board;
+import fr.lezoo.stonks.display.board.QuotationBoardRenderer;
+import fr.lezoo.stonks.display.map.QuotationMapRenderer;
 import fr.lezoo.stonks.util.Utils;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
