@@ -2,8 +2,11 @@ package fr.lezoo.stonks.share;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -84,6 +87,30 @@ public class Share {
         this.wallet = config.getDouble("wallet");
     }
 
+    /**
+     * Reads a share from a NBT in which share data was saved.
+     * See {@link fr.lezoo.stonks.item.SharePaper} to see the data format
+     *
+     * @param nbt Item NBT to read
+     */
+    public Share(UUID owner, PersistentDataContainer nbt) {
+
+        // Info generated randomly
+        this.owner = owner;
+        this.uuid = UUID.randomUUID();
+
+        // Mandatory info
+        this.type = ShareType.valueOf(nbt.get(Utils.namespacedKey("ShareType"), PersistentDataType.STRING));
+        this.quotation = Objects.requireNonNull(Stonks.plugin.quotationManager.get(nbt.get(Utils.namespacedKey("StockId"), PersistentDataType.STRING)), "Could not find quotation");
+        this.timeStamp = nbt.get(Utils.namespacedKey("ShareTimeStamp"), PersistentDataType.LONG);
+        this.initialPrice = nbt.get(Utils.namespacedKey("ShareInitialPrice"), PersistentDataType.DOUBLE);
+
+        // Non final info
+        this.shares = nbt.get(Utils.namespacedKey("ShareAmount"), PersistentDataType.DOUBLE);
+        this.leverage = nbt.get(Utils.namespacedKey("ShareLeverage"), PersistentDataType.DOUBLE);
+        this.wallet = nbt.get(Utils.namespacedKey("ShareWallet"), PersistentDataType.DOUBLE);
+    }
+
     public void saveInConfig(ConfigurationSection config) {
         config.set(uuid.toString() + ".type", type.name());
         config.set(uuid.toString() + ".owner", owner.toString());
@@ -121,11 +148,18 @@ public class Share {
         return shares;
     }
 
+    /**
+     * @return Time (in millis) at which the share was created
+     */
+    public long getCreationTime() {
+        return timeStamp;
+    }
+
     public double getInitialPrice() {
         return initialPrice;
     }
 
-    public void setShares(double shares) {
+    public void setAmount(double shares) {
         this.shares = shares;
     }
 
@@ -164,19 +198,18 @@ public class Share {
     }
 
     /**
-     * @param quotation The quotation the share was bought from
      * @return Money earned by the player if he were to close
-     * this share right now. This might return a negative
+     *         this share right now. This might return a negative
      */
-    public double getCloseEarning(Quotation quotation) {
-        return calculateGain(quotation) + initialPrice * shares;
+    public double getCloseEarning() {
+        return calculateGain() + initialPrice * shares;
     }
 
     /**
      * @return Money gained by the player (may be negative)
-     * if he were to close the share right now
+     *         if he were to close the share right now
      */
-    public double calculateGain(Quotation quotation) {
+    public double calculateGain() {
 
         // Difference in price between when it was bought and now
         double diff = (quotation.getPrice() - initialPrice) * (type == ShareType.SHORT ? -1 : 1);

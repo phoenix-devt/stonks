@@ -2,6 +2,7 @@ package fr.lezoo.stonks.util;
 
 import fr.lezoo.stonks.Stonks;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
@@ -9,6 +10,7 @@ import java.text.DecimalFormat;
 
 public class Utils {
     public static DecimalFormat singleDigit = new DecimalFormat("0.#");
+    public static DecimalFormat fourDigits = new DecimalFormat("0.####");
 
     /**
      * Transforms 'badly-formatted ENUM name' into 'BADLY_FORMATTED_ENUM_NAME'
@@ -18,6 +20,10 @@ public class Utils {
      */
     public static String enumName(String str) {
         return str == null ? "" : str.toUpperCase().replace(" ", "_").replace("-", "_");
+    }
+
+    public static NamespacedKey namespacedKey(String str) {
+        return new NamespacedKey(Stonks.plugin, str);
     }
 
     /**

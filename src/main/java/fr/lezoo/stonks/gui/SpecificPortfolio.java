@@ -1,22 +1,23 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.util.Utils;
-import fr.lezoo.stonks.version.NBTItem;
-import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.api.event.PlayerCloseShareEvent;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.share.Share;
-import fr.lezoo.stonks.util.message.Message;
+import fr.lezoo.stonks.api.event.PlayerGenerateSharePaperEvent;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
 import fr.lezoo.stonks.gui.api.item.Placeholders;
 import fr.lezoo.stonks.gui.api.item.SimpleItem;
+import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.util.Utils;
+import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.version.ItemTag;
+import fr.lezoo.stonks.version.NBTItem;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
@@ -40,6 +41,9 @@ public class SpecificPortfolio extends EditableInventory {
         if (function.equalsIgnoreCase("share"))
             return new ShareItem(config);
 
+        if (function.equalsIgnoreCase("back"))
+            return new BackItem(config);
+
         if (function.equalsIgnoreCase("next-page"))
             return new NextPageItem(config);
 
@@ -55,19 +59,26 @@ public class SpecificPortfolio extends EditableInventory {
 
     public class GeneratedSpecificPortfolio extends GeneratedInventory {
         private final Quotation quotation;
-        private final List<Share> shares = new ArrayList<>();
-        private final int maxPage;
+        private final int perPage;
 
         // Page indexing arbitrarily starts at 0
         private int page = 0;
+
+        private final List<Share> shares = new ArrayList<>();
+        private int maxPage;
 
         public GeneratedSpecificPortfolio(PlayerData playerData, Quotation quotation, EditableInventory editable) {
             super(playerData, editable);
 
             // Get amount of shares displayed per page
-            int perPage = editable.getByFunction("share").getSlots().size();
-
+            this.perPage = editable.getByFunction("share").getSlots().size();
             this.quotation = quotation;
+
+            updateInventoryData();
+        }
+
+        private void updateInventoryData() {
+            shares.clear();
             shares.addAll(playerData.getShares(quotation));
             maxPage = Math.max(((int) Math.ceil((double) shares.size() / perPage)) - 1, 0);
         }
@@ -79,6 +90,12 @@ public class SpecificPortfolio extends EditableInventory {
 
         @Override
         public void whenClicked(InventoryClickEvent event, InventoryItem item) {
+
+            // Back to list
+            if (item instanceof BackItem) {
+                Stonks.plugin.configManager.PORTFOLIO_LIST.generate(playerData).open();
+                return;
+            }
 
             // Next Page
             if (item instanceof PreviousPageItem && page < maxPage) {
@@ -95,30 +112,63 @@ public class SpecificPortfolio extends EditableInventory {
             }
 
             if (item instanceof ShareItem) {
-                NBTItem nbt = NBTItem.get(event.getCurrentItem());
-                String shareId = nbt.getString("shareId");
-                Share share = playerData.getShareById(quotation, UUID.fromString(shareId));
 
-                PlayerCloseShareEvent called = new PlayerCloseShareEvent(playerData, quotation, share);
-                Bukkit.getPluginManager().callEvent(called);
-                if (called.isCancelled())
+                NBTItem nbt = NBTItem.get(event.getCurrentItem());
+                String shareId = nbt.getString("ShareId");
+                if (shareId.isEmpty())
                     return;
 
-                // Close share
-                double gain = share.calculateGain(quotation), earned = share.getCloseEarning(quotation);
-                Message.CLOSE_SHARES.format("shares", "" + share.getAmount(),
-                        "company", quotation.getCompanyName(),
-                        "gain", Utils.formatGain(gain)).send(player);
-                Stonks.plugin.economy.depositPlayer(player, earned);
-                playerData.getShares(quotation).remove(share);
+                Share share = playerData.getShareById(quotation, UUID.fromString(shareId));
 
-                Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, quotation).open();
+                if (event.getAction() == InventoryAction.PICKUP_HALF) {
+                    PlayerGenerateSharePaperEvent called = new PlayerGenerateSharePaperEvent(playerData, share);
+                    Bukkit.getPluginManager().callEvent(called);
+                    if (called.isCancelled())
+                        return;
+
+                    // Unregister share before
+                    playerData.unregisterShare(share);
+
+                    // Get and give bill
+                    ItemStack paper = Stonks.plugin.configManager.sharePaper.build(playerData.getPlayer(), share);
+                    for (ItemStack dropped : player.getInventory().addItem(paper).values())
+                        player.getWorld().dropItem(player.getLocation(), dropped);
+
+                    Message.GET_SHARE_PAPER.format("company", quotation.getCompanyName(),
+                            "shares", Utils.fourDigits.format(share.getAmount())).send(player);
+
+                    updateInventoryData();
+                    open();
+
+                } else if (event.getAction() == InventoryAction.PICKUP_ALL) {
+                    PlayerCloseShareEvent called = new PlayerCloseShareEvent(playerData, share);
+                    Bukkit.getPluginManager().callEvent(called);
+                    if (called.isCancelled())
+                        return;
+
+                    // Close share
+                    double gain = share.calculateGain(), earned = share.getCloseEarning();
+                    Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getAmount()),
+                            "company", quotation.getCompanyName(),
+                            "gain", Utils.formatGain(gain)).send(player);
+                    Stonks.plugin.economy.depositPlayer(player, earned);
+                    playerData.unregisterShare(share);
+
+                    updateInventoryData();
+                    open();
+                }
             }
         }
 
         @Override
         public void whenClosed(InventoryCloseEvent event) {
             // Nothing
+        }
+    }
+
+    public class BackItem extends SimpleItem<GeneratedSpecificPortfolio> {
+        public BackItem(ConfigurationSection config) {
+            super(config);
         }
     }
 
@@ -165,7 +215,7 @@ public class SpecificPortfolio extends EditableInventory {
 
             // Displayed required quotation
             NBTItem nbt = NBTItem.get(super.getDisplayedItem(inv, n));
-            nbt.addTag(new ItemTag("shareId", share.getUniqueId()));
+            nbt.addTag(new ItemTag("ShareId", share.getUniqueId().toString()));
             return nbt.toItem();
         }
 
@@ -185,12 +235,15 @@ public class SpecificPortfolio extends EditableInventory {
 
             holders.register("company-name", inv.quotation.getCompanyName());
             holders.register("stock-name", inv.quotation.getStockName());
+            holders.register("leverage", Utils.fourDigits.format(share.getLeverage()));
+            holders.register("amount", format.format(share.getAmount()));
 
-            holders.register("current-stock", inv.quotation.getPrice());
-            holders.register("initial-stock", share.getInitialPrice());
+            holders.register("current-stock", format.format(inv.quotation.getPrice()));
+            holders.register("initial-stock", format.format(share.getInitialPrice()));
 
-            holders.register("initial-share", share.getInitialPrice() * share.getAmount());
-            holders.register("gain", share.calculateGain(inv.quotation));
+            holders.register("initial-share", format.format(share.getInitialPrice() * share.getAmount()));
+            holders.register("current-share", format.format(share.getCloseEarning()));
+            holders.register("gain", Utils.formatGain(share.calculateGain()));
 
             return holders;
         }

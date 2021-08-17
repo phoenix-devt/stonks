@@ -4,7 +4,7 @@ import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.share.Share;
 import org.bukkit.event.HandlerList;
 
-public class PlayerCloseShareEvent extends PlayerDataEvent {
+public class PlayerGenerateSharePaperEvent extends PlayerDataEvent {
     private final Share share;
 
     private static final HandlerList handlers = new HandlerList();
@@ -15,14 +15,10 @@ public class PlayerCloseShareEvent extends PlayerDataEvent {
      * @param playerData Player closing the share
      * @param share      Share closed
      */
-    public PlayerCloseShareEvent(PlayerData playerData, Share share) {
+    public PlayerGenerateSharePaperEvent(PlayerData playerData, Share share) {
         super(playerData);
 
         this.share = share;
-    }
-
-    public Share getShare() {
-        return share;
     }
 
     @Override

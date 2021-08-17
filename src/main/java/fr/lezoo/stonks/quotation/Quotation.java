@@ -78,7 +78,7 @@ public abstract class Quotation {
         // We load the different data from the yml
         for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
             int i = 0;
-            List<QuotationInfo> workingQuotation = this.getData(time);
+            List<QuotationInfo> workingQuotation = new ArrayList<>();
 
             while (config.contains(time.toString().toLowerCase() + "data." + i)) {
                 workingQuotation.add(new QuotationInfo(config.getConfigurationSection(time.toString().toLowerCase() + "data." + i)));
@@ -86,7 +86,7 @@ public abstract class Quotation {
             }
 
             // We change the attribute
-            this.setCorrespondingData(time, workingQuotation);
+            this.setData(time, workingQuotation);
         }
     }
 
@@ -120,7 +120,7 @@ public abstract class Quotation {
      * @param time          the time corresponding to the data
      * @param quotationData the data we want to update
      */
-    public void setCorrespondingData(QuotationTimeDisplay time, List<QuotationInfo> quotationData) {
+    public void setData(QuotationTimeDisplay time, List<QuotationInfo> quotationData) {
         this.quotationData.put(time, quotationData);
     }
 

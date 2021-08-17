@@ -1,13 +1,13 @@
 package fr.lezoo.stonks.command;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.CreatedQuotation;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
 import fr.lezoo.stonks.util.message.Message;
-import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -33,18 +33,24 @@ public class StonksCommand implements CommandExecutor {
             return true;
         }
 
-        if(args.length==0) {
-            player.sendMessage(ChatColor.RED+"Authorized commands : givemap adddisplay createquotation removeboard removequotation ");
+        if (args.length == 0) {
+            player.sendMessage(ChatColor.RED + "Authorized commands : givemap adddisplay createquotation removeboard removequotation ");
             return true;
         }
 
-        if(args[0].equalsIgnoreCase("givetradingbook")) {
+
+        if (args[0].equalsIgnoreCase("reload")) {
+            Stonks.plugin.configManager.reload();
+            sender.sendMessage(ChatColor.YELLOW + "Stonks " + Stonks.plugin.getDescription().getVersion() + " reloaded.");
+        }
+
+        if (args[0].equalsIgnoreCase("givetradingbook")) {
             player.getInventory().addItem(Stonks.plugin.itemManager.createTradingBook());
         }
 
 
-        if(args[0].equalsIgnoreCase("removequotation")) {
-            if(args.length!=2) {
+        if (args[0].equalsIgnoreCase("removequotation")) {
+            if (args.length != 2) {
                 player.sendMessage("usage : /stonks removequotation quotationid");
                 return true;
             }

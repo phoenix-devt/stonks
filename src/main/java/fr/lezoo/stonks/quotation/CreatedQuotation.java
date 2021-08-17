@@ -53,7 +53,7 @@ public class CreatedQuotation extends Quotation {
                 if (workingData.size() > datanumber)
                     workingData.remove(0);
                 //We save the changes we made in the attribute
-                this.setCorrespondingData(time, workingData);
+                this.setData(time, workingData);
             }
 
 

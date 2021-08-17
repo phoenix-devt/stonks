@@ -126,7 +126,7 @@ public class TradingInteractListener implements Listener {
                 return;
             }
             PlayerData playerData =Stonks.plugin.playerManager.get(player);
-            playerData.buyShare(board.getQuotation(), ShareType.POSITIVE,readBook()[0],readBook()[1],readBook()[2]);
+            playerData.buyShare(board.getQuotation(), ShareType.NORMAL,readBook()[0],readBook()[1],readBook()[2]);
         }
     }
 

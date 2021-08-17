@@ -31,7 +31,7 @@ items:
       - ''
       - '&7Owned Shares: &f{owned}'
       - ''
-      - '&eClick to open the share menu.'
+      - '&e► Click to open the share menu.'
     no-quotation:
       name: '&aNo Quotation'
       item: PAPER

@@ -1,5 +1,7 @@
 package fr.lezoo.stonks;
 
+import fr.lezoo.stonks.command.PortfolioCommand;
+import fr.lezoo.stonks.listener.SharePaperListener;
 import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.command.QuotationsCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
@@ -23,6 +25,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.sound.sampled.Port;
 import java.util.logging.Level;
 
 public class Stonks extends JavaPlugin {
@@ -100,9 +103,11 @@ public class Stonks extends JavaPlugin {
         getCommand("stonks").setTabCompleter(new StonksCommandCompletion());
         getCommand("redeemdividends").setExecutor(new RedeemDividendsCommand());
         getCommand("quotations").setExecutor(new QuotationsCommand());
+        getCommand("portfolio").setExecutor(new PortfolioCommand());
 
         // Register listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        Bukkit.getPluginManager().registerEvents(new SharePaperListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplaySignListener(), this);
         Bukkit.getPluginManager().registerEvents(new TradingInteractListener(), this);
         // Refresh boards
@@ -123,8 +128,6 @@ public class Stonks extends JavaPlugin {
 
             }
         }.runTaskTimer(this, 0, 20L * configManager.quotationRefreshTime / 1000);
-
-
     }
 
     @Override

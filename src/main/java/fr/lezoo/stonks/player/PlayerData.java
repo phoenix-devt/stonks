@@ -33,7 +33,7 @@ public class PlayerData {
     }
 
     public void loadFromConfig(FileConfiguration config) {
-        playerStatus=PlayerStatus.valueOf(config.getString("player-status").toUpperCase());
+       // playerStatus=PlayerStatus.valueOf(config.getString("player-status").toUpperCase());
         // Load shares from config file
         if (config.contains("shares"))
             for (String quotationKey : config.getConfigurationSection("shares").getKeys(false)) {
@@ -54,7 +54,7 @@ public class PlayerData {
 
         // Remove old shares
         config.set("shares", null);
-        config.set("player-status",playerStatus.toString().toLowerCase());
+        // config.set("player-status",playerStatus.toString().toLowerCase());
         // Save newest
         for (String quotationId : shares.keySet()) {
             List<String> toList = new ArrayList<>();
@@ -189,7 +189,7 @@ public class PlayerData {
         // Check for Bukkit event
         Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, minPrice, maxPrice);
 
-        PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, quotation, share);
+        PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, share);
         Bukkit.getPluginManager().callEvent(called);
         if (called.isCancelled())
             return false;
@@ -199,7 +199,7 @@ public class PlayerData {
         Stonks.plugin.economy.withdrawPlayer(player, price);
 
         // Send player message
-        (type == ShareType.POSITIVE ? Message.BUY_SHARES : Message.SELL_SHARES).format(
+        (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(
                 "shares", Stonks.plugin.configManager.shareFormat.format(amount),
                 "price", Stonks.plugin.configManager.stockPriceFormat.format(price),
                 "company", quotation.getCompanyName()).send(player);

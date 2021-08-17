@@ -6,6 +6,11 @@ name: 'Bought Shares'
 slots: 54
 
 items:
+  back:
+    slots: [ 37 ]
+    function: back
+    name: '&aBack'
+    item: OAK_SIGN
   next-page:
     slots: [ 53 ]
     function: 'next-page'
@@ -20,7 +25,7 @@ items:
     slots: [ 10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34 ]
     function: share
     name: '&a{stock-name}'
-    item: PAPER
+    item: BOOK
     lore:
       - ''
       - '&7Shares: &f{amount}'
@@ -30,8 +35,14 @@ items:
       - '&7Initial Stock Price: &f${initial-stock}'
       - ''
       - '&7Initial Share Price: {initial-share}'
-      - '&7Gain if sold now: {gain}'
+      - '&7Current Share Price: {current-share}'
       - ''
-      - '&eClick to open the share menu.'
+      - '&8-------------------------------'
+      - '&7&lGain if sold now: {gain}'
+      - '&8-------------------------------'
+      - ''
+      - '&e► Left click to close it.'
+      - '&e► Right click to transfer it into a share paper.'
     no-share:
-      item: AIR
+      item: PAPER
+      name: '&aNo Share'

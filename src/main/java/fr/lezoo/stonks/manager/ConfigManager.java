@@ -1,41 +1,44 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.util.ConfigFile;
-import fr.lezoo.stonks.util.CustomItem;
-import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
-import fr.lezoo.stonks.util.ConfigSchedule;
-import fr.lezoo.stonks.util.message.Message;
+import fr.lezoo.stonks.gui.PortfolioList;
 import fr.lezoo.stonks.gui.QuotationList;
 import fr.lezoo.stonks.gui.QuotationShareMenu;
+import fr.lezoo.stonks.gui.SpecificPortfolio;
 import fr.lezoo.stonks.gui.api.EditableInventory;
+import fr.lezoo.stonks.item.SharePaper;
+import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.util.ConfigFile;
+import fr.lezoo.stonks.util.ConfigSchedule;
+import fr.lezoo.stonks.util.message.Language;
+import fr.lezoo.stonks.util.message.Message;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.util.HashMap;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 public class ConfigManager {
 
     // List of items to reload
-    private final String[] itemIds = {"PHYSICAL_SHARE_BILL"};
-    private final Map<String, CustomItem> items = new HashMap<>();
+    public SharePaper sharePaper;
 
     // Accessible public GUIs
     public final QuotationList QUOTATION_LIST = new QuotationList();
     public final QuotationShareMenu QUOTATION_SHARE = new QuotationShareMenu();
-    public final QuotationShareMenu PORTFOLIO_LIST = new QuotationShareMenu();
-    public final QuotationShareMenu SPECIFIC_PORTFOLIO = new QuotationShareMenu();
+    public final PortfolioList PORTFOLIO_LIST = new PortfolioList();
+    public final SpecificPortfolio SPECIFIC_PORTFOLIO = new SpecificPortfolio();
     private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, PORTFOLIO_LIST, SPECIFIC_PORTFOLIO};
 
     // Accessible public config fields
     public DecimalFormat stockPriceFormat, shareFormat;
+    public DateFormat dateFormat;
     public ConfigSchedule closeTime, openTime;
     public boolean closeTimeEnabled;
     public List<String> displaySignFormat;
@@ -48,13 +51,13 @@ public class ConfigManager {
             stockNameText, timeVisualizedText, quotationTypeText, quotationMapName, tradingBookName,bookExplanationText;
     public List<String> tradingBookLore;
 
-
     public void reload() {
 
         // Reload default config
         Stonks.plugin.reloadConfig();
 
         // Update public config fields
+        dateFormat = new SimpleDateFormat(Stonks.plugin.getConfig().getString("date-format"));
         stockPriceFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("stock-price-decimal-format"));
         shareFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("shares-decimal-format"));
         boardRefreshTime = Stonks.plugin.getConfig().getLong("board-refresh-time");
@@ -68,7 +71,6 @@ public class ConfigManager {
         quotationDataNumber = Stonks.plugin.getConfig().getInt("quotation-data-number");
         quotationRefreshTime = QuotationTimeDisplay.QUARTERHOUR.getTime() / quotationDataNumber;
         maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
-
 
         currentPriceText = Stonks.plugin.getConfig().getString("currentpricetext");
         lowestPriceText = Stonks.plugin.getConfig().getString("lowestpricetext");
@@ -88,7 +90,7 @@ public class ConfigManager {
                 builder.append(" \n ");
         }
 
-        bookExplanationText= builder.toString();
+        bookExplanationText = builder.toString();
         // Useful checks
         Validate.isTrue(displaySignFormat.size() == 4, "Display sign format should be of length 4");
 
@@ -96,12 +98,23 @@ public class ConfigManager {
         for (DefaultFile def : DefaultFile.values())
             def.checkFile();
 
+        // Save default language file
+        ConfigFile language = new ConfigFile("/language", "language");
+        for (Language key : Language.values()) {
+            String path = key.getPath();
+            if (!language.getConfig().contains(path))
+                language.getConfig().set(path, key.getCached());
+
+            key.update(language.getConfig().getString(path));
+        }
+        language.save();
+
         // Save default messages
         ConfigFile messages = new ConfigFile("/language", "messages");
         for (Message key : Message.values()) {
             String path = key.getPath();
             if (!messages.getConfig().contains(path)) {
-                messages.getConfig().set(path + ".format", key.getDefault());
+                messages.getConfig().set(path + ".format", key.getCached());
                 if (key.hasSound()) {
                     messages.getConfig().set(path + ".sound.name", key.getSound().getSound().name());
                     messages.getConfig().set(path + ".sound.vol", key.getSound().getVolume());
@@ -124,12 +137,7 @@ public class ConfigManager {
 
         // Reload items
         FileConfiguration config = new ConfigFile("/language", "items").getConfig();
-        for (String id : itemIds)
-            try {
-                items.put(id, new CustomItem(config.getConfigurationSection(id)));
-            } catch (IllegalArgumentException exception) {
-                Stonks.plugin.getLogger().log(Level.WARNING, "Could not load item '" + id + "': " + exception.getMessage());
-            }
+        sharePaper = new SharePaper(config.getConfigurationSection("PHYSICAL_SHARE_BILL"));
 
         // Reload GUIs
         for (EditableInventory inv : guis)

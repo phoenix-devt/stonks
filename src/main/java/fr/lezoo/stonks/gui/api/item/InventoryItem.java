@@ -27,7 +27,7 @@ public abstract class InventoryItem<T extends GeneratedInventory> {
         this.id = config.getName();
         this.function = config.getString("function", "").toLowerCase();
 
-        this.material = Material.valueOf(Objects.requireNonNull(config.getString("type"), "Could not find material name").toUpperCase().replace(" ", "_").replace("-", "_"));
+        this.material = Material.valueOf(Objects.requireNonNull(config.getString("item"), "Could not find material name").toUpperCase().replace(" ", "_").replace("-", "_"));
         this.name = config.getString("name");
         this.lore = config.getStringList("lore");
         this.hideFlags = config.getBoolean("hide-flags");
@@ -113,6 +113,10 @@ public abstract class InventoryItem<T extends GeneratedInventory> {
      * @return Item that will be displayed in the generated inventory
      */
     public ItemStack getDisplayedItem(T inv, int n) {
+
+        // Support for AIR
+        if (material == Material.AIR)
+            return new ItemStack(Material.AIR);
 
         Placeholders placeholders = getPlaceholders(inv, n);
         ItemStack item = new ItemStack(material);

@@ -1,6 +1,7 @@
-package fr.lezoo.stonks.util;
+package fr.lezoo.stonks.item;
 
 import fr.lezoo.stonks.gui.api.item.Placeholders;
+import fr.lezoo.stonks.util.Utils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -10,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomItem {
+public abstract class CustomItem<T> {
     private final Material material;
     private final int modelData;
     private final List<String> lore;
@@ -26,14 +27,14 @@ public class CustomItem {
     /**
      * Build an item using specific lore and name placeholders.
      *
-     * @param player       PLayer to parse placeholders from
-     * @param placeholders PLaceholders to parse
+     * @param player Player to parse placeholders from
+     * @param t      Object to build the item stack onto
      * @return Built item
      */
-    public ItemStack build(Player player, Placeholders placeholders) {
-
+    public ItemStack build(Player player, T t) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
+        Placeholders placeholders = getPlaceholders(player, t);
 
         // Apply custom model data
         if (modelData > 0)
@@ -51,10 +52,15 @@ public class CustomItem {
             meta.setLore(built);
         }
 
+        // Apply special effects
+        whenBuilt(item, meta, t);
+
         item.setItemMeta(meta);
 
         return item;
     }
 
+    public abstract Placeholders getPlaceholders(Player player, T t);
 
+    public abstract void whenBuilt(ItemStack item, ItemMeta meta, T t);
 }

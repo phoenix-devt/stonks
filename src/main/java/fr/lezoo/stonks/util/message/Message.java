@@ -13,6 +13,8 @@ public enum Message {
     BUY_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou bought {shares} shares from {company} for ${price}."),
     SELL_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou short-sold {shares} shares from {company} for ${price}."),
     CLOSE_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou closed {shares} shares from {company} for a final gain of ${gain}."),
+    GET_SHARE_PAPER(new SoundReader(Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2), "&eYou virtually closed your order and got an order paper for {shares} shares of {company}."),
+    CLAIM_SHARE_PAPER(new SoundReader(Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2), "&eYou claimed {shares} shares of {company} for a total current value of ${value}."),
 
     CLAIM_DIVIDENDS(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou successfully redeemed &f${amount} &efrom your dividends."),
     NO_DIVIDENDS_TO_CLAIM("&cYou don't have any dividends to claim."),
@@ -44,9 +46,9 @@ public enum Message {
     }
 
     /**
-     * @return A copy of the default message with no parsed placeholders
+     * @return Message updated based on what's in the config files
      */
-    public List<String> getDefault() {
+    public List<String> getCached() {
         return new ArrayList<>(message);
     }
 

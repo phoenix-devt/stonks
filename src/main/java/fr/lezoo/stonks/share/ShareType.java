@@ -1,5 +1,7 @@
 package fr.lezoo.stonks.share;
 
+import fr.lezoo.stonks.util.message.Language;
+
 public enum ShareType {
 
     /**
@@ -11,5 +13,9 @@ public enum ShareType {
     /**
      * Gain money if stock price increases
      */
-    POSITIVE;
+    NORMAL;
+
+    public String getTranslation() {
+        return Language.valueOf("SHARE_TYPE_" + name()).getCached();
+    }
 }

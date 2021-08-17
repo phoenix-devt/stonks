@@ -101,8 +101,8 @@ public class QuotationShareMenu extends EditableInventory {
                 });
 
             if (item instanceof CustomActionItem) {
-                ShareType type = item.getFunction().equalsIgnoreCase("buy-custom") ? ShareType.POSITIVE : ShareType.SHORT;
-                (type == ShareType.POSITIVE ? Message.BUY_CUSTOM_ASK : Message.SELL_CUSTOM_ASK).format().send(player);
+                ShareType type = item.getFunction().equalsIgnoreCase("buy-custom") ? ShareType.NORMAL : ShareType.SHORT;
+                (type == ShareType.NORMAL ? Message.BUY_CUSTOM_ASK : Message.SELL_CUSTOM_ASK).format().send(player);
 
                 new ChatInput(this, (playerData, input) -> {
                     double amount;
@@ -119,15 +119,13 @@ public class QuotationShareMenu extends EditableInventory {
             }
 
             if (item instanceof AmountActionItem)
-                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.POSITIVE : ShareType.SHORT, ((AmountActionItem) item).getAmount(), -1, -1);
+                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.NORMAL : ShareType.SHORT, ((AmountActionItem) item).getAmount(), -1, -1);
         }
 
         @Override
         public void whenClosed(InventoryCloseEvent event) {
             // Nothing
         }
-
-
     }
 
     /**
@@ -154,7 +152,7 @@ public class QuotationShareMenu extends EditableInventory {
             Placeholders holders = new Placeholders();
 
             holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.quotation.getPrice() * amount));
-            holders.register("leverage", Utils.singleDigit.format(inv.getPlayerData().getLeverage()));
+            holders.register("leverage", Utils.fourDigits.format(inv.getPlayerData().getLeverage()));
             holders.register("amount", amount);
 
             return holders;
@@ -183,7 +181,7 @@ public class QuotationShareMenu extends EditableInventory {
             Placeholders holders = new Placeholders();
 
             holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.quotation.getPrice() * amount));
-            holders.register("leverage", Utils.singleDigit.format(inv.getPlayerData().getLeverage()));
+            holders.register("leverage", Utils.fourDigits.format(inv.getPlayerData().getLeverage()));
             holders.register("amount", amount);
 
             return holders;
@@ -207,7 +205,7 @@ public class QuotationShareMenu extends EditableInventory {
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
 
-            holders.register("leverage", Utils.singleDigit.format(inv.getPlayerData().getLeverage()));
+            holders.register("leverage", Utils.fourDigits.format(inv.getPlayerData().getLeverage()));
 
             return holders;
         }
@@ -222,7 +220,7 @@ public class QuotationShareMenu extends EditableInventory {
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
 
-            holders.register("leverage", Utils.singleDigit.format(inv.getPlayerData().getLeverage()));
+            holders.register("leverage", Utils.fourDigits.format(inv.getPlayerData().getLeverage()));
 
             return holders;
         }

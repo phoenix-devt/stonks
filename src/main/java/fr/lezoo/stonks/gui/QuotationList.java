@@ -98,8 +98,10 @@ public class QuotationList extends EditableInventory {
             if (item instanceof QuotationItem) {
                 NBTItem nbt = NBTItem.get(event.getCurrentItem());
                 String quotationId = nbt.getString("quotationId");
-                Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
+                if (quotationId.isEmpty())
+                    return;
 
+                Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
                 Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, quotation).open();
             }
         }

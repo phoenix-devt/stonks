@@ -4,6 +4,9 @@ PHYSICAL_SHARE_BILL:
   model-data: 0
   lore:
     - '&7This bill can be used at the broker'
-    - '&7to redeem &c{shares} &7shares of &c{quotation}&7.'
+    - '&7to redeem &c{amount} &7shares of &c{quotation}&7.'
+    - '&7'
+    - '&7Leverage: &c{leverage}'
+    - '&7Share Type: &c{type}'
     - '&7'
     - '&7Generated on &c{date}'

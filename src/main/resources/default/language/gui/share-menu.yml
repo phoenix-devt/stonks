@@ -11,9 +11,6 @@ items:
     function: back
     name: '&aBack'
     item: OAK_SIGN
-    lore:
-      - ''
-      - '&eClick to go back to the quotation list.'
   buy1:
     slots: [ 23 ]
     function: buy1
@@ -24,7 +21,7 @@ items:
       - '&7Buy {amount} share with leverage {leverage}'
       - '&7Price: &f${price}'
       - ''
-      - '&eClick to buy.'
+      - '&e► Click to buy.'
   buy10:
     slots: [ 24 ]
     function: buy10
@@ -35,7 +32,7 @@ items:
       - '&7Buy {amount} shares with leverage {leverage}'
       - '&7Price: &f${price}'
       - ''
-      - '&eClick to buy.'
+      - '&e► Click to buy.'
   buy100:
     slots: [ 25 ]
     function: buy100
@@ -46,7 +43,7 @@ items:
       - '&7Buy {amount} shares with leverage {leverage}'
       - '&7Price: &f${price}'
       - ''
-      - '&eClick to buy.'
+      - '&e► Click to buy.'
   buy-custom:
     slots: [ 32 ]
     function: buy-custom
@@ -57,7 +54,7 @@ items:
       - '&7Buy a custom amount of shares with leverage {leverage}'
       - '&7(Write in the chat the amount you want)'
       - ''
-      - '&eClick to buy.'
+      - '&e► Click to buy.'
   sell1:
     slots: [ 21 ]
     function: sell1
@@ -68,7 +65,7 @@ items:
       - '&7Sell {amount} share with leverage {leverage}'
       - '&7Price: &f${price}'
       - ''
-      - '&eClick to sell.'
+      - '&e► Click to sell.'
   sell10:
     slots: [ 20 ]
     function: sell10
@@ -79,7 +76,7 @@ items:
       - '&7Sell {amount} shares with leverage {leverage}'
       - '&7Price: &f${price}'
       - ''
-      - '&eClick to sell.'
+      - '&e► Click to sell.'
   sell100:
     slots: [ 19 ]
     function: sell100
@@ -90,7 +87,7 @@ items:
       - '&7Sell {amount} shares with leverage {leverage}'
       - '&7Price: &f${price}'
       - ''
-      - '&eClick to sell.'
+      - '&e► Click to sell.'
   sell-custom:
     slots: [ 30 ]
     function: sell-custom
@@ -101,7 +98,7 @@ items:
       - '&7Sell a custom amount of shares with leverage {leverage}'
       - '&7(Write in the chat the amount you want)'
       - ''
-      - '&eClick to sell.'
+      - '&e► Click to sell.'
   stock-info:
     slots: [ 13 ]
     function: info
@@ -125,4 +122,4 @@ items:
       - ''
       - '&7Current leverage is &f{leverage}'
       - ''
-      - '&eClick to change it.'
+      - '&e► Click to change it.'

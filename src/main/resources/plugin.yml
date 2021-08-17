@@ -9,6 +9,8 @@ api-version: 1.13
 commands:
   stonks:
     description: 'Main plugin command.'
+  portfolio:
+    description: 'All you shares are available here.'
   boarddisplay:
     description: 'Display quotation info on an item frame board.'
   removeboard:

@@ -17,7 +17,7 @@ public class PlayerMessage {
      * @param message Message to send to any player
      */
     public PlayerMessage(Message message) {
-        format = (this.message = message).getDefault();
+        format = (this.message = message).getCached();
     }
 
     public PlayerMessage format(Object... placeholders) {

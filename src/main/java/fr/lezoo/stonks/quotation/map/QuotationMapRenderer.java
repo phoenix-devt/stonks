@@ -34,7 +34,7 @@ public class QuotationMapRenderer extends MapRenderer {
 
     public QuotationMapRenderer(Quotation quotation, QuotationTimeDisplay time) {
         this.quotation = quotation;
-        quotationData=quotation.getCorrespondingData(time);
+        quotationData=quotation.getData(time);
         this.time=time;
         //We take the min of the theoric DATA_NUMBER that we want and the real length size of quotationData to avoid IndexOutOfBounds
         this.datataken = Math.min(quotationData.size(), Stonks.plugin.configManager.quotationDataNumber);
@@ -44,7 +44,7 @@ public class QuotationMapRenderer extends MapRenderer {
         BufferedImage image =new BufferedImage(128,128,BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d= (Graphics2D) image.getGraphics();
         
-        List<QuotationInfo> quotationData = quotation.getCorrespondingData(time);
+        List<QuotationInfo> quotationData = quotation.getData(time);
         //If the quotation is Empty we print an error
         Validate.isTrue(quotationData.size()!=0,"The quotation : "+quotation.getId()+" has no values!!");
 
