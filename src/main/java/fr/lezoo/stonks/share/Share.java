@@ -22,6 +22,21 @@ public class Share {
     private final Quotation quotation;
     private final long timeStamp;
     private final double initialPrice;
+    //if the share is closed it gets the final price and display it
+    private ShareStatus status=ShareStatus.OPEN;
+    private double finalPrice=0;
+
+    public ShareStatus getStatus() {
+        return status;
+    }
+
+    public double getFinalPrice() {
+        return finalPrice;
+    }
+
+    public double getShares() {
+        return shares;
+    }
 
     /*
      * These fields can be modified by other plugins freely. maxPrice
@@ -181,6 +196,14 @@ public class Share {
     public double getMinPrice() {
         return minPrice;
     }
+
+
+    public void close() {
+        this.status=ShareStatus.CLOSED;
+        this.finalPrice=this.quotation.getPrice();
+    }
+
+
 
     public void setWallet(double wallet) {
         this.wallet = wallet;

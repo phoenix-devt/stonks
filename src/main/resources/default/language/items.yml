@@ -10,3 +10,31 @@ PHYSICAL_SHARE_BILL:
     - '&7Share Type: &c{type}'
     - '&7'
     - '&7Generated on &c{date}'
+    -
+
+
+TRADING_BOOK :
+  type : ENCHANTED_BOOK
+  name : '&3Trading Book'
+  model-data : 0
+  lore :
+    - '&6 This books enables you to interact with boards to trade !'
+    - '&7First page : the amount of shares you want '
+    - '&7The max price before the share is automatically closed '
+    - '&7The min price before the share is automatically closed'
+
+
+
+QUOTATION_MAP :
+  type : FILLED_MAP
+  name : '&6Quotation Map'
+  model-data : 0
+  lore :
+    - '&7Quotation id : {quotation-id}'
+    - '&7Company name : {company}'
+    - '&7 Current price : {current-price}'
+    - '&7 Lowest Price : {lowest-price}'
+    - '&7 Highest Price : {highest-price}'
+    - '&7 Time Visualized : {time-visualized}'
+    - '&7 QuotationType : {quotation-type}'
+    - '&7 ExchangeType : {exchangeType}'

@@ -1,0 +1,22 @@
+# GUI display name
+name: 'Shares for {company}'
+
+# Number of slots in your inventory. Must be
+# between 9 and 54 and must be a multiple of 9.
+slots: 9
+
+items :
+  open-shares :
+    slots : [4]
+    name : '&aGet Open Shares Menu'
+    function : 'open-shares menu'
+    item : 'BLUE_WOOL'
+
+  closed-shares :
+    slots : [5]
+    function : 'closed-shares menu'
+    name : '&7Get Closed Share Menu'
+    item : 'GREY_WOOL'
+
+
+

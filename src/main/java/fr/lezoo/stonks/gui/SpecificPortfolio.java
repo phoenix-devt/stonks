@@ -11,6 +11,7 @@ import fr.lezoo.stonks.gui.api.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.version.ItemTag;
@@ -31,8 +32,11 @@ import java.util.UUID;
  * Displays all your shares from a SPECIFIC quotation
  */
 public class SpecificPortfolio extends EditableInventory {
-    public SpecificPortfolio() {
+    private final ShareStatus status;
+
+    public SpecificPortfolio(ShareStatus status) {
         super("specific-portfolio");
+        this.status = status;
     }
 
     @Override
@@ -79,7 +83,7 @@ public class SpecificPortfolio extends EditableInventory {
 
         private void updateInventoryData() {
             shares.clear();
-            shares.addAll(playerData.getShares(quotation));
+            shares.addAll(playerData.getShares(quotation,status));
             maxPage = Math.max(((int) Math.ceil((double) shares.size() / perPage)) - 1, 0);
         }
 
@@ -93,7 +97,11 @@ public class SpecificPortfolio extends EditableInventory {
 
             // Back to list
             if (item instanceof BackItem) {
-                Stonks.plugin.configManager.PORTFOLIO_LIST.generate(playerData).open();
+                if (status.equals(ShareStatus.OPEN)) {
+                    Stonks.plugin.configManager.OPEN_PORTFOLIO_LIST.generate(playerData).open();
+                    return;
+                }
+                Stonks.plugin.configManager.CLOSED_PORTFOLIO_LIST.generate(playerData).open();
                 return;
             }
 

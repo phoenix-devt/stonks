@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
@@ -13,6 +14,23 @@ import java.util.logging.Level;
 
 public class ShareManager {
     private final Map<UUID, Share> mapped = new HashMap<>();
+
+
+
+
+
+
+    public void refresh() {
+        for (Share share : mapped.values()) {
+            //Check if the share need to be closed
+            if(share.getStatus().equals(ShareStatus.OPEN)&&
+                    ( share.getMaxPrice()<=share.getQuotation().getPrice()||share.getMinPrice()>=share.getQuotation().getPrice()) )
+                //We close the share
+                share.close();
+        }
+    }
+
+
 
     public void load() {
 

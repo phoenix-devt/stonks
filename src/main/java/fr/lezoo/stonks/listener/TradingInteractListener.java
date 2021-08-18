@@ -149,7 +149,7 @@ public class TradingInteractListener implements Listener {
 
     public void checkDownSquare() {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.95) && (verticalOffset > 0.75)) {
-            Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(Stonks.plugin.playerManager.get(player), board.getQuotation()).open();
+            Stonks.plugin.configManager.SHARE_STATUS_MENU.generate(Stonks.plugin.playerManager.get(player)).open();
         }
     }
 

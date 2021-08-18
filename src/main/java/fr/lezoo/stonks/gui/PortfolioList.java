@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.version.NBTItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
@@ -27,8 +28,13 @@ import java.util.List;
  * you open a {@link SpecificPortfolio}
  */
 public class PortfolioList extends EditableInventory {
-    public PortfolioList() {
+    //The status of the shares that will be displayed closed or open
+    private final ShareStatus status;
+
+    public PortfolioList(ShareStatus status) {
         super("portfolio-list");
+        this.status=status;
+
     }
 
     @Override
@@ -93,8 +99,10 @@ public class PortfolioList extends EditableInventory {
                 String quotationId = nbt.getString("quotationId");
                 Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
                 Validate.notNull(quotation, "Could not find quotation with ID '" + quotationId + "'");
-
-                Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(playerData, quotation).open();
+                if(status.equals(ShareStatus.OPEN))
+                    Stonks.plugin.configManager.OPEN_SPECIFIC_PORTFOLIO.generate(playerData, quotation).open();
+                else if(status.equals(ShareStatus.CLOSED))
+                    Stonks.plugin.configManager.CLOSED_SPECIFIC_PORTFOLIO.generate(playerData, quotation).open();
             }
         }
 

@@ -4,6 +4,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.message.Message;
@@ -13,6 +14,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PlayerData {
     private final UUID uuid;
@@ -92,6 +94,20 @@ public class PlayerData {
     public Set<Share> getShares(Quotation quotation) {
         return shares.getOrDefault(quotation.getId(), new HashSet<>());
     }
+
+    /**
+     * @return Owned shares from a specific quotation with a specific ShareStatus
+     */
+    public Set<Share> getShares(Quotation quotation, ShareStatus status) {
+        //We filter to only have the ones of the specified share Status
+        return shares.getOrDefault(quotation.getId(), new HashSet<>())
+                .stream()
+                .filter((share)-> share.getStatus().equals(status))
+                .collect(Collectors.toSet());
+    }
+
+
+
 
     /**
      * @return Owned shares from all quotations

@@ -2,15 +2,13 @@ package fr.lezoo.stonks.manager;
 
 import com.sun.org.apache.xpath.internal.operations.Quo;
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.PortfolioList;
-import fr.lezoo.stonks.gui.QuotationList;
-import fr.lezoo.stonks.gui.QuotationShareMenu;
-import fr.lezoo.stonks.gui.SpecificPortfolio;
+import fr.lezoo.stonks.gui.*;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.item.QuotationMap;
 import fr.lezoo.stonks.item.SharePaper;
 import fr.lezoo.stonks.item.TradingBook;
 import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.util.message.Language;
@@ -37,9 +35,13 @@ public class ConfigManager {
     // Accessible public GUIs
     public final QuotationList QUOTATION_LIST = new QuotationList();
     public final QuotationShareMenu QUOTATION_SHARE = new QuotationShareMenu();
-    public final PortfolioList PORTFOLIO_LIST = new PortfolioList();
-    public final SpecificPortfolio SPECIFIC_PORTFOLIO = new SpecificPortfolio();
-    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, PORTFOLIO_LIST, SPECIFIC_PORTFOLIO};
+    public final PortfolioList OPEN_PORTFOLIO_LIST = new PortfolioList(ShareStatus.OPEN);
+    public final PortfolioList CLOSED_PORTFOLIO_LIST = new PortfolioList(ShareStatus.CLOSED);
+    public final SpecificPortfolio OPEN_SPECIFIC_PORTFOLIO = new SpecificPortfolio(ShareStatus.OPEN);
+    public final SpecificPortfolio CLOSED_SPECIFIC_PORTFOLIO = new SpecificPortfolio(ShareStatus.CLOSED);
+    public final ShareStatusMenu SHARE_STATUS_MENU = new ShareStatusMenu();
+
+    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, OPEN_PORTFOLIO_LIST, CLOSED_PORTFOLIO_LIST, OPEN_SPECIFIC_PORTFOLIO, CLOSED_SPECIFIC_PORTFOLIO,SHARE_STATUS_MENU};
 
     // Accessible public config fields
     public DecimalFormat stockPriceFormat, shareFormat;
@@ -49,11 +51,11 @@ public class ConfigManager {
     public List<String> displaySignFormat;
     public int dividendsRedeemHour;
 
-    public long boardRefreshTime, quotationRefreshTime;
+    public long boardRefreshTime, quotationRefreshTime, shareRefreshTime;
     public double offerDemandImpact, volatility;
     public int quotationDataNumber, maxInteractionDistance;
     public String currentPriceText, lowestPriceText, highestPriceText, evolutionText, companyNameText,
-            stockNameText, timeVisualizedText, quotationTypeText, quotationMapName, tradingBookName,bookExplanationText;
+            stockNameText, timeVisualizedText, quotationTypeText, quotationMapName, tradingBookName, bookExplanationText;
     public List<String> tradingBookLore;
 
     public void reload() {
@@ -75,6 +77,7 @@ public class ConfigManager {
         dividendsRedeemHour = Stonks.plugin.getConfig().getInt("dividends-redeem-hour");
         quotationDataNumber = Stonks.plugin.getConfig().getInt("quotation-data-number");
         quotationRefreshTime = QuotationTimeDisplay.QUARTERHOUR.getTime() / quotationDataNumber;
+        shareRefreshTime = Stonks.plugin.getConfig().getLong("share-refresh-time");
         maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
 
         // Useful checks
@@ -124,9 +127,8 @@ public class ConfigManager {
         // Reload items
         FileConfiguration config = new ConfigFile("/language", "items").getConfig();
         sharePaper = new SharePaper(config.getConfigurationSection("PHYSICAL_SHARE_BILL"));
-        quotationMap= new QuotationMap(config.getConfigurationSection("QUOTATION_MAP"));
-        tradingBook= new TradingBook(config.getConfigurationSection("TRADING_BOOK"));
-
+        quotationMap = new QuotationMap(config.getConfigurationSection("QUOTATION_MAP"));
+        tradingBook = new TradingBook(config.getConfigurationSection("TRADING_BOOK"));
 
 
         // Reload GUIs

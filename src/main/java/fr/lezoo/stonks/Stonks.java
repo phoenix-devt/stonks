@@ -1,5 +1,6 @@
 package fr.lezoo.stonks;
 
+import com.sun.jna.platform.win32.COM.IRunningObjectTable;
 import fr.lezoo.stonks.command.PortfolioCommand;
 import fr.lezoo.stonks.listener.SharePaperListener;
 import fr.lezoo.stonks.util.ConfigSchedule;
@@ -128,7 +129,17 @@ public class Stonks extends JavaPlugin {
 
             }
         }.runTaskTimer(this, 0, 20L * configManager.quotationRefreshTime / 1000);
+
+        //We refresh the shares
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                shareManager.refresh();
+            }
+        }.runTaskTimer(this,0L,configManager.shareRefreshTime);
     }
+
 
     @Override
     public void onDisable() {
