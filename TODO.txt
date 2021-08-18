@@ -29,9 +29,8 @@ A RAJOUTER / RENFORCER
 PROBLEMES AVEC L'ANCIEN PLUGIN
 - Afficher les stocks sur DES PANNEAUX pour voir en temps réel !!
 - option de stocks max par personne
-- placeholder pour le top des portfolios
-- TRANSFORMER UN STOCK EN UN OBJET CLIQUABLE que l'on peut redeem au NPC
 - deux types d'actions : virtuelles, où avec des objets réels (itemStacks)
+- placeholder pour le top des portfolios
 https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-other-stocks-on
 
 
@@ -39,6 +38,7 @@ https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-
 
 
 OK
+- TRANSFORMER UN STOCK EN UN OBJET CLIQUABLE que l'on peut redeem au NPC
 - des stocks factices qui varient avec des formules mathématiques toutes configurables
 - commande pour simple pour rajouter un boarddisplay
 - les dividendes

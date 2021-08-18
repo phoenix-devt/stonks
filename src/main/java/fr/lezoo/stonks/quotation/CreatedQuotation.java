@@ -12,8 +12,8 @@ import java.util.Random;
 public class CreatedQuotation extends Quotation {
     private double previousDemand, currentDemand;
 
-    public CreatedQuotation(String id, String companyName, String stockName, Dividends dividends, QuotationInfo firstQuotationData) {
-        super(id, companyName, stockName, dividends, firstQuotationData);
+    public CreatedQuotation(String id, String name, Dividends dividends, QuotationInfo firstQuotationData) {
+        super(id, name, dividends, firstQuotationData);
     }
 
     public CreatedQuotation(ConfigurationSection config) {

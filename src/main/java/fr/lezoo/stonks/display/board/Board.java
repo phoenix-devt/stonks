@@ -184,8 +184,7 @@ public class Board {
         g2d.drawString(Stonks.plugin.configManager.evolutionText+" : "+quotation.getEvolution(time)+"%",(int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
 
 
-        g2d.drawString(Stonks.plugin.configManager.companyNameText+" : " + quotation.getCompanyName(), (int) (0.35 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
-        g2d.drawString(Stonks.plugin.configManager.stockNameText+" : " +quotation.getStockName(),(int) (0.35 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
+        g2d.drawString(Stonks.plugin.configManager.companyNameText+" : " + quotation.getName(), (int) (0.35 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
         g2d.drawString(Stonks.plugin.configManager.timeVisualizedText+" : " +time.toString().toLowerCase(),(int) (0.35 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
         g2d.drawString(Stonks.plugin.configManager.quotationTypeText+" : ",(int) (0.35 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
 

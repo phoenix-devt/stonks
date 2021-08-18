@@ -1,10 +1,10 @@
 spacex:
 
-  # Displayed on the item in the quotation list
-  quotation-name: 'SpaceX'
+  # Stock name
+  name: 'SpaceX'
 
-  # Company name
-  company-name: 'SpaceX'
+  material:
+    type: DIAMOND
 
   dividends:
 

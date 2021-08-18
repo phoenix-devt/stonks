@@ -56,8 +56,7 @@ public class DisplaySign {
     }
 
     private String applyPlaceholders(Quotation quotation, String input) {
-        return input.replace("{stock-name}", quotation.getStockName())
-                .replace("{company-name}", quotation.getCompanyName())
+        return input.replace("{name}", quotation.getName())
                 .replace("{price}", Stonks.plugin.configManager.stockPriceFormat.format(quotation.getPrice()))
                 .replace("{day-evolution}", Utils.formatRate(quotation.getEvolution(QuotationTimeDisplay.DAY)))
                 .replace("{week-evolution}", Utils.formatRate(quotation.getEvolution(QuotationTimeDisplay.WEEK)));

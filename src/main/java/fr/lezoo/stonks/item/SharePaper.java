@@ -24,8 +24,7 @@ public class SharePaper extends CustomItem<Share> {
         placeholders.register("leverage", Utils.fourDigits.format(share.getLeverage()));
         placeholders.register("initial-price", Stonks.plugin.configManager.stockPriceFormat.format(share.getInitialPrice()));
         placeholders.register("date", Stonks.plugin.configManager.dateFormat.format(share.getCreationTime()));
-        placeholders.register("quotation", share.getQuotation().getStockName());
-        placeholders.register("company", share.getQuotation().getCompanyName());
+        placeholders.register("quotation", share.getQuotation().getName());
         placeholders.register("type", share.getType().getTranslation());
 
         return placeholders;

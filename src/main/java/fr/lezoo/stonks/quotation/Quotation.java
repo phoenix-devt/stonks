@@ -4,9 +4,11 @@ package fr.lezoo.stonks.quotation;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.Board;
 import fr.lezoo.stonks.display.board.QuotationBoardRenderer;
-import fr.lezoo.stonks.display.map.QuotationMapRenderer;
 import fr.lezoo.stonks.util.Utils;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,7 +30,7 @@ import java.util.logging.Level;
  * Place where players can buy and sell shares
  */
 public abstract class Quotation {
-    protected final String id, companyName, stockName;
+    protected final String id, name;
     private final Dividends dividends;
 
     /**
@@ -37,10 +39,9 @@ public abstract class Quotation {
      */
     protected final Map<QuotationTimeDisplay, List<QuotationInfo>> quotationData = new HashMap<>();
 
-    public Quotation(String id, String companyName, String stockName, Dividends dividends) {
+    public Quotation(String id, String name, Dividends dividends) {
         this.id = id;
-        this.companyName = companyName;
-        this.stockName = stockName;
+        this.name = name;
         this.dividends = dividends;
 
         for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
@@ -51,15 +52,13 @@ public abstract class Quotation {
      * Public constructor to create a new Quotation from scratch
      *
      * @param id                 Internal quotation id
-     * @param companyName        Name of the concerned company
-     * @param stockName          Name of the stock
+     * @param name               Name of the stock
      * @param dividends          Whether or not this quotations gives dividends to investers
      * @param firstQuotationData The only QuotationInfo that exists
      */
-    public Quotation(String id, String companyName, String stockName, Dividends dividends, QuotationInfo firstQuotationData) {
+    public Quotation(String id, String name, Dividends dividends, QuotationInfo firstQuotationData) {
         this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
-        this.companyName = companyName;
-        this.stockName = stockName;
+        this.name = name;
         this.dividends = dividends;
 
         for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
@@ -71,8 +70,7 @@ public abstract class Quotation {
      */
     public Quotation(ConfigurationSection config) {
         this.id = config.getName();
-        this.companyName = config.getString("company-name");
-        this.stockName = config.getString("stock-name");
+        this.name = config.getString("name");
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
 
         // We load the different data from the yml
@@ -94,12 +92,8 @@ public abstract class Quotation {
         return id;
     }
 
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public String getStockName() {
-        return stockName;
+    public String getName() {
+        return name;
     }
 
     public boolean hasDividends() {
@@ -239,50 +233,15 @@ public abstract class Quotation {
 
     public static final String MAP_ITEM_TAG_PATH = "StonksQuotationMap";
 
-    /**
-     * This map is never updated you have to get another one to get new informations
-     *
-     * @param time the time the map looks backwards
-     * @return A map where we can see the quotation
-     */
-    public ItemStack createQuotationMap(QuotationTimeDisplay time) {
-        ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
-
-        // We cast the ItemMeta into MapMeta
-        MapMeta meta = (MapMeta) mapItem.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + Stonks.plugin.configManager.quotationMapName + " : " + companyName);
-        //Description of the map
-        meta.setLore(Arrays.asList(Stonks.plugin.configManager.companyNameText + " : " + companyName,
-                Stonks.plugin.configManager.stockNameText + " : " + stockName,
-                Stonks.plugin.configManager.currentPriceText + " : " + this.getPrice(),
-                Stonks.plugin.configManager.lowestPriceText + " : " + this.getLowest(time),
-                Stonks.plugin.configManager.highestPriceText + " : " + this.getHighest(time),
-                Stonks.plugin.configManager.evolutionText + " : " + this.getEvolution(time),
-                Stonks.plugin.configManager.timeVisualizedText + " : " + time.toString(),
-                Stonks.plugin.configManager.quotationTypeText + " : "));
-
-
-        // Creates a mapview to later change its Renderer and load img
-        MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
-        mapView.getRenderers().clear();
-        mapView.addRenderer(new QuotationMapRenderer(this, time));
-        meta.setMapView(mapView);
-        mapItem.setItemMeta(meta);
-        return mapItem;
-    }
-
-
     public void save(FileConfiguration config) {
 
         // If the quotation is empty we destroy it to not overload memory and avoid errors
         if (quotationData.get(QuotationTimeDisplay.QUARTERHOUR).size() == 0) {
-            config.set(id + ".company-name", null);
-            config.set(id + ".stock-name", null);
+            config.set(id + ".name", null);
             return;
         }
 
-        config.set(id + ".company-name", companyName);
-        config.set(id + ".stock-name", stockName);
+        config.set(id + ".name", name);
         //We save the information of the data
         for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
             List<QuotationInfo> quotationData = this.getData(time);
@@ -339,11 +298,11 @@ public abstract class Quotation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Quotation quotation = (Quotation) o;
-        return id.equals(quotation.id) && companyName.equals(quotation.companyName) && stockName.equals(quotation.stockName);
+        return id.equals(quotation.id) && name.equals(quotation.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, companyName, stockName);
+        return Objects.hash(id, name);
     }
 }

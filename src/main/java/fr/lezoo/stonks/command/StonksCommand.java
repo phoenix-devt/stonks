@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.command;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.display.DisplayInfo;
 import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.CreatedQuotation;
@@ -68,28 +69,31 @@ public class StonksCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.RED+"usage : /stonks givemap quotationid time");
                 return true;
             }
+
             if(!Stonks.plugin.quotationManager.has(args[1])){
                 player.sendMessage("There is no quotation with this id");
                 return true;
             }
-            if(!QuotationTimeDisplay.checkQuotationTimeDisplay(args[2])) {
+
+            if (!QuotationTimeDisplay.checkQuotationTimeDisplay(args[2])) {
                 player.sendMessage("Authorized time display : QUARTERHOUR, HOUR, DAY, WEEK, MONTH, YEAR");
                 return true;
             }
-            Quotation quotation =Stonks.plugin.quotationManager.get(args[1]);
+
+            Quotation quotation = Stonks.plugin.quotationManager.get(args[1]);
             QuotationTimeDisplay time = QuotationTimeDisplay.valueOf(args[2]);
-            player.getInventory().addItem(quotation.createQuotationMap(time));
+            DisplayInfo displayInfo = new DisplayInfo(quotation, time);
+            player.getInventory().addItem(Stonks.plugin.configManager.quotationMap.build(player, displayInfo));
         }
 
 
         if (args[0].equalsIgnoreCase("createquotation")) {
             if (args.length < 5) {
-                player.sendMessage("Usage : /stonks createquotation quotationId quotationName StockName InitialPrice");
+                player.sendMessage("Usage : /stonks createquotation quotationId quotationName InitialPrice");
                 return true;
             }
             args[1] = args[1].toLowerCase();
             args[2] = args[2].toLowerCase();
-            args[3] = args[3].toLowerCase();
 
             if (Stonks.plugin.quotationManager.has(args[1])) {
                 player.sendMessage(ChatColor.RED + "There is already a quotation with ID " + args[1]);
@@ -98,14 +102,13 @@ public class StonksCommand implements CommandExecutor {
 
             double initialPrice;
             try {
-                initialPrice = Double.parseDouble(args[4]);
+                initialPrice = Double.parseDouble(args[3]);
             } catch (IllegalArgumentException e) {
                 player.sendMessage(ChatColor.RED + "You didn't enter the initial price correctly");
                 return true;
             }
-            Stonks.plugin.quotationManager.register(new CreatedQuotation(args[1], args[2], args[3], null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
 
-
+            Stonks.plugin.quotationManager.register(new CreatedQuotation(args[1], args[2], null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
         }
 
 

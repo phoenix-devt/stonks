@@ -134,7 +134,7 @@ public class SpecificPortfolio extends EditableInventory {
                     for (ItemStack dropped : player.getInventory().addItem(paper).values())
                         player.getWorld().dropItem(player.getLocation(), dropped);
 
-                    Message.GET_SHARE_PAPER.format("company", quotation.getCompanyName(),
+                    Message.GET_SHARE_PAPER.format("company", quotation.getName(),
                             "shares", Utils.fourDigits.format(share.getAmount())).send(player);
 
                     updateInventoryData();
@@ -149,7 +149,7 @@ public class SpecificPortfolio extends EditableInventory {
                     // Close share
                     double gain = share.calculateGain(), earned = share.getCloseEarning();
                     Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getAmount()),
-                            "company", quotation.getCompanyName(),
+                            "company", quotation.getName(),
                             "gain", Utils.formatGain(gain)).send(player);
                     Stonks.plugin.economy.depositPlayer(player, earned);
                     playerData.unregisterShare(share);
@@ -233,8 +233,7 @@ public class SpecificPortfolio extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("company-name", inv.quotation.getCompanyName());
-            holders.register("stock-name", inv.quotation.getStockName());
+            holders.register("company", inv.quotation.getName());
             holders.register("leverage", Utils.fourDigits.format(share.getLeverage()));
             holders.register("amount", format.format(share.getAmount()));
 

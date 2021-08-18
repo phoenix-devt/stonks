@@ -42,8 +42,7 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
         QuotationTimeDisplay timeDisplay = info.getTimeDisplay();
         Placeholders holders = new Placeholders();
 
-        holders.register("company-name", quotation.getCompanyName());
-        holders.register("stock-name", quotation.getStockName());
+        holders.register("company", quotation.getName());
         holders.register("current-price", quotation.getPrice());
         holders.register("lowest-price", quotation.getLowest(timeDisplay));
         holders.register("highest-price", quotation.getHighest(timeDisplay));

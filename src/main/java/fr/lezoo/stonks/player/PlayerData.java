@@ -203,7 +203,7 @@ public class PlayerData {
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(
                 "shares", Stonks.plugin.configManager.shareFormat.format(amount),
                 "price", Stonks.plugin.configManager.stockPriceFormat.format(price),
-                "company", quotation.getCompanyName()).send(player);
+                "company", quotation.getName()).send(player);
 
         // Successfully bought
         return true;
