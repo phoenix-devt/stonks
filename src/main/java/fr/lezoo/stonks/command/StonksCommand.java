@@ -12,6 +12,7 @@ import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -88,8 +89,8 @@ public class StonksCommand implements CommandExecutor {
 
 
         if (args[0].equalsIgnoreCase("createquotation")) {
-            if (args.length < 4) {
-                player.sendMessage("Usage : /stonks createquotation quotationId quotationName InitialPrice");
+            if (args.length < 5) {
+                player.sendMessage("Usage : /stonks createquotation quotationId quotationName InitialPrice exchangeType");
                 return true;
             }
             args[1] = args[1].toLowerCase();
@@ -107,8 +108,16 @@ public class StonksCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.RED + "You didn't enter the initial price correctly");
                 return true;
             }
+            Material material;
+            try {
+                material=Material.valueOf(args[4].toUpperCase());
+            } catch (IllegalArgumentException e) {
+                player.sendMessage(ChatColor.RED + "You didn't enter the exchanegType correctly");
+                return true;
+            }
 
-            Stonks.plugin.quotationManager.register(new CreatedQuotation(args[1], args[2], null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
+
+            Stonks.plugin.quotationManager.register(new CreatedQuotation(args[1], args[2],null, material, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
         }
 
 

@@ -175,11 +175,14 @@ public class PortfolioList extends EditableInventory {
 
             holders.register("company", quotation.getName());
             holders.register("price", format.format(quotation.getPrice()));
+            holders.register("day-low", format.format(quotation.getLowest(QuotationTimeDisplay.DAY)));
+            holders.register("day-high", format.format(quotation.getHighest(QuotationTimeDisplay.DAY)));
             holders.register("week-low", format.format(quotation.getLowest(QuotationTimeDisplay.WEEK)));
             holders.register("week-high", format.format(quotation.getHighest(QuotationTimeDisplay.WEEK)));
             holders.register("month-low", format.format(quotation.getLowest(QuotationTimeDisplay.MONTH)));
             holders.register("month-high", format.format(quotation.getHighest(QuotationTimeDisplay.MONTH)));
-
+            holders.register("exchange-type",quotation.getExchangeType().toString().toLowerCase());
+            holders.register("quotation-type",quotation.getClass().getSimpleName());
             holders.register("owned", "" + inv.getPlayerData().countShares(quotation));
 
             return holders;

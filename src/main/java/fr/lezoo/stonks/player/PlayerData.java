@@ -225,7 +225,7 @@ public class PlayerData {
             int bal = 0;
             //We check the amount of the material the player has in his inventory
             for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack.getType().equals(quotation.getExchangeType()))
+                if (itemStack!=null&&itemStack.getType().equals(quotation.getExchangeType()))
                     bal += itemStack.getAmount();
             }
             if (bal < price) {
@@ -244,7 +244,7 @@ public class PlayerData {
             giveShare(share);
             //We withdraw the amount of shares he bought
             for(ItemStack itemStack : player.getInventory().getContents()) {
-                if(itemStack.getType().equals(quotation.getExchangeType())){
+                if(itemStack!=null&&itemStack.getType().equals(quotation.getExchangeType())){
                     double withdraw= Math.min(itemStack.getAmount(),price);
                     itemStack.setAmount(itemStack.getAmount()-(int)withdraw);
                     price-=withdraw;

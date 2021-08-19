@@ -155,6 +155,7 @@ public class Board {
         holders.register("evolution", quotation.getEvolution(time));
         holders.register("time-visualized", time.toString().toLowerCase());
         holders.register("quotation-type",quotation.getClass().getSimpleName());
+        holders.register("exchange-type",quotation.getExchangeType().toString().toLowerCase());
         return holders;
     }
 
@@ -203,13 +204,11 @@ public class Board {
         g2d.drawString(holders.apply(config.getString("time-visualized")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("company")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("quotation-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
-        g2d.drawString("",(int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
-
-
-        g2d.drawString(holders.apply(config.getString("current-price")),(int) (0.4 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("lowest-price")),(int) (0.4 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("highest-price")),(int) (0.4 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("evolution")), (int) (0.4 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("exchange-type")),(int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("current-price")),(int) (0.45 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("lowest-price")),(int) (0.45 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("highest-price")),(int) (0.45 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("evolution")), (int) (0.45 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
 
         g2d.setColor(new Color(80, 30, 0));
         // Bouton SELL,SHORT,BUY,SET LEVERAGE

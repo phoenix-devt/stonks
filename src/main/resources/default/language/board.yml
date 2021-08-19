@@ -7,4 +7,4 @@ description:
     time-visualized:   'Time Visualized : {time-visualized}'
     quotation-type:  'Type : {quotation-type}'
     evolution: 'Evolution : {evolution}'
-    #exchange-type: 'ExchangeType : {exchangeType}'
+    exchange-type: 'ExchangeType : {exchange-type}'

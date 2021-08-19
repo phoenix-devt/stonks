@@ -1,8 +1,10 @@
 package fr.lezoo.stonks.quotation;
 
 import fr.lezoo.stonks.Stonks;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -14,6 +16,10 @@ public class CreatedQuotation extends Quotation {
 
     public CreatedQuotation(String id, String name, Dividends dividends, QuotationInfo firstQuotationData) {
         super(id, name, dividends, firstQuotationData);
+    }
+
+    public CreatedQuotation(String id, String name, Dividends dividends, Material exchangeType, QuotationInfo firstQuotationData) {
+        super(id, name, dividends, exchangeType, firstQuotationData);
     }
 
     public CreatedQuotation(ConfigurationSection config) {
@@ -43,10 +49,10 @@ public class CreatedQuotation extends Quotation {
         //We update all the data List
         for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
             //We get the list corresponding to the time
-            List<QuotationInfo> workingData = this.getData(time);
+            List<QuotationInfo> workingData = new ArrayList<>();
+            workingData.addAll(this.getData(time));
             //If the the latest data of workingData is too old we add another one
             if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / datanumber) {
-
 
                 workingData.add(new QuotationInfo(System.currentTimeMillis(), currentPrice + change));
                 //If the list contains too much data we remove the older ones

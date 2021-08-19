@@ -24,9 +24,17 @@ public class ShareManager {
         for (Share share : mapped.values()) {
             //Check if the share need to be closed
             if(share.getStatus().equals(ShareStatus.OPEN)&&
-                    ( share.getMaxPrice()<=share.getQuotation().getPrice()||share.getMinPrice()>=share.getQuotation().getPrice()) )
+                    ( share.getMaxPrice()<=share.getQuotation().getPrice()||share.getMinPrice()>=share.getQuotation().getPrice()) ) {
                 //We close the share
                 share.close();
+                return;
+            }
+            if(share.getCloseEarning()<=0) {
+                share.close();
+                return;
+            }
+
+
         }
     }
 

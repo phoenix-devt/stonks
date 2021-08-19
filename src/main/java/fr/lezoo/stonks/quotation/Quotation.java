@@ -68,6 +68,24 @@ public abstract class Quotation {
     }
 
     /**
+     * Public constructor to create a new Quotation from scratch
+     *
+     * @param id                 Internal quotation id
+     * @param name               Name of the stock
+
+     * @param firstQuotationData The only QuotationInfo that exists
+     */
+    public Quotation(String id, String name, Material exchangeType, QuotationInfo firstQuotationData) {
+        this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
+        this.name = name;
+        this.dividends = null;
+        this.exchangeType = exchangeType;
+        for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
+            quotationData.put(disp, Arrays.asList(firstQuotationData));
+    }
+
+
+    /**
      * Same constructor but if nothing specified the exchangeType is air so money
      */
 
@@ -91,7 +109,7 @@ public abstract class Quotation {
         this.id = config.getName();
         this.name = config.getString("name");
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
-        this.exchangeType= config.contains("exchange-type")? Material.valueOf(config.getString("exchange-type").toUpperCase()):Material.AIR;
+        this.exchangeType= config.contains("exchange-type")? Material.valueOf(config.getString("exchange-type").toUpperCase()) : Material.AIR;
         // We load the different data from the yml
         for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
             int i = 0;
@@ -261,6 +279,7 @@ public abstract class Quotation {
         }
 
         config.set(id + ".name", name);
+        config.set(id+".exchange-type",exchangeType.toString().toLowerCase());
         //We save the information of the data
         for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
             List<QuotationInfo> quotationData = this.getData(time);

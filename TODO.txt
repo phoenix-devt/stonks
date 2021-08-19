@@ -4,9 +4,10 @@
 
 
 TODO Guillaume
-- option pour acheter automatiquement ou vendre auto en fonction de certaines conditions des stocks
+- option pour acheter automatiquement ou vendre auto en fonction de certaines conditions des stocks OK
 - option pour changer le taux de commission d'une personne
--
+- physical shares ok
+- Pouvoir trade des objets specifiques et pas juste des material
 -
 
 

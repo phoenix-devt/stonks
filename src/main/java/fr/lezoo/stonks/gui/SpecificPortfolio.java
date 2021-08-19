@@ -17,6 +17,7 @@ import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.version.ItemTag;
 import fr.lezoo.stonks.version.NBTItem;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -159,8 +160,21 @@ public class SpecificPortfolio extends EditableInventory {
                     Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getAmount()),
                             "company", quotation.getName(),
                             "gain", Utils.formatGain(gain)).send(player);
-                    Stonks.plugin.economy.depositPlayer(player, earned);
-                    playerData.unregisterShare(share);
+                    if(share.getQuotation().getExchangeType().equals(Material.AIR)) {
+                        Stonks.plugin.economy.depositPlayer(player, earned);
+                        playerData.unregisterShare(share);
+                    }
+                    else {
+                        //We give the material of the share the player is selling
+                        Material material =share.getQuotation().getExchangeType();
+                        int realGain= (int) Math.floor(earned);
+                        while (realGain>=0) {
+                            int withdraw =Math.min(realGain,64);
+                            player.getInventory().addItem(new ItemStack(material,withdraw));
+                            realGain-=withdraw;
+                            playerData.unregisterShare(share);
+                        }
+                    }
 
                     updateInventoryData();
                     open();
