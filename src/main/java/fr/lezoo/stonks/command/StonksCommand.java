@@ -46,7 +46,7 @@ public class StonksCommand implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("givetradingbook")) {
-            player.getInventory().addItem(Stonks.plugin.itemManager.createTradingBook());
+            player.getInventory().addItem(Stonks.plugin.configManager.tradingBook.build(player,player));
         }
 
 
@@ -88,7 +88,7 @@ public class StonksCommand implements CommandExecutor {
 
 
         if (args[0].equalsIgnoreCase("createquotation")) {
-            if (args.length < 5) {
+            if (args.length < 4) {
                 player.sendMessage("Usage : /stonks createquotation quotationId quotationName InitialPrice");
                 return true;
             }

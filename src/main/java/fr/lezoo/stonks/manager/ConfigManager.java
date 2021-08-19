@@ -54,9 +54,8 @@ public class ConfigManager {
     public long boardRefreshTime, quotationRefreshTime, shareRefreshTime;
     public double offerDemandImpact, volatility;
     public int quotationDataNumber, maxInteractionDistance;
-    public String currentPriceText, lowestPriceText, highestPriceText, evolutionText, companyNameText,
-            stockNameText, timeVisualizedText, quotationTypeText, quotationMapName, tradingBookName, bookExplanationText;
-    public List<String> tradingBookLore;
+
+
 
     public void reload() {
 
@@ -147,7 +146,8 @@ public class ConfigManager {
     public enum DefaultFile {
         ITEMS("language", "items.yml"),
         QUOTATIONS("", "quotations.yml"),
-
+        BOARD("language","board.yml"),
+        GUI_STATUS_TYPE_MENU("language/gui","share-status-menu.yml"),
         GUI_QUOTATION_LIST("language/gui", "quotation-list.yml"),
         GUI_SHARE_MENU("language/gui", "share-menu.yml"),
         GUI_PORTFOLIO_LIST("language/gui", "portfolio-list.yml"),

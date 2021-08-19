@@ -33,17 +33,19 @@ public abstract class Quotation {
     protected final String id, name;
     private final Dividends dividends;
 
+    //The type of material that will be exchanged. If the material is AIR it means that it exchanges money
+    private final Material exchangeType;
     /**
      * List of data for every scale. Allows to store just the right
      * amount of data needed so that there aren't 10s timestamps on the yearly scale.
      */
     protected final Map<QuotationTimeDisplay, List<QuotationInfo>> quotationData = new HashMap<>();
 
-    public Quotation(String id, String name, Dividends dividends) {
+    public Quotation(String id, String name, Material exchangeType, Dividends dividends) {
         this.id = id;
         this.name = name;
         this.dividends = dividends;
-
+        this.exchangeType = exchangeType;
         for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
             quotationData.put(disp, new ArrayList<>());
     }
@@ -56,13 +58,30 @@ public abstract class Quotation {
      * @param dividends          Whether or not this quotations gives dividends to investers
      * @param firstQuotationData The only QuotationInfo that exists
      */
+    public Quotation(String id, String name, Dividends dividends, Material exchangeType, QuotationInfo firstQuotationData) {
+        this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
+        this.name = name;
+        this.dividends = dividends;
+        this.exchangeType = exchangeType;
+        for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
+            quotationData.put(disp, Arrays.asList(firstQuotationData));
+    }
+
+    /**
+     * Same constructor but if nothing specified the exchangeType is air so money
+     */
+
     public Quotation(String id, String name, Dividends dividends, QuotationInfo firstQuotationData) {
         this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.name = name;
         this.dividends = dividends;
-
+        this.exchangeType = Material.AIR;
         for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
             quotationData.put(disp, Arrays.asList(firstQuotationData));
+    }
+
+    public Material getExchangeType() {
+        return exchangeType;
     }
 
     /**
@@ -72,7 +91,7 @@ public abstract class Quotation {
         this.id = config.getName();
         this.name = config.getString("name");
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
-
+        this.exchangeType= config.contains("exchange-type")? Material.valueOf(config.getString("exchange-type").toUpperCase()):Material.AIR;
         // We load the different data from the yml
         for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
             int i = 0;

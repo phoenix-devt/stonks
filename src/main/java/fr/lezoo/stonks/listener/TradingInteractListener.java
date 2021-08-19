@@ -44,8 +44,10 @@ public class TradingInteractListener implements Listener {
 
 
         //Check if the player is trying to interact with a board with a tradingbook
-        if (player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInMainHand().getItemMeta() != null
-                && player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase(Stonks.plugin.configManager.tradingBookName)) {
+        if ((player.getInventory().getItemInMainHand() != null) && (player.getInventory().getItemInMainHand().getItemMeta() != null)
+                && player.getInventory().getItemInMainHand().getItemMeta().getDisplayName()
+                .equalsIgnoreCase(Stonks.plugin.configManager.tradingBook.getPlaceholders(player, player).apply(Stonks.plugin.configManager.tradingBook.getDisplayName())))
+        {
 
             // We get the block that the player is interacting with and check if
             // the nearest entity is an item frame wich belongs to a board

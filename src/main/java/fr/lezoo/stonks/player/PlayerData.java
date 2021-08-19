@@ -10,8 +10,11 @@ import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.message.Message;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,7 +39,7 @@ public class PlayerData {
     }
 
     public void loadFromConfig(FileConfiguration config) {
-       // playerStatus=PlayerStatus.valueOf(config.getString("player-status").toUpperCase());
+        // playerStatus=PlayerStatus.valueOf(config.getString("player-status").toUpperCase());
         // Load shares from config file
         if (config.contains("shares"))
             for (String quotationKey : config.getConfigurationSection("shares").getKeys(false)) {
@@ -102,11 +105,9 @@ public class PlayerData {
         //We filter to only have the ones of the specified share Status
         return shares.getOrDefault(quotation.getId(), new HashSet<>())
                 .stream()
-                .filter((share)-> share.getStatus().equals(status))
+                .filter((share) -> share.getStatus().equals(status))
                 .collect(Collectors.toSet());
     }
-
-
 
 
     /**
@@ -196,24 +197,63 @@ public class PlayerData {
     public boolean buyShare(Quotation quotation, ShareType type, double amount, double maxPrice, double minPrice) {
         double price = quotation.getPrice() * amount;
 
-        // Check for balance
-        double bal = Stonks.plugin.economy.getBalance(player);
-        if (bal < price) {
-            Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", Stonks.plugin.configManager.stockPriceFormat.format(price - bal)).send(player);
-            return false;
+        //If it exchanges money
+        if (quotation.getExchangeType().equals(Material.AIR)) {
+            // Check for balance
+            double bal = Stonks.plugin.economy.getBalance(player);
+            if (bal < price) {
+                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", Stonks.plugin.configManager.stockPriceFormat.format(price - bal)).send(player);
+                return false;
+            }
+
+            // Check for Bukkit event
+            Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, minPrice, maxPrice);
+
+            PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, share);
+            Bukkit.getPluginManager().callEvent(called);
+            if (called.isCancelled())
+                return false;
+
+            // Remove from balance and buy shares
+            giveShare(share);
+            Stonks.plugin.economy.withdrawPlayer(player, price);
+        }
+        else {
+            //We make the price an int cause we can't withdraw half items (makes the player lose a bit of money
+            price =Math.ceil(price);
+
+            int bal = 0;
+            //We check the amount of the material the player has in his inventory
+            for (ItemStack itemStack : player.getInventory().getContents()) {
+                if (itemStack.getType().equals(quotation.getExchangeType()))
+                    bal += itemStack.getAmount();
+            }
+            if (bal < price) {
+                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", Stonks.plugin.configManager.stockPriceFormat.format(price - bal)).send(player);
+                return false;
+            }
+            // Check for Bukkit event
+            Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, minPrice, maxPrice);
+
+            PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, share);
+            Bukkit.getPluginManager().callEvent(called);
+            if (called.isCancelled())
+                return false;
+
+            //We give the player the share
+            giveShare(share);
+            //We withdraw the amount of shares he bought
+            for(ItemStack itemStack : player.getInventory().getContents()) {
+                if(itemStack.getType().equals(quotation.getExchangeType())){
+                    double withdraw= Math.min(itemStack.getAmount(),price);
+                    itemStack.setAmount(itemStack.getAmount()-(int)withdraw);
+                    price-=withdraw;
+                }
+
+            }
+
         }
 
-        // Check for Bukkit event
-        Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, minPrice, maxPrice);
-
-        PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, share);
-        Bukkit.getPluginManager().callEvent(called);
-        if (called.isCancelled())
-            return false;
-
-        // Remove from balance and buy shares
-        giveShare(share);
-        Stonks.plugin.economy.withdrawPlayer(player, price);
 
         // Send player message
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(

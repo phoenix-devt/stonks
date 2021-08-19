@@ -1,9 +1,12 @@
 package fr.lezoo.stonks.display.board;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.gui.api.item.Placeholders;
+import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -11,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.util.Vector;
 
@@ -19,6 +23,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -138,8 +143,25 @@ public class Board {
         quotation.createQuotationBoard(true, location, direction, time, width, height);
     }
 
+
+    public Placeholders getPlaceholders() {
+        Placeholders holders = new Placeholders();
+        DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
+        holders.register("quotation-id", quotation.getId());
+        holders.register("company", quotation.getName());
+        holders.register("current-price", format.format(quotation.getPrice()));
+        holders.register("lowest-price", format.format(quotation.getLowest(time)));
+        holders.register("highest-price",format.format(quotation.getHighest(time)));
+        holders.register("evolution", quotation.getEvolution(time));
+        holders.register("time-visualized", time.toString().toLowerCase());
+        holders.register("quotation-type",quotation.getClass().getSimpleName());
+        return holders;
+    }
+
     public BufferedImage getImage(QuotationTimeDisplay time, int BOARD_WIDTH, int BOARD_HEIGHT) {
 
+        ConfigurationSection config = YamlConfiguration.loadConfiguration(ConfigManager.DefaultFile.BOARD.getFile()).getConfigurationSection("description");
+        Placeholders holders = getPlaceholders();
 
 
         // There is 128 pixel for each map
@@ -178,15 +200,16 @@ public class Board {
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 3 / 128));
         // We want only 2 numbers after the comma
-        g2d.drawString(Stonks.plugin.configManager.currentPriceText +" : " +(double) ((int) (quotationData.get(quotationData.size() - 1).getPrice() * 100) / 1) / 100, (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
-        g2d.drawString(Stonks.plugin.configManager.highestPriceText+" : " + (double) ((int) (maxVal * 100) / 1) / 100, (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
-        g2d.drawString(Stonks.plugin.configManager.lowestPriceText+" : " + (double) ((int) (minVal * 100) / 1) / 100, (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
-        g2d.drawString(Stonks.plugin.configManager.evolutionText+" : "+quotation.getEvolution(time)+"%",(int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("time-visualized")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("company")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("quotation-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
+        g2d.drawString("",(int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
 
 
-        g2d.drawString(Stonks.plugin.configManager.companyNameText+" : " + quotation.getName(), (int) (0.35 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
-        g2d.drawString(Stonks.plugin.configManager.timeVisualizedText+" : " +time.toString().toLowerCase(),(int) (0.35 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
-        g2d.drawString(Stonks.plugin.configManager.quotationTypeText+" : ",(int) (0.35 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("current-price")),(int) (0.4 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("lowest-price")),(int) (0.4 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("highest-price")),(int) (0.4 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("evolution")), (int) (0.4 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
 
         g2d.setColor(new Color(80, 30, 0));
         // Bouton SELL,SHORT,BUY,SET LEVERAGE

@@ -44,7 +44,7 @@ public class Stonks extends JavaPlugin {
     public PlayerDataManager playerManager = new PlayerDataManager();
     public QuotationManager quotationManager = new QuotationManager();
     public BoardManager boardManager = new BoardManager();
-    public ItemManager itemManager = new ItemManager();
+
 
 
     /*TODO Comment obtenir les lives de trading

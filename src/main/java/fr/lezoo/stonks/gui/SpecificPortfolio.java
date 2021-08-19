@@ -89,7 +89,7 @@ public class SpecificPortfolio extends EditableInventory {
 
         @Override
         public String applyNamePlaceholders(String str) {
-            return str.replace("{page}", "" + (page + 1)).replace("{max}", "" + (maxPage + 1));
+            return str.replace("{share-status}",status.toString().toLowerCase()).replace("{page}", "" + (page + 1)).replace("{max}", "" + (maxPage + 1));
         }
 
         @Override

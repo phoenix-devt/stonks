@@ -22,15 +22,14 @@ items:
     name: '&a{name}'
     item: BOOK
     lore:
-      - ''
-      - '&7Current Price: &f${price}'
-      - ''
-      - '&71 Week Extrema: &c${week-low} &7- &a${week-high}'
-      - '&71 Month Extrema: &c${month-low} &7- &a${month-high}'
-      - ''
-      - '&7Owned Shares: &f{owned}'
-      - ''
-      - '&e► Click to open the share menu.'
+      - '&7Quotation id : {quotation-id}'
+      - '&7Company name : {company}'
+      - '&7 Current price : {current-price}'
+      - '&7 Lowest Price : {lowest-price}'
+      - '&7 Highest Price : {highest-price}'
+      - '&7 Time Visualized : {time-visualized}'
+      - '&7 QuotationType : {quotation-type}'
+      - '&3 Click Here to open the Shares menu'
     no-quotation:
       name: '&aNo Quotation'
       item: PAPER

@@ -14,6 +14,8 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
+import java.text.DecimalFormat;
+
 public class QuotationMap extends CustomItem<DisplayInfo> {
 
     public QuotationMap(ConfigurationSection config) {
@@ -40,12 +42,13 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
     public Placeholders getPlaceholders(Player player, DisplayInfo info) {
         Quotation quotation = info.getQuotation();
         QuotationTimeDisplay timeDisplay = info.getTimeDisplay();
+        DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
         Placeholders holders = new Placeholders();
         holders.register("quotation-id", quotation.getId());
         holders.register("company", quotation.getName());
-        holders.register("current-price", quotation.getPrice());
-        holders.register("lowest-price", quotation.getLowest(timeDisplay));
-        holders.register("highest-price", quotation.getHighest(timeDisplay));
+        holders.register("current-price", format.format(quotation.getPrice()));
+        holders.register("lowest-price", format.format(quotation.getLowest(timeDisplay)));
+        holders.register("highest-price", format.format(quotation.getHighest(timeDisplay)));
         holders.register("evolution", quotation.getEvolution(timeDisplay));
         holders.register("time-visualized", timeDisplay.toString().toLowerCase());
         holders.register("quotation-type", quotation.getClass().getName());

@@ -1,0 +1,10 @@
+description:
+    quotation-id: 'id : {quotation-id}'
+    company: 'name : {company}'
+    current-price: 'Current price : {current-price}'
+    lowest-price:  'Lowest Price : {lowest-price}'
+    highest-price:  'Highest Price : {highest-price}'
+    time-visualized:   'Time Visualized : {time-visualized}'
+    quotation-type:  'Type : {quotation-type}'
+    evolution: 'Evolution : {evolution}'
+    #exchange-type: 'ExchangeType : {exchangeType}'

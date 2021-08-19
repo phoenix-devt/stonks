@@ -67,7 +67,7 @@ public class PortfolioList extends EditableInventory {
             super(playerData, editable);
 
             int perPage = editable.getByFunction("quotation").getSlots().size();
-
+            quotations.clear();
             quotations.addAll(Stonks.plugin.quotationManager.getQuotations());
             maxPage = Math.max(((int) Math.ceil((double) quotations.size() / perPage)) - 1, 0);
         }
