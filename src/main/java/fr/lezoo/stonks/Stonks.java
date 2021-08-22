@@ -2,20 +2,19 @@ package fr.lezoo.stonks;
 
 import com.sun.jna.platform.win32.COM.IRunningObjectTable;
 import fr.lezoo.stonks.command.PortfolioCommand;
-import fr.lezoo.stonks.listener.SharePaperListener;
-import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.command.QuotationsCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
-import fr.lezoo.stonks.command.StonksCommand;
-import fr.lezoo.stonks.command.completion.StonksCommandCompletion;
+import fr.lezoo.stonks.command.StonksCommandRoot;
 import fr.lezoo.stonks.compat.placeholder.DefaultPlaceholderParser;
 import fr.lezoo.stonks.compat.placeholder.PlaceholderAPIParser;
 import fr.lezoo.stonks.compat.placeholder.PlaceholderParser;
 import fr.lezoo.stonks.compat.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.DisplaySignListener;
 import fr.lezoo.stonks.listener.PlayerListener;
+import fr.lezoo.stonks.listener.SharePaperListener;
 import fr.lezoo.stonks.listener.TradingInteractListener;
 import fr.lezoo.stonks.manager.*;
+import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.version.ServerVersion;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper_1_17_R1;
@@ -26,7 +25,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import javax.sound.sampled.Port;
 import java.util.logging.Level;
 
 public class Stonks extends JavaPlugin {
@@ -100,8 +98,9 @@ public class Stonks extends JavaPlugin {
         }
 
         // Register commands
-        getCommand("stonks").setExecutor(new StonksCommand());
-        getCommand("stonks").setTabCompleter(new StonksCommandCompletion());
+        StonksCommandRoot commandRoot = new StonksCommandRoot();
+        getCommand("stonks").setExecutor(commandRoot);
+        getCommand("stonks").setTabCompleter(commandRoot);
         getCommand("redeemdividends").setExecutor(new RedeemDividendsCommand());
         getCommand("quotations").setExecutor(new QuotationsCommand());
         getCommand("portfolio").setExecutor(new PortfolioCommand());
@@ -111,6 +110,7 @@ public class Stonks extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new SharePaperListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplaySignListener(), this);
         Bukkit.getPluginManager().registerEvents(new TradingInteractListener(), this);
+
         // Refresh boards
         new BukkitRunnable() {
             //We refresh the board only if people are online.
@@ -121,12 +121,11 @@ public class Stonks extends JavaPlugin {
             }
         }.runTaskTimer(this, 0, 20L * this.configManager.boardRefreshTime);
 
-        //Refresh quotation prices
+        // Refresh quotation prices
         new BukkitRunnable() {
             @Override
             public void run() {
                 quotationManager.refreshQuotations();
-
             }
         }.runTaskTimer(this, 0, 20L * configManager.quotationRefreshTime / 1000);
 
@@ -151,7 +150,7 @@ public class Stonks extends JavaPlugin {
 
     /**
      * @return If the stock market is closed and no shares
-     * can be bought or closed
+     *         can be bought or closed
      */
     public boolean isClosed() {
 
