@@ -1,7 +1,9 @@
 package fr.lezoo.stonks.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
 
@@ -38,6 +40,11 @@ public class Position {
 
     public static Position from(Location loc) {
         return new Position(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    public static Position from(ConfigurationSection config) {
+        World world = Objects.requireNonNull(Bukkit.getWorld(config.getString("world")), "Could not find world");
+        return new Position(world, config.getInt("x"), config.getInt("y"), config.getInt("z"));
     }
 
     @Override

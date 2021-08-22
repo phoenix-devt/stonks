@@ -7,8 +7,11 @@ import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class DisplaySign {
     private final Quotation quotation;
@@ -18,9 +21,25 @@ public class DisplaySign {
 
     private static final long CHECK_TIME_OUT = 1000 * 10;
 
+    /**
+     * Used when creating a display sign using the special command
+     *
+     * @param quotation Quotation to take info from
+     * @param pos       Position of the display sign
+     */
     public DisplaySign(Quotation quotation, Position pos) {
         this.quotation = quotation;
         this.pos = pos;
+
+        update();
+    }
+
+    /**
+     * Used when loading a display sign from the save file
+     */
+    public DisplaySign(ConfigurationSection config) {
+        quotation = Objects.requireNonNull(Stonks.plugin.quotationManager.get(config.getString("quotation")), "Could not find quotation");
+        pos = Position.from(config.getConfigurationSection("position"));
 
         update();
     }
@@ -55,6 +74,16 @@ public class DisplaySign {
 
         // Save block state update
         sign.update();
+    }
+
+    public void save(ConfigurationSection config) {
+        UUID randomId = UUID.randomUUID();
+        config.set(randomId + ".quotation", quotation.getId());
+
+        config.set(randomId + ".position.world", pos.getWorld().getName());
+        config.set(randomId + ".position.x", pos.getX());
+        config.set(randomId + ".position.y", pos.getY());
+        config.set(randomId + ".position.z", pos.getZ());
     }
 
     private String applyPlaceholders(Quotation quotation, String input) {

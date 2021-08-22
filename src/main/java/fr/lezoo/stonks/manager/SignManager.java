@@ -1,11 +1,15 @@
 package fr.lezoo.stonks.manager;
 
+import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.sign.DisplaySign;
 import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.Position;
 import org.apache.commons.lang.Validate;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class SignManager implements FileManager {
     private final Map<Position, DisplaySign> mapped = new HashMap<>();
@@ -43,13 +47,27 @@ public class SignManager implements FileManager {
 
     @Override
     public void load() {
-
-        // TODO
+        FileConfiguration config = new ConfigFile("signdata").getConfig();
+        for (String key : config.getKeys(false))
+            try {
+                register(new DisplaySign(config.getConfigurationSection(key)));
+            } catch (RuntimeException exception) {
+                Stonks.plugin.getLogger().log(Level.WARNING, "Could not load display sign " + key + ": " + exception.getMessage());
+            }
     }
 
     @Override
     public void save() {
+        ConfigFile config = new ConfigFile("signdata");
 
-        // TODO
+        // Remove older
+        for (String key : config.getConfig().getKeys(false))
+            config.getConfig().set(key, null);
+
+        // Save latest
+        for (DisplaySign sign : getActive())
+            sign.save(config.getConfig());
+
+        config.save();
     }
 }
