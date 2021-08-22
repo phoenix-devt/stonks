@@ -35,7 +35,8 @@ items:
         - '&7 Week High: ${week-high}'
         - '---------------------------'
         - ''
-        - '&3► Click to buy/sell shares'
+        - '&3► Left click to buy/sell shares'
+        - '&3► Right click to see your orders'
 
     # When a quotation exchanges money
     name: '&a{company}'
@@ -50,7 +51,8 @@ items:
       - '&7 Week High: {week-high}'
       - '---------------------------'
       - ''
-      - '&3► Click to buy/sell shares'
+      - '&3► Left click to buy/sell shares'
+      - '&3► Right click to see your orders'
 
     # When there are no quotation at a target slot
     none:

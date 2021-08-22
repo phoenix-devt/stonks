@@ -18,7 +18,7 @@ public class PortfolioCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        Stonks.plugin.configManager.SHARE_STATUS_MENU.generate(PlayerData.get(player)).open();
+        Stonks.plugin.configManager.QUOTATION_LIST.generate(PlayerData.get(player)).open();
         return true;
     }
 }

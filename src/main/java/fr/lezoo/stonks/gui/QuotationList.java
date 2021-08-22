@@ -13,6 +13,7 @@ import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.version.ItemTag;
 import fr.lezoo.stonks.version.NBTItem;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
@@ -102,7 +103,10 @@ public class QuotationList extends EditableInventory {
                     return;
 
                 Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
-                Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, quotation).open();
+                if (event.getAction() == InventoryAction.PICKUP_ALL)
+                    Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, quotation).open();
+                if (event.getAction() == InventoryAction.PICKUP_HALF)
+                    Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(playerData, quotation).open();
             }
         }
 

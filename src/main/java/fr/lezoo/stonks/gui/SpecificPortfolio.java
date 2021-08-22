@@ -52,25 +52,27 @@ public class SpecificPortfolio extends EditableInventory {
         if (function.equalsIgnoreCase("previous-page"))
             return new PreviousPageItem(config);
 
+        if (function.equalsIgnoreCase("switch-viewed-shares"))
+            return new SwitchViewedSharesItem(config);
+
         return new SimpleItem(config);
     }
 
-    public GeneratedInventory generate(PlayerData player, Quotation quotation, ShareStatus shareStatus) {
-        return new GeneratedSpecificPortfolio(player, quotation, this, shareStatus);
+    public GeneratedInventory generate(PlayerData player, Quotation quotation) {
+        return new GeneratedSpecificPortfolio(player, quotation, this);
     }
 
     public class GeneratedSpecificPortfolio extends GeneratedInventory {
         private final Quotation quotation;
         private final int perPage;
-        private final ShareStatus shareStatus;
 
         // Page indexing arbitrarily starts at 0
         private int page = 0;
-
+        private ShareStatus shareStatus = ShareStatus.OPEN;
         private final List<Share> shares = new ArrayList<>();
         private int maxPage;
 
-        public GeneratedSpecificPortfolio(PlayerData playerData, Quotation quotation, EditableInventory editable, ShareStatus shareStatus) {
+        public GeneratedSpecificPortfolio(PlayerData playerData, Quotation quotation, EditableInventory editable) {
             super(playerData, editable);
 
             // Get amount of shares displayed per page
@@ -89,15 +91,26 @@ public class SpecificPortfolio extends EditableInventory {
 
         @Override
         public String applyNamePlaceholders(String str) {
-            return str.replace("{share-status}", shareStatus.toString().toLowerCase()).replace("{page}", "" + (page + 1)).replace("{max}", "" + (maxPage + 1));
+            return str.replace("{company}", quotation.getCompany())
+                    .replace("{share-status}", shareStatus.toString().toLowerCase())
+                    .replace("{page}", "" + (page + 1))
+                    .replace("{max}", "" + (maxPage + 1));
         }
 
         @Override
         public void whenClicked(InventoryClickEvent event, InventoryItem item) {
 
+            // Switch viewed shares
+            if (item instanceof SwitchViewedSharesItem) {
+                this.shareStatus = shareStatus == ShareStatus.OPEN ? ShareStatus.CLOSED : ShareStatus.OPEN;
+                updateInventoryData();
+                open();
+                return;
+            }
+
             // Back to list
             if (item instanceof BackItem) {
-                Stonks.plugin.configManager.PORTFOLIO_LIST.generate(playerData, shareStatus).open();
+                Stonks.plugin.configManager.QUOTATION_LIST.generate(playerData).open();
                 return;
             }
 
@@ -155,11 +168,14 @@ public class SpecificPortfolio extends EditableInventory {
                     Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getAmount()),
                             "company", quotation.getCompany(),
                             "gain", Utils.formatGain(gain)).send(player);
-                    if (share.getQuotation().getExchangeType().equals(Material.AIR)) {
+
+                    // Virtual quotation
+                    if (share.getQuotation().isVirtual()) {
                         Stonks.plugin.economy.depositPlayer(player, earned);
                         playerData.unregisterShare(share);
+
+                        // Physical quotation
                     } else {
-                        //We give the material of the share the player is selling
                         Material material = share.getQuotation().getExchangeType();
                         int realGain = (int) Math.floor(earned);
                         while (realGain >= 0) {
@@ -185,6 +201,26 @@ public class SpecificPortfolio extends EditableInventory {
     public class BackItem extends SimpleItem<GeneratedSpecificPortfolio> {
         public BackItem(ConfigurationSection config) {
             super(config);
+        }
+    }
+
+    public class SwitchViewedSharesItem extends InventoryItem<GeneratedSpecificPortfolio> {
+        private final InventoryItem showOpen;
+
+        public SwitchViewedSharesItem(ConfigurationSection config) {
+            super(config);
+
+            showOpen = new SimpleItem(config.getConfigurationSection("show-open"));
+        }
+
+        @Override
+        public ItemStack getDisplayedItem(GeneratedSpecificPortfolio inv, int n) {
+            return inv.shareStatus == ShareStatus.OPEN ? super.getDisplayedItem(inv, n) : showOpen.getDisplayedItem(inv, n);
+        }
+
+        @Override
+        public Placeholders getPlaceholders(GeneratedSpecificPortfolio inv, int n) {
+            return new Placeholders();
         }
     }
 

@@ -1,7 +1,9 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.*;
+import fr.lezoo.stonks.gui.QuotationList;
+import fr.lezoo.stonks.gui.QuotationShareMenu;
+import fr.lezoo.stonks.gui.SpecificPortfolio;
 import fr.lezoo.stonks.gui.objects.EditableInventory;
 import fr.lezoo.stonks.item.QuotationMap;
 import fr.lezoo.stonks.item.SharePaper;
@@ -33,11 +35,9 @@ public class ConfigManager {
     // Accessible public GUIs
     public final QuotationList QUOTATION_LIST = new QuotationList();
     public final QuotationShareMenu QUOTATION_SHARE = new QuotationShareMenu();
-    public final PortfolioList PORTFOLIO_LIST = new PortfolioList();
     public final SpecificPortfolio SPECIFIC_PORTFOLIO = new SpecificPortfolio();
-    public final ShareStatusMenu SHARE_STATUS_MENU = new ShareStatusMenu();
 
-    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, PORTFOLIO_LIST, SPECIFIC_PORTFOLIO, SHARE_STATUS_MENU};
+    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, SPECIFIC_PORTFOLIO};
 
     // Accessible public config fields
     public DecimalFormat stockPriceFormat, shareFormat;
@@ -141,10 +141,9 @@ public class ConfigManager {
         ITEMS("language", "items.yml"),
         QUOTATIONS("", "quotations.yml"),
         BOARD("language", "board.yml"),
-        GUI_STATUS_TYPE_MENU("language/gui", "share-status-menu.yml"),
+
         GUI_QUOTATION_LIST("language/gui", "quotation-list.yml"),
         GUI_SHARE_MENU("language/gui", "share-menu.yml"),
-        GUI_PORTFOLIO_LIST("language/gui", "portfolio-list.yml"),
         GUI_SPECIFIC_PORTFOLIO("language/gui", "specific-portfolio.yml"),
         ;
 

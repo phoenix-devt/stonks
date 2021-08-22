@@ -22,6 +22,7 @@ public class PlayerData {
     private final UUID uuid;
     private Player player;
     private PlayerStatus playerStatus;
+
     // Data not saved when logging off
     private double leverage = 1;
 
@@ -29,7 +30,6 @@ public class PlayerData {
      * Mapped shares the player bought from a particular quotation
      */
     private final Map<String, Set<Share>> shares = new HashMap<>();
-
 
     public PlayerData(Player player) {
         this.player = player;
@@ -59,8 +59,8 @@ public class PlayerData {
 
         // Remove old shares
         config.set("shares", null);
-        // config.set("player-status",playerStatus.toString().toLowerCase());
-        // Save newest
+
+        // Save newest shares
         for (String quotationId : shares.keySet()) {
             List<String> toList = new ArrayList<>();
             shares.get(quotationId).forEach(share -> toList.add(share.getUniqueId().toString()));
@@ -143,13 +143,6 @@ public class PlayerData {
         this.shares.get(share.getQuotation().getId()).remove(share);
     }
 
-    /**
-     * @return IDs of quotations the player has some shares of which
-     */
-    public Set<String> getShareKeys() {
-        return shares.keySet();
-    }
-
     public Share getShareById(Quotation quotation, UUID uuid) {
 
         for (Share share : getShares(quotation))
@@ -216,15 +209,14 @@ public class PlayerData {
             // Remove from balance and buy shares
             giveShare(share);
             Stonks.plugin.economy.withdrawPlayer(player, price);
-        }
-        else {
+        } else {
             //We make the price an int cause we can't withdraw half items (makes the player lose a bit of money
-            price =Math.ceil(price);
+            price = Math.ceil(price);
 
             int bal = 0;
             //We check the amount of the material the player has in his inventory
             for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack!=null&&itemStack.getType().equals(quotation.getExchangeType()))
+                if (itemStack != null && itemStack.getType().equals(quotation.getExchangeType()))
                     bal += itemStack.getAmount();
             }
             if (bal < price) {
@@ -242,11 +234,11 @@ public class PlayerData {
             //We give the player the share
             giveShare(share);
             //We withdraw the amount of shares he bought
-            for(ItemStack itemStack : player.getInventory().getContents()) {
-                if(itemStack!=null&&itemStack.getType().equals(quotation.getExchangeType())){
-                    double withdraw= Math.min(itemStack.getAmount(),price);
-                    itemStack.setAmount(itemStack.getAmount()-(int)withdraw);
-                    price-=withdraw;
+            for (ItemStack itemStack : player.getInventory().getContents()) {
+                if (itemStack != null && itemStack.getType().equals(quotation.getExchangeType())) {
+                    double withdraw = Math.min(itemStack.getAmount(), price);
+                    itemStack.setAmount(itemStack.getAmount() - (int) withdraw);
+                    price -= withdraw;
                 }
 
             }

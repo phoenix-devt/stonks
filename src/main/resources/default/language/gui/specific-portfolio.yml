@@ -46,3 +46,15 @@ items:
     no-share:
       item: PAPER
       name: '&aNo Share'
+  switch-viewed-shares:
+    slots: [ 43 ]
+    function: 'switch-viewed-shares'
+
+    # 'Show Open Shares' item
+    show-open:
+      name: '&aShow Open Shares'
+      item: 'BLUE_WOOL'
+
+    # 'Show Closed Shares' item
+    name: '&cShow Closed Shares'
+    item: 'RED_WOOL'
