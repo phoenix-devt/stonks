@@ -32,7 +32,7 @@ public class QuotationManager implements FileManager {
     }
 
     public void remove(String quotationId) {
-        Validate.isTrue(!mapped.containsKey(quotationId), "Tried to remove quotation " + quotationId + " which does not exist");
+        Validate.isTrue(mapped.containsKey(quotationId), "Tried to remove quotation " + quotationId + " which does not exist");
 
         mapped.remove(quotationId);
     }
