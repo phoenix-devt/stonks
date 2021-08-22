@@ -1,6 +1,5 @@
 package fr.lezoo.stonks;
 
-import com.sun.jna.platform.win32.COM.IRunningObjectTable;
 import fr.lezoo.stonks.command.PortfolioCommand;
 import fr.lezoo.stonks.command.QuotationsCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
@@ -42,7 +41,6 @@ public class Stonks extends JavaPlugin {
     public PlayerDataManager playerManager = new PlayerDataManager();
     public QuotationManager quotationManager = new QuotationManager();
     public BoardManager boardManager = new BoardManager();
-
 
 
     /*TODO Comment obtenir les lives de trading
@@ -136,7 +134,7 @@ public class Stonks extends JavaPlugin {
             public void run() {
                 shareManager.refresh();
             }
-        }.runTaskTimer(this,0L,configManager.shareRefreshTime);
+        }.runTaskTimer(this, 0L, configManager.shareRefreshTime);
     }
 
 
