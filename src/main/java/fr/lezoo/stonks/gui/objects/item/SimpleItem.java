@@ -1,8 +1,7 @@
-package fr.lezoo.stonks.gui.api.item;
+package fr.lezoo.stonks.gui.objects.item;
 
-import fr.lezoo.stonks.gui.api.GeneratedInventory;
+import fr.lezoo.stonks.gui.objects.GeneratedInventory;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.Inventory;
 
 /**
  * An inventory item that has no particular placeholder

@@ -1,11 +1,11 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.api.EditableInventory;
-import fr.lezoo.stonks.gui.api.GeneratedInventory;
-import fr.lezoo.stonks.gui.api.item.InventoryItem;
-import fr.lezoo.stonks.gui.api.item.Placeholders;
-import fr.lezoo.stonks.gui.api.item.SimpleItem;
+import fr.lezoo.stonks.gui.objects.EditableInventory;
+import fr.lezoo.stonks.gui.objects.GeneratedInventory;
+import fr.lezoo.stonks.gui.objects.item.InventoryItem;
+import fr.lezoo.stonks.gui.objects.item.Placeholders;
+import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
@@ -135,12 +135,13 @@ public class QuotationList extends EditableInventory {
     }
 
     public class QuotationItem extends InventoryItem<GeneratedQuotationList> {
-        private final SimpleItem noQuotation;
+        private final InventoryItem none, physicalQuotation;
 
         public QuotationItem(ConfigurationSection config) {
             super(config);
 
-            noQuotation = new SimpleItem(config.getConfigurationSection("no-quotation"));
+            none = new SimpleItem(config.getConfigurationSection("none"));
+            physicalQuotation = new SubQuotationItem(config.getConfigurationSection("physical"), this);
         }
 
         @Override
@@ -149,12 +150,13 @@ public class QuotationList extends EditableInventory {
 
             // If above quotation number, display 'No quotation'
             if (index >= inv.quotations.size())
-                return noQuotation.getDisplayedItem(inv, n);
+                return none.getDisplayedItem(inv, n);
 
             Quotation quotation = inv.quotations.get(index);
 
             // Displayed required quotation
-            NBTItem nbt = NBTItem.get(super.getDisplayedItem(inv, n));
+            ItemStack displayed = quotation.isVirtual() ? super.getDisplayedItem(inv, n) : physicalQuotation.getDisplayedItem(inv, n);
+            NBTItem nbt = NBTItem.get(displayed);
             nbt.addTag(new ItemTag("quotationId", quotation.getId()));
             return nbt.toItem();
         }
@@ -173,7 +175,7 @@ public class QuotationList extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("stock-name", quotation.getName());
+            holders.register("company", quotation.getCompany());
             holders.register("price", format.format(quotation.getPrice()));
             holders.register("day-low", format.format(quotation.getLowest(TimeScale.DAY)));
             holders.register("day-high", format.format(quotation.getHighest(TimeScale.DAY)));
@@ -181,9 +183,24 @@ public class QuotationList extends EditableInventory {
             holders.register("week-high", format.format(quotation.getHighest(TimeScale.WEEK)));
             holders.register("month-low", format.format(quotation.getLowest(TimeScale.MONTH)));
             holders.register("month-high", format.format(quotation.getHighest(TimeScale.MONTH)));
-            holders.register("exchange-type", quotation.getExchangeType().toString().toLowerCase());
+            holders.register("exchange-type", quotation.isVirtual() ? "None" : quotation.getExchangeType().toString().toLowerCase());
             holders.register("quotation-type", quotation.getClass().getSimpleName());
             return holders;
+        }
+
+        public class SubQuotationItem extends InventoryItem<GeneratedQuotationList> {
+            private final InventoryItem parent;
+
+            public SubQuotationItem(ConfigurationSection config, InventoryItem parent) {
+                super(config);
+
+                this.parent = parent;
+            }
+
+            @Override
+            public Placeholders getPlaceholders(GeneratedQuotationList inv, int n) {
+                return parent.getPlaceholders(inv, n);
+            }
         }
     }
 }

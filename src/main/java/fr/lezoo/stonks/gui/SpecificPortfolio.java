@@ -3,11 +3,11 @@ package fr.lezoo.stonks.gui;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.PlayerCloseShareEvent;
 import fr.lezoo.stonks.api.event.PlayerGenerateSharePaperEvent;
-import fr.lezoo.stonks.gui.api.EditableInventory;
-import fr.lezoo.stonks.gui.api.GeneratedInventory;
-import fr.lezoo.stonks.gui.api.item.InventoryItem;
-import fr.lezoo.stonks.gui.api.item.Placeholders;
-import fr.lezoo.stonks.gui.api.item.SimpleItem;
+import fr.lezoo.stonks.gui.objects.EditableInventory;
+import fr.lezoo.stonks.gui.objects.GeneratedInventory;
+import fr.lezoo.stonks.gui.objects.item.InventoryItem;
+import fr.lezoo.stonks.gui.objects.item.Placeholders;
+import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
@@ -143,7 +143,7 @@ public class SpecificPortfolio extends EditableInventory {
                     for (ItemStack dropped : player.getInventory().addItem(paper).values())
                         player.getWorld().dropItem(player.getLocation(), dropped);
 
-                    Message.GET_SHARE_PAPER.format("company", quotation.getName(),
+                    Message.GET_SHARE_PAPER.format("company", quotation.getCompany(),
                             "shares", Utils.fourDigits.format(share.getAmount())).send(player);
 
                     updateInventoryData();
@@ -158,7 +158,7 @@ public class SpecificPortfolio extends EditableInventory {
                     // Close share
                     double gain = share.calculateGain(), earned = share.getCloseEarning();
                     Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getAmount()),
-                            "company", quotation.getName(),
+                            "company", quotation.getCompany(),
                             "gain", Utils.formatGain(gain)).send(player);
                     if(share.getQuotation().getExchangeType().equals(Material.AIR)) {
                         Stonks.plugin.economy.depositPlayer(player, earned);
@@ -255,7 +255,7 @@ public class SpecificPortfolio extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("company", inv.quotation.getName());
+            holders.register("company", inv.quotation.getCompany());
             holders.register("leverage", Utils.fourDigits.format(share.getLeverage()));
             holders.register("amount", format.format(share.getAmount()));
 

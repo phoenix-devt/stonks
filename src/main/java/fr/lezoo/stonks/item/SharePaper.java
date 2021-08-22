@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.item;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.api.item.Placeholders;
+import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.util.Utils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,7 +24,7 @@ public class SharePaper extends CustomItem<Share> {
         placeholders.register("leverage", Utils.fourDigits.format(share.getLeverage()));
         placeholders.register("initial-price", Stonks.plugin.configManager.stockPriceFormat.format(share.getInitialPrice()));
         placeholders.register("date", Stonks.plugin.configManager.dateFormat.format(share.getCreationTime()));
-        placeholders.register("quotation", share.getQuotation().getName());
+        placeholders.register("company", share.getQuotation().getCompany());
         placeholders.register("type", share.getType().getTranslation());
 
         return placeholders;

@@ -1,6 +1,6 @@
 package fr.lezoo.stonks.item;
 
-import fr.lezoo.stonks.gui.api.item.Placeholders;
+import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.util.Utils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;

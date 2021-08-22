@@ -1,8 +1,8 @@
-package fr.lezoo.stonks.gui.api;
+package fr.lezoo.stonks.gui.objects;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.gui.api.item.InventoryItem;
+import fr.lezoo.stonks.gui.objects.item.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;

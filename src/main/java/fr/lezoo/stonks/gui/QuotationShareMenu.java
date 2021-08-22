@@ -1,11 +1,11 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.api.EditableInventory;
-import fr.lezoo.stonks.gui.api.GeneratedInventory;
-import fr.lezoo.stonks.gui.api.item.InventoryItem;
-import fr.lezoo.stonks.gui.api.item.Placeholders;
-import fr.lezoo.stonks.gui.api.item.SimpleItem;
+import fr.lezoo.stonks.gui.objects.EditableInventory;
+import fr.lezoo.stonks.gui.objects.GeneratedInventory;
+import fr.lezoo.stonks.gui.objects.item.InventoryItem;
+import fr.lezoo.stonks.gui.objects.item.Placeholders;
+import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
@@ -63,7 +63,7 @@ public class QuotationShareMenu extends EditableInventory {
 
         @Override
         public String applyNamePlaceholders(String str) {
-            return str.replace("{company}", quotation.getName());
+            return str.replace("{company}", quotation.getCompany());
         }
 
         @Override
@@ -237,7 +237,7 @@ public class QuotationShareMenu extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("company", inv.quotation.getName());
+            holders.register("company", inv.quotation.getCompany());
 
             holders.register("week-low", format.format(inv.quotation.getLowest(TimeScale.WEEK)));
             holders.register("week-high", format.format(inv.quotation.getHighest(TimeScale.WEEK)));

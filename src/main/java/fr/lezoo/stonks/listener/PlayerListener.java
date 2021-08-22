@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.listener;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.api.PluginInventory;
+import fr.lezoo.stonks.gui.objects.PluginInventory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;

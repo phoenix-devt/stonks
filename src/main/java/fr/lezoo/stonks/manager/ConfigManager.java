@@ -2,7 +2,7 @@ package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.gui.*;
-import fr.lezoo.stonks.gui.api.EditableInventory;
+import fr.lezoo.stonks.gui.objects.EditableInventory;
 import fr.lezoo.stonks.item.QuotationMap;
 import fr.lezoo.stonks.item.SharePaper;
 import fr.lezoo.stonks.item.TradingBook;

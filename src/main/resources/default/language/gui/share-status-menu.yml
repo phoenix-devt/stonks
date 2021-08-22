@@ -3,19 +3,19 @@ name: 'Share Status Menu'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
-slots: 9
+slots: 27
 
 items:
   open-shares:
-    slots: [ 0 ]
-    name: '&aGet Open Shares Menu'
-    function: 'open-shares-menu'
+    slots: [ 10 ]
+    name: '&aOpen Shares'
+    function: 'open-shares'
     item: 'BLUE_WOOL'
 
   closed-shares:
-    slots: [ 8 ]
-    name: '&7Get Closed Share Menu'
-    function: 'closed-shares-menu'
+    slots: [ 16 ]
+    name: '&7Closed Shares'
+    function: 'closed-shares'
     item: 'GRAY_WOOL'
 
 

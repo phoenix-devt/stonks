@@ -19,21 +19,40 @@ items:
   quotation:
     slots: [ 10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34 ]
     function: quotation
-    name: '&a{name}'
+
+    # Used when a quotation exchanges physical items
+    physical:
+      name: '&a{company}'
+      item: BOOK
+      lore:
+        - '&7Current price: {current-price}'
+        - '&7Exchange Type: {exchange-type}'
+        - '---------------------------'
+        - '&7 Day Low: {day-low}'
+        - '&7 Day High: {day-high}'
+        - '---------------------------'
+        - '&7 Week Low: {week-low}'
+        - '&7 Week High: {week-high}'
+        - '---------------------------'
+        - ''
+        - '&3► Click to buy/sell shares'
+
+    # When a quotation exchanges money
+    name: '&a{company}'
     item: BOOK
     lore:
-      - '&7Quotation id : {quotation-id}'
-      - '&7Company name : {company}'
-      - '&7 Current price : {current-price}'
-      - '&7 Exchange Type : {exchange-type}'
-      - '&7 QuotationType : {quotation-type}'
-      - '&3 Click Here to open the Shares menu'
+      - '&7Current price: {current-price}'
       - '---------------------------'
-      - '&7 Day Low : {day-low}'
-      - '&7 Day High : {day-high}'
+      - '&7 Day Low: {day-low}'
+      - '&7 Day High: {day-high}'
       - '---------------------------'
-      - '&7 Week Low : {week-low}'
-      - '&7 Week High : {week-high}'
-    no-quotation:
+      - '&7 Week Low: {week-low}'
+      - '&7 Week High: {week-high}'
+      - '---------------------------'
+      - ''
+      - '&3► Click to buy/sell shares'
+
+    # When there are no quotation at a target slot
+    none:
       name: '&aNo Quotation'
       item: PAPER

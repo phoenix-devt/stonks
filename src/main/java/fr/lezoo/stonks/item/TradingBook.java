@@ -1,6 +1,6 @@
 package fr.lezoo.stonks.item;
 
-import fr.lezoo.stonks.gui.api.item.Placeholders;
+import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

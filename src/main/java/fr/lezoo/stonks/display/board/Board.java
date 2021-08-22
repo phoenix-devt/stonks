@@ -1,12 +1,11 @@
 package fr.lezoo.stonks.display.board;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.api.item.Placeholders;
+import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import fr.lezoo.stonks.quotation.TimeScale;
-import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -148,7 +147,7 @@ public class Board {
         Placeholders holders = new Placeholders();
         DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
         holders.register("quotation-id", quotation.getId());
-        holders.register("company", quotation.getName());
+        holders.register("company", quotation.getCompany());
         holders.register("current-price", format.format(quotation.getPrice()));
         holders.register("lowest-price", format.format(quotation.getLowest(time)));
         holders.register("highest-price",format.format(quotation.getHighest(time)));

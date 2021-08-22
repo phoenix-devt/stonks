@@ -1,24 +1,22 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.CreatedQuotation;
+import fr.lezoo.stonks.util.ConfigFile;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class QuotationManager implements FileManager {
-    private final Map<String, CreatedQuotation> createdQuotationMap = new HashMap<>();
+    private final Map<String, Quotation> mapped = new HashMap<>();
 
     public void refreshQuotations() {
-        createdQuotationMap.values().forEach((q) -> q.refreshQuotation());
+        mapped.values().forEach((q) -> q.refreshQuotation());
     }
 
     @Override
@@ -27,38 +25,35 @@ public class QuotationManager implements FileManager {
         FileConfiguration config = new ConfigFile("quotations").getConfig();
         for (String key : config.getKeys(false))
             try {
-                register(new CreatedQuotation(config.getConfigurationSection(key)));
+                register(new Quotation(config.getConfigurationSection(key)));
             } catch (IllegalArgumentException exception) {
                 Stonks.plugin.getLogger().log(Level.WARNING, "Could not load quotation '" + key + "': " + exception.getMessage());
             }
     }
 
     public void remove(String quotationId) {
-        Validate.isTrue(createdQuotationMap.containsKey(quotationId),"Tried to remove the quotation"+quotationId+ "which doesn't exist!");
-        createdQuotationMap.remove(quotationId);
-    }
+        Validate.isTrue(!mapped.containsKey(quotationId), "Tried to remove quotation " + quotationId + " which does not exist");
 
+        mapped.remove(quotationId);
+    }
 
     @Override
     public void save() {
-        FileConfiguration fileConfiguration = new ConfigFile("quotations").getConfig();
-        //We save the quotation info
-        //We remove the old ones of the yml
-        for (String key : fileConfiguration.getKeys(true))
-            fileConfiguration.set(key, null);
-        //We save the information
-        for (CreatedQuotation quotation : createdQuotationMap.values())
-            quotation.save(fileConfiguration);
-        try {
-            fileConfiguration.save(new File(Stonks.plugin.getDataFolder(), "quotations.yml"));
-        } catch (IOException e) {
-            Bukkit.getServer().getLogger().log(Level.WARNING, "The quotations couldn't be saved in the yml, the file to save it doesn't exist");
-            e.printStackTrace();
-        }
+        ConfigFile config = new ConfigFile("quotations");
+
+        // Remove old quotations
+        for (String key : config.getConfig().getKeys(true))
+            config.getConfig().set(key, null);
+
+        // Save newest
+        for (Quotation quotation : mapped.values())
+            quotation.save(config.getConfig());
+
+        config.save();
     }
 
     public boolean has(String id) {
-        return createdQuotationMap.containsKey(formatId(id));
+        return mapped.containsKey(formatId(id));
     }
 
     /**
@@ -69,18 +64,18 @@ public class QuotationManager implements FileManager {
      */
     @NotNull
     public Quotation get(String id) {
-        Validate.isTrue(createdQuotationMap.containsKey(formatId(id)), "No quotation found with ID '" + formatId(id) + "'");
-        return createdQuotationMap.get(formatId(id));
+        Validate.isTrue(mapped.containsKey(formatId(id)), "No quotation found with ID '" + formatId(id) + "'");
+        return mapped.get(formatId(id));
     }
 
-    public void register(CreatedQuotation createdQuotation) {
-        Validate.isTrue(!createdQuotationMap.containsKey(createdQuotation.getId()), "There is already a quotation with ID " + createdQuotation.getId() + "'");
+    public void register(Quotation quotation) {
+        Validate.isTrue(!mapped.containsKey(quotation.getId()), "There is already a quotation with ID " + quotation.getId() + "'");
 
-        createdQuotationMap.put(createdQuotation.getId(), createdQuotation);
+        mapped.put(quotation.getId(), quotation);
     }
 
-    public Collection<CreatedQuotation> getQuotations() {
-        return createdQuotationMap.values();
+    public Collection<Quotation> getQuotations() {
+        return mapped.values();
     }
 
     private String formatId(String str) {

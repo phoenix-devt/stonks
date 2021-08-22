@@ -5,6 +5,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.Board;
 import fr.lezoo.stonks.display.board.QuotationBoardRenderer;
 import fr.lezoo.stonks.util.Utils;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,25 +30,57 @@ import java.util.logging.Level;
 /**
  * Place where players can buy and sell shares
  */
-public abstract class Quotation {
+public class Quotation {
     protected final String id, name;
     private final Dividends dividends;
 
-    //The type of material that will be exchanged. If the material is AIR it means that it exchanges money
+    /**
+     * The material that will be exchanged. If this is set to null,
+     * that means the quotation is virtual and exchanges money instead
+     */
     private final Material exchangeType;
+
     /**
      * List of data for every scale. Allows to store just the right
      * amount of data needed so that there aren't 10s timestamps on the yearly scale.
      */
     protected final Map<TimeScale, List<QuotationInfo>> quotationData = new HashMap<>();
 
-    public Quotation(String id, String name, Material exchangeType, Dividends dividends) {
-        this.id = id;
-        this.name = name;
-        this.dividends = dividends;
-        this.exchangeType = exchangeType;
-        for (TimeScale disp : TimeScale.values())
-            quotationData.put(disp, new ArrayList<>());
+    private double previousDemand, currentDemand;
+
+    /**
+     * New virtual quotation without dividends
+     *
+     * @param id                 Internal quotation id
+     * @param name               Name of the stock
+     * @param firstQuotationData Info containing the quotation initial price
+     */
+    public Quotation(String id, String name, QuotationInfo firstQuotationData) {
+        this(id, name, null, null, firstQuotationData);
+    }
+
+    /**
+     * New virtual or physical quotations without dividends
+     *
+     * @param id                 Internal quotation id
+     * @param name               Name of the stock
+     * @param exchangeType       The material being exchanged, or null if the quotation is virtual
+     * @param firstQuotationData Info containing the quotation initial price
+     */
+    public Quotation(String id, String name, Material exchangeType, QuotationInfo firstQuotationData) {
+        this(id, name, null, exchangeType, firstQuotationData);
+    }
+
+    /**
+     * New virtual quotation with dividends
+     *
+     * @param id                 Internal quotation id
+     * @param name               Name of the stock
+     * @param dividends          Information about quotation dividends
+     * @param firstQuotationData Info containing the quotation initial price
+     */
+    public Quotation(String id, String name, Dividends dividends, QuotationInfo firstQuotationData) {
+        this(id, name, dividends, null, firstQuotationData);
     }
 
     /**
@@ -56,6 +89,7 @@ public abstract class Quotation {
      * @param id                 Internal quotation id
      * @param name               Name of the stock
      * @param dividends          Whether or not this quotations gives dividends to investers
+     * @param exchangeType       The material being exchanged, or null if the quotation is virtual
      * @param firstQuotationData The only QuotationInfo that exists
      */
     public Quotation(String id, String name, Dividends dividends, Material exchangeType, QuotationInfo firstQuotationData) {
@@ -68,47 +102,15 @@ public abstract class Quotation {
     }
 
     /**
-     * Public constructor to create a new Quotation from scratch
-     *
-     * @param id                 Internal quotation id
-     * @param name               Name of the stock
-     * @param firstQuotationData The only QuotationInfo that exists
-     */
-    public Quotation(String id, String name, Material exchangeType, QuotationInfo firstQuotationData) {
-        this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
-        this.name = name;
-        this.dividends = null;
-        this.exchangeType = exchangeType;
-        for (TimeScale disp : TimeScale.values())
-            quotationData.put(disp, Arrays.asList(firstQuotationData));
-    }
-
-
-    /**
-     * Same constructor but if nothing specified the exchangeType is air so money
-     */
-
-    public Quotation(String id, String name, Dividends dividends, QuotationInfo firstQuotationData) {
-        this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
-        this.name = name;
-        this.dividends = dividends;
-        this.exchangeType = Material.AIR;
-        for (TimeScale disp : TimeScale.values())
-            quotationData.put(disp, Arrays.asList(firstQuotationData));
-    }
-
-    public Material getExchangeType() {
-        return exchangeType;
-    }
-
-    /**
      * Loads a quotation from a config section
      */
     public Quotation(ConfigurationSection config) {
         this.id = config.getName();
         this.name = config.getString("name");
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
-        this.exchangeType = config.contains("exchange-type") ? Material.valueOf(config.getString("exchange-type").toUpperCase()) : Material.AIR;
+        this.exchangeType = config.contains("exchange-type") ? Material.valueOf(config.getString("exchange-type").toUpperCase().replace("-", "_").replace(" ", "_")) : null;
+        Validate.isTrue(exchangeType != Material.AIR, "Cannot use AIR as exchange type");
+
         // We load the different data from the yml
         for (TimeScale time : TimeScale.values()) {
             int i = 0;
@@ -128,7 +130,7 @@ public abstract class Quotation {
         return id;
     }
 
-    public String getName() {
+    public String getCompany() {
         return name;
     }
 
@@ -138,6 +140,14 @@ public abstract class Quotation {
 
     public Dividends getDividends() {
         return dividends;
+    }
+
+    public Material getExchangeType() {
+        return exchangeType;
+    }
+
+    public boolean isVirtual() {
+        return exchangeType == null;
     }
 
     public List<QuotationInfo> getData(TimeScale disp) {
@@ -276,7 +286,7 @@ public abstract class Quotation {
         }
 
         config.set(id + ".name", name);
-        config.set(id + ".exchange-type", exchangeType.toString().toLowerCase());
+        config.set(id + ".exchange-type", exchangeType == null ? null : exchangeType.name());
         //We save the information of the data
         for (TimeScale time : TimeScale.values()) {
             List<QuotationInfo> quotationData = this.getData(time);
@@ -326,6 +336,51 @@ public abstract class Quotation {
     public double getPrice() {
         List<QuotationInfo> latest = quotationData.get(TimeScale.QUARTERHOUR);
         return latest.get(latest.size() - 1).getPrice();
+    }
+
+    /**
+     * Changes the quotation price
+     */
+    public void refreshQuotation() {
+        if (getData(TimeScale.QUARTERHOUR).isEmpty())
+            return;
+
+        Random random = new Random();
+        double rand = random.nextInt(2);
+        double change = rand == 0 ? -1 : 1;
+        // The offset due to the offer and demand of the stock
+        double offset = Stonks.plugin.configManager.offerDemandImpact * Math.atan(previousDemand) * 2 / Math.PI;
+        double currentPrice = getPrice();
+        //The change between the currentPrice and nextPrice
+
+        //We multiply by sqrt(t) so that volatility doesn't depend on refreshTime
+
+        change = (change + offset) * Stonks.plugin.configManager.volatility * currentPrice / 20 * Math.sqrt((double) (Stonks.plugin.configManager.quotationRefreshTime) / 3600);
+
+        int datanumber = Stonks.plugin.configManager.quotationDataNumber;
+        //We update all the data List
+        for (TimeScale time : TimeScale.values()) {
+            //We get the list corresponding to the time
+            List<QuotationInfo> workingData = new ArrayList<>();
+            workingData.addAll(this.getData(time));
+            //If the the latest data of workingData is too old we add another one
+            if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / datanumber) {
+
+                workingData.add(new QuotationInfo(System.currentTimeMillis(), currentPrice + change));
+                //If the list contains too much data we remove the older ones
+                if (workingData.size() > datanumber)
+                    workingData.remove(0);
+                //We save the changes we made in the attribute
+                this.setData(time, workingData);
+            }
+
+
+        }
+
+    }
+
+    public void addDemand(double stockBought) {
+        currentDemand += stockBought;
     }
 
     @Override

@@ -6,11 +6,11 @@ import fr.lezoo.stonks.version.NBTItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
-import fr.lezoo.stonks.gui.api.EditableInventory;
-import fr.lezoo.stonks.gui.api.GeneratedInventory;
-import fr.lezoo.stonks.gui.api.item.InventoryItem;
-import fr.lezoo.stonks.gui.api.item.Placeholders;
-import fr.lezoo.stonks.gui.api.item.SimpleItem;
+import fr.lezoo.stonks.gui.objects.EditableInventory;
+import fr.lezoo.stonks.gui.objects.GeneratedInventory;
+import fr.lezoo.stonks.gui.objects.item.InventoryItem;
+import fr.lezoo.stonks.gui.objects.item.Placeholders;
+import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.version.ItemTag;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
@@ -172,7 +172,7 @@ public class PortfolioList extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("company", quotation.getName());
+            holders.register("company", quotation.getCompany());
             holders.register("price", format.format(quotation.getPrice()));
             holders.register("day-low", format.format(quotation.getLowest(TimeScale.DAY)));
             holders.register("day-high", format.format(quotation.getHighest(TimeScale.DAY)));

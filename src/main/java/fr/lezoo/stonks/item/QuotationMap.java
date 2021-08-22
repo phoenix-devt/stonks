@@ -3,7 +3,7 @@ package fr.lezoo.stonks.item;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.DisplayInfo;
 import fr.lezoo.stonks.display.map.QuotationMapRenderer;
-import fr.lezoo.stonks.gui.api.item.Placeholders;
+import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
 import org.bukkit.configuration.ConfigurationSection;
@@ -44,12 +44,12 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
         DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
         Placeholders holders = new Placeholders();
         holders.register("quotation-id", quotation.getId());
-        holders.register("company", quotation.getName());
+        holders.register("company", quotation.getCompany());
         holders.register("current-price", format.format(quotation.getPrice()));
         holders.register("lowest-price", format.format(quotation.getLowest(timeDisplay)));
         holders.register("highest-price", format.format(quotation.getHighest(timeDisplay)));
         holders.register("evolution", quotation.getEvolution(timeDisplay));
-        holders.register("time-visualized", timeDisplay.toString().toLowerCase());
+        holders.register("time-scale", timeDisplay.toString().toLowerCase());
         holders.register("quotation-type", quotation.getClass().getName());
         return holders;
 

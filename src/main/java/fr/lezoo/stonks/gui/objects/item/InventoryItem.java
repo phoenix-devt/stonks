@@ -1,6 +1,6 @@
-package fr.lezoo.stonks.gui.api.item;
+package fr.lezoo.stonks.gui.objects.item;
 
-import fr.lezoo.stonks.gui.api.GeneratedInventory;
+import fr.lezoo.stonks.gui.objects.GeneratedInventory;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;

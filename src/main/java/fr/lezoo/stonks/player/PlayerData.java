@@ -12,7 +12,6 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -259,7 +258,7 @@ public class PlayerData {
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(
                 "shares", Stonks.plugin.configManager.shareFormat.format(amount),
                 "price", Stonks.plugin.configManager.stockPriceFormat.format(price),
-                "company", quotation.getName()).send(player);
+                "company", quotation.getCompany()).send(player);
 
         // Successfully bought
         return true;
