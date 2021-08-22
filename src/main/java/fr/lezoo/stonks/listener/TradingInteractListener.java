@@ -1,8 +1,8 @@
 package fr.lezoo.stonks.listener;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.display.board.Board;
+import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
@@ -46,8 +46,7 @@ public class TradingInteractListener implements Listener {
         //Check if the player is trying to interact with a board with a tradingbook
         if ((player.getInventory().getItemInMainHand() != null) && (player.getInventory().getItemInMainHand().getItemMeta() != null)
                 && player.getInventory().getItemInMainHand().getItemMeta().getDisplayName()
-                .equalsIgnoreCase(Stonks.plugin.configManager.tradingBook.getPlaceholders(player, player).apply(Stonks.plugin.configManager.tradingBook.getDisplayName())))
-        {
+                .equalsIgnoreCase(Stonks.plugin.configManager.tradingBook.getPlaceholders(player, null).apply(Stonks.plugin.configManager.tradingBook.getDisplayName()))) {
 
             // We get the block that the player is interacting with and check if
             // the nearest entity is an item frame wich belongs to a board
@@ -128,8 +127,8 @@ public class TradingInteractListener implements Listener {
                 Message.MARKET_CLOSING.format().send(player);
                 return;
             }
-            PlayerData playerData =Stonks.plugin.playerManager.get(player);
-            playerData.buyShare(board.getQuotation(), ShareType.NORMAL,readBook()[0],readBook()[1],readBook()[2]);
+            PlayerData playerData = Stonks.plugin.playerManager.get(player);
+            playerData.buyShare(board.getQuotation(), ShareType.NORMAL, readBook()[0], readBook()[1], readBook()[2]);
         }
     }
 
@@ -144,8 +143,8 @@ public class TradingInteractListener implements Listener {
                 Message.MARKET_CLOSING.format().send(player);
                 return;
             }
-            PlayerData playerData =Stonks.plugin.playerManager.get(player);
-            playerData.buyShare(board.getQuotation(), ShareType.SHORT,readBook()[0],readBook()[1],readBook()[2]);
+            PlayerData playerData = Stonks.plugin.playerManager.get(player);
+            playerData.buyShare(board.getQuotation(), ShareType.SHORT, readBook()[0], readBook()[1], readBook()[2]);
         }
     }
 
@@ -160,12 +159,12 @@ public class TradingInteractListener implements Listener {
     private double[] readBook() {
         ItemStack book = player.getInventory().getItemInMainHand();
         BookMeta meta = (BookMeta) book.getItemMeta();
-        List<String> pages =meta.getPages();
+        List<String> pages = meta.getPages();
 
-        
+
         double amount = 0;
-        if (pages.size() ==0) {
-            player.sendMessage(ChatColor.RED+"You didn't enter anything, write after the instructions by coming back to the line");
+        if (pages.size() == 0) {
+            player.sendMessage(ChatColor.RED + "You didn't enter anything, write after the instructions by coming back to the line");
             return null;
         }
         //We cast into double but want it to be an int, we cant lose half a diamond... easier to do so.

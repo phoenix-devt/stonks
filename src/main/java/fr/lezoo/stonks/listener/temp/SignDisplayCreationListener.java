@@ -1,31 +1,24 @@
 package fr.lezoo.stonks.listener.temp;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.util.Position;
-import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.display.sign.DisplaySign;
-import org.bukkit.Bukkit;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.util.Position;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class    SignDisplayCreationListener implements Listener {
+public class SignDisplayCreationListener extends TemporaryListener {
     private final Quotation quotation;
     private final Player player;
 
     public SignDisplayCreationListener(Quotation quotation, Player player) {
+        super(PlayerQuitEvent.getHandlerList(), PlayerInteractEvent.getHandlerList());
+
         this.quotation = quotation;
         this.player = player;
-
-        Bukkit.getPluginManager().registerEvents(this, Stonks.plugin);
-    }
-
-    public void close() {
-        PlayerQuitEvent.getHandlerList().unregister(this);
-        PlayerInteractEvent.getHandlerList().unregister(this);
     }
 
     @EventHandler
@@ -51,5 +44,10 @@ public class    SignDisplayCreationListener implements Listener {
         DisplaySign sign = new DisplaySign(quotation, pos);
         Stonks.plugin.signManager.register(sign);
         player.sendMessage("");
+    }
+
+    @Override
+    public void whenClosed() {
+
     }
 }

@@ -2,7 +2,6 @@ package fr.lezoo.stonks.listener.temp;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.Board;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -13,18 +12,18 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.UUID;
 
-public class RemoveBoardListener implements TemporaryListener {
+public class RemoveBoardListener extends TemporaryListener {
     private final Player player;
 
     public RemoveBoardListener(Player player) {
-        this.player = player;
+        super(HangingBreakByEntityEvent.getHandlerList());
 
-        Bukkit.getPluginManager().registerEvents(this, Stonks.plugin);
+        this.player = player;
     }
 
     @Override
-    public void close() {
-        HangingBreakByEntityEvent.getHandlerList().unregister(this);
+    public void whenClosed() {
+
     }
 
     @EventHandler
@@ -33,15 +32,14 @@ public class RemoveBoardListener implements TemporaryListener {
         // If the block wasn't removed by the person we are listenning to we dont do anything
         if (!(event.getRemover() instanceof Player))
             return;
+
         Player removingPlayer = (Player) event.getRemover();
-        if(!removingPlayer.equals(player)) {
+        if (!removingPlayer.equals(player)) {
             return;
         }
 
         if (!(event.getEntity() instanceof ItemFrame))
             return;
-
-
 
         ItemFrame itemFrame = (ItemFrame) event.getEntity();
         PersistentDataContainer container = itemFrame.getPersistentDataContainer();
@@ -55,8 +53,6 @@ public class RemoveBoardListener implements TemporaryListener {
             //We unregister the listener
             close();
         }
-
-
 
 
     }
