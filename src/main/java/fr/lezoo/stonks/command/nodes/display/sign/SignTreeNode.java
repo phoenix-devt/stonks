@@ -6,6 +6,9 @@ import org.bukkit.command.CommandSender;
 public class SignTreeNode extends CommandTreeNode {
     public SignTreeNode(CommandTreeNode parent) {
         super(parent, "sign");
+
+        addChild(new CreateTreeNode(this));
+        addChild(new RemoveTreeNode(this));
     }
 
     @Override

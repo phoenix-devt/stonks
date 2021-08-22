@@ -8,9 +8,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CreateTreeNode extends CommandTreeNode {
-    public CreateTreeNode(CommandTreeNode parent) {
-        super(parent, "create");
+public class RemoveTreeNode extends CommandTreeNode {
+    public RemoveTreeNode(CommandTreeNode parent) {
+        super(parent, "remove");
 
         addParameter(Parameter.QUOTATION_ID);
     }
@@ -31,9 +31,9 @@ public class CreateTreeNode extends CommandTreeNode {
             return CommandResult.FAILURE;
         }
 
-        new SignDisplayEditionListener(Stonks.plugin.quotationManager.get(quotationId), (Player) sender, false);
-        sender.sendMessage(ChatColor.YELLOW + "Please click on a sign to register a new display sign");
-        sender.sendMessage(ChatColor.YELLOW + "You can relog to cancel display sign creation");
+        new SignDisplayEditionListener(Stonks.plugin.quotationManager.get(quotationId), (Player) sender, true);
+        sender.sendMessage(ChatColor.YELLOW + "Please click on a display sign to delete it");
+        sender.sendMessage(ChatColor.YELLOW + "You can relog to cancel display sign removal");
         return CommandResult.SUCCESS;
     }
 }

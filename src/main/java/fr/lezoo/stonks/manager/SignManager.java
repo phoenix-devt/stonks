@@ -1,8 +1,8 @@
 package fr.lezoo.stonks.manager;
 
-import fr.lezoo.stonks.util.Position;
-import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.display.sign.DisplaySign;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.util.Position;
 import org.apache.commons.lang.Validate;
 
 import java.util.HashMap;
@@ -23,8 +23,8 @@ public class SignManager implements FileManager {
         mapped.put(sign.getPosition(), sign);
     }
 
-    public void unregister(DisplaySign sign) {
-        mapped.remove(sign.getPosition());
+    public void unregister(Position pos) {
+        mapped.remove(pos);
     }
 
     /**
