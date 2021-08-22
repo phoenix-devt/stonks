@@ -3,7 +3,7 @@ package fr.lezoo.stonks.command.nodes;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.command.objects.CommandTreeNode;
 import fr.lezoo.stonks.command.objects.parameter.Parameter;
-import fr.lezoo.stonks.display.DisplayInfo;
+import fr.lezoo.stonks.display.board.DisplayInfo;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
 import org.bukkit.Bukkit;
