@@ -1,9 +1,9 @@
 package fr.lezoo.stonks.display.sign;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
@@ -21,6 +21,8 @@ public class DisplaySign {
     public DisplaySign(Quotation quotation, Position pos) {
         this.quotation = quotation;
         this.pos = pos;
+
+        update();
     }
 
     public Quotation getQuotation() {

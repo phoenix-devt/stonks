@@ -1,10 +1,9 @@
+
+
 spacex:
 
   # Stock name
   name: 'SpaceX'
-
-  material:
-    type: DIAMOND
 
   dividends:
 

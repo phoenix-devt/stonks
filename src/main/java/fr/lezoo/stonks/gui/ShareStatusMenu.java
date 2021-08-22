@@ -6,6 +6,7 @@ import fr.lezoo.stonks.gui.objects.GeneratedInventory;
 import fr.lezoo.stonks.gui.objects.item.InventoryItem;
 import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.share.ShareStatus;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -41,10 +42,7 @@ public class ShareStatusMenu extends EditableInventory {
 
         @Override
         public void whenClicked(InventoryClickEvent event, InventoryItem item) {
-            if (item instanceof OpenShareItem)
-                Stonks.plugin.configManager.OPEN_PORTFOLIO_LIST.generate(playerData).open();
-            else if (item instanceof ClosedShareItem)
-                Stonks.plugin.configManager.CLOSED_PORTFOLIO_LIST.generate(playerData).open();
+            Stonks.plugin.configManager.PORTFOLIO_LIST.generate(playerData, item instanceof OpenShareItem ? ShareStatus.OPEN : ShareStatus.CLOSED).open();
         }
 
         @Override

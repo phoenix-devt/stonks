@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.display;
+package fr.lezoo.stonks.display.board;
 
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;

@@ -1,17 +1,17 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.share.ShareStatus;
-import fr.lezoo.stonks.version.NBTItem;
-import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.gui.objects.EditableInventory;
 import fr.lezoo.stonks.gui.objects.GeneratedInventory;
 import fr.lezoo.stonks.gui.objects.item.InventoryItem;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.gui.objects.item.SimpleItem;
+import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.version.ItemTag;
+import fr.lezoo.stonks.version.NBTItem;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -27,13 +27,8 @@ import java.util.List;
  * you open a {@link SpecificPortfolio}
  */
 public class PortfolioList extends EditableInventory {
-    //The status of the shares that will be displayed closed or open
-    private final ShareStatus status;
-
-    public PortfolioList(ShareStatus status) {
+    public PortfolioList() {
         super("portfolio-list");
-        this.status=status;
-
     }
 
     @Override
@@ -51,24 +46,26 @@ public class PortfolioList extends EditableInventory {
         return new SimpleItem(config);
     }
 
-    public GeneratedInventory generate(PlayerData player) {
-        return new GeneratedPortfolioList(player, this);
+    public GeneratedInventory generate(PlayerData player, ShareStatus shareStatus) {
+        return new GeneratedPortfolioList(player, this, shareStatus);
     }
 
     public class GeneratedPortfolioList extends GeneratedInventory {
         private final List<Quotation> quotations = new ArrayList<>();
         private final int maxPage;
+        private final ShareStatus shareStatus;
 
         // Page indexing arbitrarily starts at 0
         private int page = 0;
 
-        public GeneratedPortfolioList(PlayerData playerData, EditableInventory editable) {
+        public GeneratedPortfolioList(PlayerData playerData, EditableInventory editable, ShareStatus shareStatus) {
             super(playerData, editable);
 
             int perPage = editable.getByFunction("quotation").getSlots().size();
             quotations.clear();
             quotations.addAll(Stonks.plugin.quotationManager.getQuotations());
             maxPage = Math.max(((int) Math.ceil((double) quotations.size() / perPage)) - 1, 0);
+            this.shareStatus = shareStatus;
         }
 
         @Override
@@ -98,10 +95,7 @@ public class PortfolioList extends EditableInventory {
                 String quotationId = nbt.getString("quotationId");
                 Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
                 Validate.notNull(quotation, "Could not find quotation with ID '" + quotationId + "'");
-                if(status.equals(ShareStatus.OPEN))
-                    Stonks.plugin.configManager.OPEN_SPECIFIC_PORTFOLIO.generate(playerData, quotation).open();
-                else if(status.equals(ShareStatus.CLOSED))
-                    Stonks.plugin.configManager.CLOSED_SPECIFIC_PORTFOLIO.generate(playerData, quotation).open();
+                Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(playerData, quotation, shareStatus).open();
             }
         }
 
@@ -180,8 +174,8 @@ public class PortfolioList extends EditableInventory {
             holders.register("week-high", format.format(quotation.getHighest(TimeScale.WEEK)));
             holders.register("month-low", format.format(quotation.getLowest(TimeScale.MONTH)));
             holders.register("month-high", format.format(quotation.getHighest(TimeScale.MONTH)));
-            holders.register("exchange-type",quotation.getExchangeType().toString().toLowerCase());
-            holders.register("quotation-type",quotation.getClass().getSimpleName());
+            holders.register("exchange-type", quotation.getExchangeType().toString().toLowerCase());
+            holders.register("quotation-type", quotation.getClass().getSimpleName());
             holders.register("owned", "" + inv.getPlayerData().countShares(quotation));
 
             return holders;

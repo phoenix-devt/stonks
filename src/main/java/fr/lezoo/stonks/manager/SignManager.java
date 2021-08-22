@@ -5,16 +5,17 @@ import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.util.Position;
 import org.apache.commons.lang.Validate;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SignManager implements FileManager {
     private final Map<Position, DisplaySign> mapped = new HashMap<>();
 
     public boolean has(Position position) {
         return mapped.containsKey(position);
+    }
+
+    public Collection<DisplaySign> getActive() {
+        return mapped.values();
     }
 
     public void register(DisplaySign sign) {
@@ -43,10 +44,12 @@ public class SignManager implements FileManager {
     @Override
     public void load() {
 
+        // TODO
     }
 
     @Override
     public void save() {
 
+        // TODO
     }
 }

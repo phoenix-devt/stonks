@@ -86,6 +86,7 @@ public class Stonks extends JavaPlugin {
         quotationManager.load();
         shareManager.load();
         boardManager.load();
+        signManager.load();
         playerManager.load();
 
         // PlaceholderAPI compatibility
@@ -144,6 +145,7 @@ public class Stonks extends JavaPlugin {
         boardManager.save();
         playerManager.save();
         shareManager.save();
+        signManager.save();
     }
 
     /**

@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.item;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.display.DisplayInfo;
+import fr.lezoo.stonks.display.board.DisplayInfo;
 import fr.lezoo.stonks.display.map.QuotationMapRenderer;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.quotation.Quotation;

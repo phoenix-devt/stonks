@@ -25,14 +25,14 @@ items:
       name: '&a{company}'
       item: BOOK
       lore:
-        - '&7Current price: {current-price}'
+        - '&7Current Price: ${price}'
         - '&7Exchange Type: {exchange-type}'
         - '---------------------------'
-        - '&7 Day Low: {day-low}'
-        - '&7 Day High: {day-high}'
+        - '&7 Day Low: ${day-low}'
+        - '&7 Day High: ${day-high}'
         - '---------------------------'
-        - '&7 Week Low: {week-low}'
-        - '&7 Week High: {week-high}'
+        - '&7 Week Low: ${week-low}'
+        - '&7 Week High: ${week-high}'
         - '---------------------------'
         - ''
         - '&3► Click to buy/sell shares'
@@ -41,10 +41,10 @@ items:
     name: '&a{company}'
     item: BOOK
     lore:
-      - '&7Current price: {current-price}'
+      - '&7Current Price: ${price}'
       - '---------------------------'
-      - '&7 Day Low: {day-low}'
-      - '&7 Day High: {day-high}'
+      - '&7 Day Low: ${day-low}'
+      - '&7 Day High: ${day-high}'
       - '---------------------------'
       - '&7 Week Low: {week-low}'
       - '&7 Week High: {week-high}'

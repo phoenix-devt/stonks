@@ -33,11 +33,8 @@ import java.util.UUID;
  * Displays all your shares from a SPECIFIC quotation
  */
 public class SpecificPortfolio extends EditableInventory {
-    private final ShareStatus status;
-
-    public SpecificPortfolio(ShareStatus status) {
+    public SpecificPortfolio() {
         super("specific-portfolio");
-        this.status = status;
     }
 
     @Override
@@ -58,13 +55,14 @@ public class SpecificPortfolio extends EditableInventory {
         return new SimpleItem(config);
     }
 
-    public GeneratedInventory generate(PlayerData player, Quotation quotation) {
-        return new GeneratedSpecificPortfolio(player, quotation, this);
+    public GeneratedInventory generate(PlayerData player, Quotation quotation, ShareStatus shareStatus) {
+        return new GeneratedSpecificPortfolio(player, quotation, this, shareStatus);
     }
 
     public class GeneratedSpecificPortfolio extends GeneratedInventory {
         private final Quotation quotation;
         private final int perPage;
+        private final ShareStatus shareStatus;
 
         // Page indexing arbitrarily starts at 0
         private int page = 0;
@@ -72,25 +70,26 @@ public class SpecificPortfolio extends EditableInventory {
         private final List<Share> shares = new ArrayList<>();
         private int maxPage;
 
-        public GeneratedSpecificPortfolio(PlayerData playerData, Quotation quotation, EditableInventory editable) {
+        public GeneratedSpecificPortfolio(PlayerData playerData, Quotation quotation, EditableInventory editable, ShareStatus shareStatus) {
             super(playerData, editable);
 
             // Get amount of shares displayed per page
             this.perPage = editable.getByFunction("share").getSlots().size();
             this.quotation = quotation;
+            this.shareStatus = shareStatus;
 
             updateInventoryData();
         }
 
         private void updateInventoryData() {
             shares.clear();
-            shares.addAll(playerData.getShares(quotation,status));
+            shares.addAll(playerData.getShares(quotation, shareStatus));
             maxPage = Math.max(((int) Math.ceil((double) shares.size() / perPage)) - 1, 0);
         }
 
         @Override
         public String applyNamePlaceholders(String str) {
-            return str.replace("{share-status}",status.toString().toLowerCase()).replace("{page}", "" + (page + 1)).replace("{max}", "" + (maxPage + 1));
+            return str.replace("{share-status}", shareStatus.toString().toLowerCase()).replace("{page}", "" + (page + 1)).replace("{max}", "" + (maxPage + 1));
         }
 
         @Override
@@ -98,11 +97,7 @@ public class SpecificPortfolio extends EditableInventory {
 
             // Back to list
             if (item instanceof BackItem) {
-                if (status.equals(ShareStatus.OPEN)) {
-                    Stonks.plugin.configManager.OPEN_PORTFOLIO_LIST.generate(playerData).open();
-                    return;
-                }
-                Stonks.plugin.configManager.CLOSED_PORTFOLIO_LIST.generate(playerData).open();
+                Stonks.plugin.configManager.PORTFOLIO_LIST.generate(playerData, shareStatus).open();
                 return;
             }
 
@@ -160,18 +155,17 @@ public class SpecificPortfolio extends EditableInventory {
                     Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getAmount()),
                             "company", quotation.getCompany(),
                             "gain", Utils.formatGain(gain)).send(player);
-                    if(share.getQuotation().getExchangeType().equals(Material.AIR)) {
+                    if (share.getQuotation().getExchangeType().equals(Material.AIR)) {
                         Stonks.plugin.economy.depositPlayer(player, earned);
                         playerData.unregisterShare(share);
-                    }
-                    else {
+                    } else {
                         //We give the material of the share the player is selling
-                        Material material =share.getQuotation().getExchangeType();
-                        int realGain= (int) Math.floor(earned);
-                        while (realGain>=0) {
-                            int withdraw =Math.min(realGain,64);
-                            player.getInventory().addItem(new ItemStack(material,withdraw));
-                            realGain-=withdraw;
+                        Material material = share.getQuotation().getExchangeType();
+                        int realGain = (int) Math.floor(earned);
+                        while (realGain >= 0) {
+                            int withdraw = Math.min(realGain, 64);
+                            player.getInventory().addItem(new ItemStack(material, withdraw));
+                            realGain -= withdraw;
                             playerData.unregisterShare(share);
                         }
                     }

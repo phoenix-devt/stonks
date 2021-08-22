@@ -76,7 +76,7 @@ public class Dividends {
     public double applyFormula(Share share) {
         double random = Math.min(1, Math.max(-1, this.random.nextGaussian()));
 
-        String parsed = new String(formula).replace("{amount}", String.valueOf(share.getAmount()))
+        String parsed = formula.replace("{amount}", String.valueOf(share.getAmount()))
                 .replace("{random}", String.valueOf(random))
                 .replace("{price}", String.valueOf(quotation.getPrice()));
 

@@ -7,13 +7,13 @@ slots: 27
 
 items:
   open-shares:
-    slots: [ 10 ]
+    slots: [ 11 ]
     name: '&aOpen Shares'
     function: 'open-shares'
     item: 'BLUE_WOOL'
 
   closed-shares:
-    slots: [ 16 ]
+    slots: [ 15 ]
     name: '&7Closed Shares'
     function: 'closed-shares'
     item: 'GRAY_WOOL'
