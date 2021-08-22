@@ -11,6 +11,26 @@ PHYSICAL_SHARE_BILL:
     - '&7'
     - '&7Generated on &c{date}'
 
+TRADING_BOOK:
+  type: WRITABLE_BOOK
+  name: '&6Trading Book'
+  model-data: 0
+  lore:
+    - '&6This book enables you to interact with trading boards.'
+    - ''
+    - '&7First page: the amount of shares you want'
+    - '&7The max price before the share is automatically closed'
+    - '&7The min price before the share is automatically closed'
+
+QUOTATION_MAP:
+  type: FILLED_MAP
+  name: '&6Quotation Map ({company})'
+  model-data: 0
+  lore:
+    - '&7Company: {company}'
+    - '&7Time Visualized: {time-visualized}'
+    - '&7Quotation Type: {quotation-type}'
+
 
 
 TRADING_BOOK:

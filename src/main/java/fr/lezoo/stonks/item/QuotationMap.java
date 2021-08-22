@@ -1,17 +1,16 @@
 package fr.lezoo.stonks.item;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.display.DisplayInfo;
 import fr.lezoo.stonks.display.map.QuotationMapRenderer;
 import fr.lezoo.stonks.gui.api.item.Placeholders;
 import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
-import fr.lezoo.stonks.display.DisplayInfo;
+import fr.lezoo.stonks.quotation.TimeScale;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
 import java.text.DecimalFormat;
@@ -26,7 +25,7 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
     @Override
     public ItemStack build(Player player, DisplayInfo info) {
         Quotation quotation = info.getQuotation();
-        QuotationTimeDisplay time = info.getTimeDisplay();
+        TimeScale time = info.getTimeDisplay();
 
         ItemStack item = super.build(player, info);
         MapMeta meta = (MapMeta) item.getItemMeta();
@@ -41,7 +40,7 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
     @Override
     public Placeholders getPlaceholders(Player player, DisplayInfo info) {
         Quotation quotation = info.getQuotation();
-        QuotationTimeDisplay timeDisplay = info.getTimeDisplay();
+        TimeScale timeDisplay = info.getTimeDisplay();
         DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
         Placeholders holders = new Placeholders();
         holders.register("quotation-id", quotation.getId());

@@ -1,14 +1,15 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.display.board.Board;
+import fr.lezoo.stonks.util.ConfigFile;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class BoardManager implements FileManager {
@@ -22,21 +23,17 @@ public class BoardManager implements FileManager {
         boards.remove(uuid);
     }
 
-
     /**
      * The location and direction of the board is a key for the boards that we can use
      *
-     * @return
+     * @return Board at target location
      */
-    @Nullable
+    @Deprecated
     public Board getBoard(Location location, BlockFace direction) {
-        for (Board board : boards.values()) {
+        for (Board board : boards.values())
             if (board.getLocation().equals(location) && board.getDirection().equals(direction))
                 return board;
-        }
-        //If the boards doesn't exist
-        Stonks.plugin.getLogger().log(Level.WARNING, "You tried to get a board that doesn't exist");
-        save();
+
         return null;
     }
 

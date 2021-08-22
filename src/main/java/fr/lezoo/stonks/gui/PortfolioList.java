@@ -5,7 +5,7 @@ import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.version.NBTItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.gui.api.GeneratedInventory;
 import fr.lezoo.stonks.gui.api.item.InventoryItem;
@@ -16,7 +16,6 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
@@ -175,12 +174,12 @@ public class PortfolioList extends EditableInventory {
 
             holders.register("company", quotation.getName());
             holders.register("price", format.format(quotation.getPrice()));
-            holders.register("day-low", format.format(quotation.getLowest(QuotationTimeDisplay.DAY)));
-            holders.register("day-high", format.format(quotation.getHighest(QuotationTimeDisplay.DAY)));
-            holders.register("week-low", format.format(quotation.getLowest(QuotationTimeDisplay.WEEK)));
-            holders.register("week-high", format.format(quotation.getHighest(QuotationTimeDisplay.WEEK)));
-            holders.register("month-low", format.format(quotation.getLowest(QuotationTimeDisplay.MONTH)));
-            holders.register("month-high", format.format(quotation.getHighest(QuotationTimeDisplay.MONTH)));
+            holders.register("day-low", format.format(quotation.getLowest(TimeScale.DAY)));
+            holders.register("day-high", format.format(quotation.getHighest(TimeScale.DAY)));
+            holders.register("week-low", format.format(quotation.getLowest(TimeScale.WEEK)));
+            holders.register("week-high", format.format(quotation.getHighest(TimeScale.WEEK)));
+            holders.register("month-low", format.format(quotation.getLowest(TimeScale.MONTH)));
+            holders.register("month-high", format.format(quotation.getHighest(TimeScale.MONTH)));
             holders.register("exchange-type",quotation.getExchangeType().toString().toLowerCase());
             holders.register("quotation-type",quotation.getClass().getSimpleName());
             holders.register("owned", "" + inv.getPlayerData().countShares(quotation));

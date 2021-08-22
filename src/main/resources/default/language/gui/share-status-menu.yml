@@ -7,15 +7,15 @@ slots: 9
 
 items:
   open-shares:
-    slots : [0]
+    slots: [ 0 ]
     name: '&aGet Open Shares Menu'
-    function: 'open-shares menu'
+    function: 'open-shares-menu'
     item: 'BLUE_WOOL'
 
   closed-shares:
-    slots: [8]
-    function: 'closed-shares menu'
+    slots: [ 8 ]
     name: '&7Get Closed Share Menu'
+    function: 'closed-shares-menu'
     item: 'GRAY_WOOL'
 
 

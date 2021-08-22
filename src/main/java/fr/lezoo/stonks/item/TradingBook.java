@@ -6,19 +6,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class TradingBook extends CustomItem<Player>{
+public class TradingBook extends CustomItem<Void> {
 
     public TradingBook(ConfigurationSection config) {
         super(config);
     }
 
     @Override
-    public Placeholders getPlaceholders(Player player, Player player2) {
-        return new Placeholders();
+    public void whenBuilt(ItemStack item, ItemMeta meta, Void v) {
+        // Nothing there
     }
 
     @Override
-    public void whenBuilt(ItemStack item, ItemMeta meta, Player player) {
-
+    public Placeholders getPlaceholders(Player player, Void v) {
+        return new Placeholders();
     }
 }

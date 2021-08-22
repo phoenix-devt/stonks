@@ -1,13 +1,12 @@
 package fr.lezoo.stonks.manager;
 
-import com.sun.org.apache.xpath.internal.operations.Quo;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.gui.*;
 import fr.lezoo.stonks.gui.api.EditableInventory;
 import fr.lezoo.stonks.item.QuotationMap;
 import fr.lezoo.stonks.item.SharePaper;
 import fr.lezoo.stonks.item.TradingBook;
-import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.ConfigSchedule;
@@ -41,7 +40,7 @@ public class ConfigManager {
     public final SpecificPortfolio CLOSED_SPECIFIC_PORTFOLIO = new SpecificPortfolio(ShareStatus.CLOSED);
     public final ShareStatusMenu SHARE_STATUS_MENU = new ShareStatusMenu();
 
-    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, OPEN_PORTFOLIO_LIST, CLOSED_PORTFOLIO_LIST, OPEN_SPECIFIC_PORTFOLIO, CLOSED_SPECIFIC_PORTFOLIO,SHARE_STATUS_MENU};
+    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, OPEN_PORTFOLIO_LIST, CLOSED_PORTFOLIO_LIST, OPEN_SPECIFIC_PORTFOLIO, CLOSED_SPECIFIC_PORTFOLIO, SHARE_STATUS_MENU};
 
     // Accessible public config fields
     public DecimalFormat stockPriceFormat, shareFormat;
@@ -54,8 +53,6 @@ public class ConfigManager {
     public long boardRefreshTime, quotationRefreshTime, shareRefreshTime;
     public double offerDemandImpact, volatility;
     public int quotationDataNumber, maxInteractionDistance;
-
-
 
     public void reload() {
 
@@ -75,8 +72,9 @@ public class ConfigManager {
         displaySignFormat = Stonks.plugin.getConfig().getStringList("custom-sign-format");
         dividendsRedeemHour = Stonks.plugin.getConfig().getInt("dividends-redeem-hour");
         quotationDataNumber = Stonks.plugin.getConfig().getInt("quotation-data-number");
-        quotationRefreshTime = QuotationTimeDisplay.QUARTERHOUR.getTime() / quotationDataNumber;
+        quotationRefreshTime = TimeScale.QUARTERHOUR.getTime() / quotationDataNumber;
         shareRefreshTime = Stonks.plugin.getConfig().getLong("share-refresh-time");
+        quotationRefreshTime = TimeScale.QUARTERHOUR.getTime() / quotationDataNumber;
         maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
 
         // Useful checks
@@ -124,11 +122,10 @@ public class ConfigManager {
             }
 
         // Reload items
-        FileConfiguration config = new ConfigFile("/language", "items").getConfig();
-        sharePaper = new SharePaper(config.getConfigurationSection("PHYSICAL_SHARE_BILL"));
-        quotationMap = new QuotationMap(config.getConfigurationSection("QUOTATION_MAP"));
-        tradingBook = new TradingBook(config.getConfigurationSection("TRADING_BOOK"));
-
+        FileConfiguration itemsConfig = new ConfigFile("/language", "items").getConfig();
+        sharePaper = new SharePaper(itemsConfig.getConfigurationSection("PHYSICAL_SHARE_BILL"));
+        quotationMap = new QuotationMap(itemsConfig.getConfigurationSection("QUOTATION_MAP"));
+        tradingBook = new TradingBook(itemsConfig.getConfigurationSection("TRADING_BOOK"));
 
         // Reload GUIs
         for (EditableInventory inv : guis)
@@ -146,8 +143,8 @@ public class ConfigManager {
     public enum DefaultFile {
         ITEMS("language", "items.yml"),
         QUOTATIONS("", "quotations.yml"),
-        BOARD("language","board.yml"),
-        GUI_STATUS_TYPE_MENU("language/gui","share-status-menu.yml"),
+        BOARD("language", "board.yml"),
+        GUI_STATUS_TYPE_MENU("language/gui", "share-status-menu.yml"),
         GUI_QUOTATION_LIST("language/gui", "quotation-list.yml"),
         GUI_SHARE_MENU("language/gui", "share-menu.yml"),
         GUI_PORTFOLIO_LIST("language/gui", "portfolio-list.yml"),

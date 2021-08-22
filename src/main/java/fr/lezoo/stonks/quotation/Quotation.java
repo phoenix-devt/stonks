@@ -39,14 +39,14 @@ public abstract class Quotation {
      * List of data for every scale. Allows to store just the right
      * amount of data needed so that there aren't 10s timestamps on the yearly scale.
      */
-    protected final Map<QuotationTimeDisplay, List<QuotationInfo>> quotationData = new HashMap<>();
+    protected final Map<TimeScale, List<QuotationInfo>> quotationData = new HashMap<>();
 
     public Quotation(String id, String name, Material exchangeType, Dividends dividends) {
         this.id = id;
         this.name = name;
         this.dividends = dividends;
         this.exchangeType = exchangeType;
-        for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
+        for (TimeScale disp : TimeScale.values())
             quotationData.put(disp, new ArrayList<>());
     }
 
@@ -63,7 +63,7 @@ public abstract class Quotation {
         this.name = name;
         this.dividends = dividends;
         this.exchangeType = exchangeType;
-        for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
+        for (TimeScale disp : TimeScale.values())
             quotationData.put(disp, Arrays.asList(firstQuotationData));
     }
 
@@ -72,7 +72,6 @@ public abstract class Quotation {
      *
      * @param id                 Internal quotation id
      * @param name               Name of the stock
-
      * @param firstQuotationData The only QuotationInfo that exists
      */
     public Quotation(String id, String name, Material exchangeType, QuotationInfo firstQuotationData) {
@@ -80,7 +79,7 @@ public abstract class Quotation {
         this.name = name;
         this.dividends = null;
         this.exchangeType = exchangeType;
-        for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
+        for (TimeScale disp : TimeScale.values())
             quotationData.put(disp, Arrays.asList(firstQuotationData));
     }
 
@@ -94,7 +93,7 @@ public abstract class Quotation {
         this.name = name;
         this.dividends = dividends;
         this.exchangeType = Material.AIR;
-        for (QuotationTimeDisplay disp : QuotationTimeDisplay.values())
+        for (TimeScale disp : TimeScale.values())
             quotationData.put(disp, Arrays.asList(firstQuotationData));
     }
 
@@ -109,9 +108,9 @@ public abstract class Quotation {
         this.id = config.getName();
         this.name = config.getString("name");
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
-        this.exchangeType= config.contains("exchange-type")? Material.valueOf(config.getString("exchange-type").toUpperCase()) : Material.AIR;
+        this.exchangeType = config.contains("exchange-type") ? Material.valueOf(config.getString("exchange-type").toUpperCase()) : Material.AIR;
         // We load the different data from the yml
-        for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
+        for (TimeScale time : TimeScale.values()) {
             int i = 0;
             List<QuotationInfo> workingQuotation = new ArrayList<>();
 
@@ -141,7 +140,7 @@ public abstract class Quotation {
         return dividends;
     }
 
-    public List<QuotationInfo> getData(QuotationTimeDisplay disp) {
+    public List<QuotationInfo> getData(TimeScale disp) {
         return quotationData.get(disp);
     }
 
@@ -151,7 +150,7 @@ public abstract class Quotation {
      * @param time          the time corresponding to the data
      * @param quotationData the data we want to update
      */
-    public void setData(QuotationTimeDisplay time, List<QuotationInfo> quotationData) {
+    public void setData(TimeScale time, List<QuotationInfo> quotationData) {
         this.quotationData.put(time, quotationData);
     }
 
@@ -162,7 +161,7 @@ public abstract class Quotation {
      * @param time Difference of time in the past, in millis
      * @return Growth rate compared to some time ago
      */
-    public double getEvolution(QuotationTimeDisplay time) {
+    public double getEvolution(TimeScale time) {
         List<QuotationInfo> quotationData = this.getData(time);
 
         /*
@@ -182,7 +181,7 @@ public abstract class Quotation {
      * gives the player all the maps in his inventory
      */
     public Board createQuotationBoard(boolean hasBeenCreated, Location initiallocation, BlockFace
-            blockFace, QuotationTimeDisplay time, int BOARD_WIDTH, int BOARD_HEIGHT) {
+            blockFace, TimeScale time, int BOARD_WIDTH, int BOARD_HEIGHT) {
 
         // We get the board corresponding to the one we are creating or updating
         Board board = !hasBeenCreated ? new Board(this, BOARD_HEIGHT, BOARD_WIDTH, initiallocation, time, blockFace)
@@ -268,20 +267,18 @@ public abstract class Quotation {
         return board;
     }
 
-    public static final String MAP_ITEM_TAG_PATH = "StonksQuotationMap";
-
     public void save(FileConfiguration config) {
 
         // If the quotation is empty we destroy it to not overload memory and avoid errors
-        if (quotationData.get(QuotationTimeDisplay.QUARTERHOUR).size() == 0) {
+        if (quotationData.get(TimeScale.QUARTERHOUR).size() == 0) {
             config.set(id + ".name", null);
             return;
         }
 
         config.set(id + ".name", name);
-        config.set(id+".exchange-type",exchangeType.toString().toLowerCase());
+        config.set(id + ".exchange-type", exchangeType.toString().toLowerCase());
         //We save the information of the data
-        for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
+        for (TimeScale time : TimeScale.values()) {
             List<QuotationInfo> quotationData = this.getData(time);
             //We load the data needed
             for (int i = 0; i < quotationData.size(); i++) {
@@ -295,7 +292,7 @@ public abstract class Quotation {
      * @param time The time we want to look back for the quotation
      * @return Lowest price for the given time
      */
-    public double getLowest(QuotationTimeDisplay time) {
+    public double getLowest(TimeScale time) {
         List<QuotationInfo> quotationData = this.getData(time);
         if (quotationData.size() == 0)
             Stonks.plugin.getLogger().log(Level.WARNING, "Can't get lowest value of quotation '" + id + "' as data is empty");
@@ -311,7 +308,7 @@ public abstract class Quotation {
      * @param time The time we want to look back for the quotation
      * @return Highest price for the given time
      */
-    public double getHighest(QuotationTimeDisplay time) {
+    public double getHighest(TimeScale time) {
         List<QuotationInfo> quotationData = this.getData(time);
         if (quotationData.size() == 0)
             Stonks.plugin.getLogger().log(Level.WARNING, "Can't get highest value of quotation '" + id + "' as data is empty");
@@ -327,7 +324,7 @@ public abstract class Quotation {
      * @return Current quotation price
      */
     public double getPrice() {
-        List<QuotationInfo> latest = quotationData.get(QuotationTimeDisplay.QUARTERHOUR);
+        List<QuotationInfo> latest = quotationData.get(TimeScale.QUARTERHOUR);
         return latest.get(latest.size() - 1).getPrice();
     }
 

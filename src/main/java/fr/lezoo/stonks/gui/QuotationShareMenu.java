@@ -8,7 +8,7 @@ import fr.lezoo.stonks.gui.api.item.Placeholders;
 import fr.lezoo.stonks.gui.api.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.ChatInput;
 import fr.lezoo.stonks.util.Utils;
@@ -239,16 +239,16 @@ public class QuotationShareMenu extends EditableInventory {
 
             holders.register("company", inv.quotation.getName());
 
-            holders.register("week-low", format.format(inv.quotation.getLowest(QuotationTimeDisplay.WEEK)));
-            holders.register("week-high", format.format(inv.quotation.getHighest(QuotationTimeDisplay.WEEK)));
-            holders.register("month-low", format.format(inv.quotation.getLowest(QuotationTimeDisplay.MONTH)));
-            holders.register("month-high", format.format(inv.quotation.getHighest(QuotationTimeDisplay.MONTH)));
+            holders.register("week-low", format.format(inv.quotation.getLowest(TimeScale.WEEK)));
+            holders.register("week-high", format.format(inv.quotation.getHighest(TimeScale.WEEK)));
+            holders.register("month-low", format.format(inv.quotation.getLowest(TimeScale.MONTH)));
+            holders.register("month-high", format.format(inv.quotation.getHighest(TimeScale.MONTH)));
 
             // TODO instead of comparing to 1 day ago, compare to the beginning of the day, same with month, year..
-            holders.register("hour-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationTimeDisplay.HOUR)));
-            holders.register("day-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationTimeDisplay.DAY)));
-            holders.register("week-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationTimeDisplay.WEEK)));
-            holders.register("month-evolution", Utils.formatRate(inv.quotation.getEvolution(QuotationTimeDisplay.MONTH)));
+            holders.register("hour-evolution", Utils.formatRate(inv.quotation.getEvolution(TimeScale.HOUR)));
+            holders.register("day-evolution", Utils.formatRate(inv.quotation.getEvolution(TimeScale.DAY)));
+            holders.register("week-evolution", Utils.formatRate(inv.quotation.getEvolution(TimeScale.WEEK)));
+            holders.register("month-evolution", Utils.formatRate(inv.quotation.getEvolution(TimeScale.MONTH)));
 
             return holders;
         }

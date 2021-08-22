@@ -20,9 +20,9 @@ public class ShareStatusMenu extends EditableInventory {
 
     @Override
     public InventoryItem loadItem(String function, ConfigurationSection config) {
-        if (function.equalsIgnoreCase("open-shares menu"))
+        if (function.equalsIgnoreCase("open-shares-menu"))
             return new OpenShareItem(config);
-        if (function.equalsIgnoreCase("closed-shares menu"))
+        if (function.equalsIgnoreCase("closed-shares-menu"))
             return new ClosedShareItem(config);
         return null;
     }

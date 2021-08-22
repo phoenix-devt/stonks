@@ -4,7 +4,7 @@ package fr.lezoo.stonks.display.map;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
-import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.quotation.TimeScale;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
@@ -28,11 +28,11 @@ public class QuotationMapRenderer extends MapRenderer {
     private int datataken;
     //Count the number of ticks
     private List<QuotationInfo> quotationData;
-    private QuotationTimeDisplay time;
+    private TimeScale time;
     private boolean done;
 
 
-    public QuotationMapRenderer(Quotation quotation, QuotationTimeDisplay time) {
+    public QuotationMapRenderer(Quotation quotation, TimeScale time) {
         this.quotation = quotation;
         quotationData=quotation.getData(time);
         this.time=time;

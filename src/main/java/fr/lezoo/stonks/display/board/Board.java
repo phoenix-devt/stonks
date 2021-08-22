@@ -5,7 +5,7 @@ import fr.lezoo.stonks.gui.api.item.Placeholders;
 import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
-import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
@@ -36,11 +36,11 @@ public class Board {
     /* private final List<>*/
 
 
-    private final QuotationTimeDisplay time;
+    private final TimeScale time;
 
     private final BlockFace direction;
 
-    public Board(Quotation quotation, int height, int width, Location location, QuotationTimeDisplay time, BlockFace direction) {
+    public Board(Quotation quotation, int height, int width, Location location, TimeScale time, BlockFace direction) {
         uuid = UUID.randomUUID();
         this.quotation = quotation;
         this.height = height;
@@ -56,7 +56,7 @@ public class Board {
         width = config.getInt("width");
         height = config.getInt("height");
         location = new Location(Bukkit.getWorld(config.getString("world")), config.getInt("x"), config.getInt("y"), config.getInt("z"));
-        time = QuotationTimeDisplay.valueOf(config.getString("time").toUpperCase());
+        time = TimeScale.valueOf(config.getString("time").toUpperCase());
         direction = BlockFace.valueOf(config.getString("direction"));
     }
 
@@ -76,7 +76,7 @@ public class Board {
         return location;
     }
 
-    public QuotationTimeDisplay getTime() {
+    public TimeScale getTime() {
         return time;
     }
 
@@ -159,7 +159,7 @@ public class Board {
         return holders;
     }
 
-    public BufferedImage getImage(QuotationTimeDisplay time, int BOARD_WIDTH, int BOARD_HEIGHT) {
+    public BufferedImage getImage(TimeScale time, int BOARD_WIDTH, int BOARD_HEIGHT) {
 
         ConfigurationSection config = YamlConfiguration.loadConfiguration(ConfigManager.DefaultFile.BOARD.getFile()).getConfigurationSection("description");
         Placeholders holders = getPlaceholders();

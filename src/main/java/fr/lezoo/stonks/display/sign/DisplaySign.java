@@ -3,7 +3,7 @@ package fr.lezoo.stonks.display.sign;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.QuotationTimeDisplay;
+import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
@@ -58,7 +58,7 @@ public class DisplaySign {
     private String applyPlaceholders(Quotation quotation, String input) {
         return input.replace("{name}", quotation.getName())
                 .replace("{price}", Stonks.plugin.configManager.stockPriceFormat.format(quotation.getPrice()))
-                .replace("{day-evolution}", Utils.formatRate(quotation.getEvolution(QuotationTimeDisplay.DAY)))
-                .replace("{week-evolution}", Utils.formatRate(quotation.getEvolution(QuotationTimeDisplay.WEEK)));
+                .replace("{day-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.DAY)))
+                .replace("{week-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.WEEK)));
     }
 }

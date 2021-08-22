@@ -1,6 +1,6 @@
 package fr.lezoo.stonks.quotation;
 
-public enum QuotationTimeDisplay {
+public enum TimeScale {
     QUARTERHOUR(1000L * 15L * 60L),
     HOUR(1000L * 60L * 60L),
     DAY(1000L * 24L * 60L * 60L),
@@ -10,7 +10,7 @@ public enum QuotationTimeDisplay {
 
     private final long time;
 
-    QuotationTimeDisplay(long time) {
+    TimeScale(long time) {
         this.time = time;
     }
 
@@ -21,15 +21,5 @@ public enum QuotationTimeDisplay {
      */
     public long getTime() {
         return time;
-    }
-
-    /**
-     * @return If given string matches any enum field name
-     */
-    public static boolean checkQuotationTimeDisplay(String s) {
-        for (QuotationTimeDisplay quot : QuotationTimeDisplay.values())
-            if (quot.toString().equals(s))
-                return true;
-        return false;
     }
 }

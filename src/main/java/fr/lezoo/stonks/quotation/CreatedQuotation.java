@@ -30,7 +30,7 @@ public class CreatedQuotation extends Quotation {
      * Changes the quotation price
      */
     public void refreshQuotation() {
-        if (getData(QuotationTimeDisplay.QUARTERHOUR).isEmpty())
+        if (getData(TimeScale.QUARTERHOUR).isEmpty())
             return;
 
         Random random = new Random();
@@ -47,7 +47,7 @@ public class CreatedQuotation extends Quotation {
 
         int datanumber = Stonks.plugin.configManager.quotationDataNumber;
         //We update all the data List
-        for (QuotationTimeDisplay time : QuotationTimeDisplay.values()) {
+        for (TimeScale time : TimeScale.values()) {
             //We get the list corresponding to the time
             List<QuotationInfo> workingData = new ArrayList<>();
             workingData.addAll(this.getData(time));
