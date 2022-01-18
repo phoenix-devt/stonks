@@ -2,13 +2,13 @@
 ---- STONKS TODO
 
 TODO Guillaume
-- option pour acheter automatiquement ou vendre auto en fonction de certaines conditions des stocks OK
-- option pour changer le taux de commission d'une personne
 - Pouvoir trade des objets specifiques et pas juste des material
+- centraliser POO
 
 TODO Jules
 - vérifier physical quotations
 - vérifier claim/close
+- option pour changer le taux de commission d'une personne
 
 A RAJOUTER / RENFORCER
 - support MySQL pour les données (avec BungeeCord)
@@ -33,12 +33,11 @@ https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-
 
 
 OK
+- option pour acheter automatiquement ou vendre auto en fonction de certaines conditions des stocks OK
 - TRANSFORMER UN STOCK EN UN OBJET CLIQUABLE que l'on peut redeem au NPC
 - des stocks factices qui varient avec des formules mathématiques toutes configurables
 - deux types d'actions : virtuelles, où avec des objets réels (itemStacks)
 https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-other-stocks-on
-
-OK
 - commande pour simple pour rajouter un boarddisplay
 - les dividendes
 - GUIs que l'on peut modifier (api déjà existante)
