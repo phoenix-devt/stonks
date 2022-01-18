@@ -7,7 +7,9 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -22,21 +24,19 @@ public class Share {
     private final Quotation quotation;
     private final long timeStamp;
     private final double initialPrice;
-    //if the share is closed it gets the final price and display it
-    private ShareStatus status=ShareStatus.OPEN;
-    private double finalPrice=0;
+    // if the share is closed it gets the final price and display it
 
-    public ShareStatus getStatus() {
-        return status;
-    }
+    /**
+     * The reason why the share was closed. Set to null
+     * when it's still open
+     */
+    @Nullable
+    private CloseReason closeReason;
 
-    public double getFinalPrice() {
-        return finalPrice;
-    }
-
-    public double getShares() {
-        return shares;
-    }
+    /**
+     * Share price when it closed
+     */
+    private double sellPrice;
 
     /*
      * These fields can be modified by other plugins freely. maxPrice
@@ -100,6 +100,8 @@ public class Share {
         this.maxPrice = config.getDouble("max-price");
         this.maxPrice = config.getDouble("min-price");
         this.wallet = config.getDouble("wallet");
+        this.closeReason = config.contains("close-reason") ? CloseReason.valueOf(config.getString("close-reason")) : null;
+        this.sellPrice = isOpen() ? 0 : config.getDouble("sell-price");
     }
 
     /**
@@ -124,19 +126,25 @@ public class Share {
         this.shares = nbt.get(Utils.namespacedKey("ShareAmount"), PersistentDataType.DOUBLE);
         this.leverage = nbt.get(Utils.namespacedKey("ShareLeverage"), PersistentDataType.DOUBLE);
         this.wallet = nbt.get(Utils.namespacedKey("ShareWallet"), PersistentDataType.DOUBLE);
+        this.closeReason = nbt.has(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING) ? CloseReason.valueOf(nbt.get(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING)) : null;
+        this.sellPrice = isOpen() ? 0 : nbt.get(Utils.namespacedKey("SellPrice"), PersistentDataType.DOUBLE);
     }
 
     public void saveInConfig(ConfigurationSection config) {
-        config.set(uuid.toString() + ".type", type.name());
-        config.set(uuid.toString() + ".owner", owner.toString());
-        config.set(uuid.toString() + ".quotation", quotation.getId());
-        config.set(uuid.toString() + ".shares", shares);
-        config.set(uuid.toString() + ".leverage", leverage);
-        config.set(uuid.toString() + ".timestamp", timeStamp);
-        config.set(uuid.toString() + ".initial", initialPrice);
-        config.set(uuid.toString() + ".max-price", maxPrice);
-        config.set(uuid.toString() + ".min-price", minPrice);
-        config.set(uuid.toString() + ".wallet", wallet);
+        config.set(uuid + ".type", type.name());
+        config.set(uuid + ".owner", owner.toString());
+        config.set(uuid + ".quotation", quotation.getId());
+        config.set(uuid + ".shares", shares);
+        config.set(uuid + ".leverage", leverage);
+        config.set(uuid + ".timestamp", timeStamp);
+        config.set(uuid + ".initial", initialPrice);
+        config.set(uuid + ".max-price", maxPrice);
+        config.set(uuid + ".min-price", minPrice);
+        config.set(uuid + ".wallet", wallet);
+        if (!isOpen()) {
+            config.set(uuid + ".close-reason", closeReason.name());
+            config.set(uuid + ".sell-price", sellPrice);
+        }
     }
 
     public UUID getUniqueId() {
@@ -197,13 +205,35 @@ public class Share {
         return minPrice;
     }
 
-
-    public void close() {
-        this.status=ShareStatus.CLOSED;
-        this.finalPrice=this.quotation.getPrice();
+    @NotNull
+    public CloseReason getCloseReason() {
+        return Objects.requireNonNull(closeReason, "Share is open");
     }
 
+    public double getShares() {
+        return shares;
+    }
 
+    public boolean isOpen() {
+        return closeReason == null;
+    }
+
+    /**
+     * Closing a share differs from saving it. Closing a share
+     * freezes its sell price. Claiming it gives the money
+     * back to the player.
+     * <p>
+     * Closed shares with negative benefits should be automatically
+     * claimed by the player who has no interest in manually
+     * claiming them (resulting in a money loss)
+     *
+     * @param closeReason Why the share was closed
+     */
+    public void close(@NotNull CloseReason closeReason) {
+        Validate.isTrue(isOpen(), "Share is already closed");
+        this.closeReason = Objects.requireNonNull(closeReason, "Reason cannot be null");
+        this.sellPrice = quotation.getPrice();
+    }
 
     public void setWallet(double wallet) {
         this.wallet = wallet;
@@ -221,24 +251,32 @@ public class Share {
     }
 
     /**
+     * Does not take dividends wallet into account
+     *
+     * @param taxRate Rate of tax on benefits
      * @return Money earned by the player if he were to close
-     *         this share right now. This might return a negative
+     * this share right now. This might return a negative
      */
-    public double getCloseEarning() {
-        return calculateGain() + initialPrice * shares;
+    public double getCloseEarning(double taxRate) {
+        return calculateGain(taxRate) + initialPrice * shares;
     }
 
     /**
+     * Does not take dividends wallet into account
+     *
      * @return Money gained by the player (may be negative)
-     *         if he were to close the share right now
+     * if they were to claim the share right now
      */
-    public double calculateGain() {
+    public double calculateGain(double taxRate) {
+
+        // Find applicable share price
+        double sharePrice = isOpen() ? quotation.getPrice() : sellPrice;
 
         // Difference in price between when it was bought and now
-        double diff = (quotation.getPrice() - initialPrice) * (type == ShareType.SHORT ? -1 : 1);
+        double diff = (sharePrice - initialPrice) * (type == ShareType.SHORT ? -1 : 1);
 
         // Multiply by leverage and shares
-        return diff * leverage * shares;
+        return diff * leverage * shares * (1 - taxRate);
     }
 
     @Override

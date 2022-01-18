@@ -4,18 +4,21 @@ import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.share.Share;
 import org.bukkit.event.HandlerList;
 
-public class PlayerCloseShareEvent extends PlayerDataEvent {
+public class PlayerClaimShareEvent extends PlayerDataEvent {
     private final Share share;
 
     private static final HandlerList handlers = new HandlerList();
 
     /**
-     * Called when a player closes a share from a certain quotation
+     * Called when a player claims a share from a certain quotation.
+     * It is called for both closed and open shares.
+     * <p>
+     * Not to be mistaken for the {@link ShareClosedEvent}
      *
      * @param playerData Player closing the share
      * @param share      Share closed
      */
-    public PlayerCloseShareEvent(PlayerData playerData, Share share) {
+    public PlayerClaimShareEvent(PlayerData playerData, Share share) {
         super(playerData);
 
         this.share = share;

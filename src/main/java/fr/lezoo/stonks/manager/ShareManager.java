@@ -1,12 +1,14 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.share.ShareStatus;
-import fr.lezoo.stonks.util.ConfigFile;
+import fr.lezoo.stonks.api.event.ShareClosedEvent;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.share.CloseReason;
 import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.util.ConfigFile;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.*;
@@ -15,30 +17,27 @@ import java.util.logging.Level;
 public class ShareManager {
     private final Map<UUID, Share> mapped = new HashMap<>();
 
-
-
-
-
-
     public void refresh() {
         for (Share share : mapped.values()) {
-            //Check if the share need to be closed
-            if(share.getStatus().equals(ShareStatus.OPEN)&&
-                    ( share.getMaxPrice()<=share.getQuotation().getPrice()||share.getMinPrice()>=share.getQuotation().getPrice()) ) {
-                //We close the share
-                share.close();
-                return;
-            }
-            if(share.getCloseEarning()<=0) {
-                share.close();
+
+            // Check if the share needs to be closed
+            if (share.isOpen() &&
+                    (share.getMaxPrice() <= share.getQuotation().getPrice() || share.getMinPrice() >= share.getQuotation().getPrice())) {
+
+                // We close the share
+                share.close(CloseReason.AUTOMATIC);
+                Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
                 return;
             }
 
-
+            // TODO make this configurable
+            if (share.getCloseEarning(0) <= 0) {
+                share.close(CloseReason.DEFICIT);
+                Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
+                return;
+            }
         }
     }
-
-
 
     public void load() {
 

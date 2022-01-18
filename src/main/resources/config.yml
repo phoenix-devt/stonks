@@ -19,6 +19,9 @@ share-refresh-time: 60
 # Refresh time of display signs
 sign-refresh-time: 80
 
+# Default benefits tax rate
+default-tax-rate: 0
+
 # The number of data that can be visualised when you see a board/map!
 # Also defines the refresh time of the quotation, lower it if your server is overloaded
 quotation-data-number: 400

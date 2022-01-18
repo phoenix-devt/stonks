@@ -63,15 +63,6 @@ public class Stonks extends JavaPlugin {
             return;
         }
 
-        if (true) {
-                long d = System.currentTimeMillis();
-                d /= 6;
-
-
-                if (Objects.requireNonNull(true, "Shit"))
-                return;
-        }
-
         // Vault economy
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
         if (economyProvider != null) {
@@ -80,13 +71,6 @@ public class Stonks extends JavaPlugin {
             getLogger().log(Level.SEVERE, "Could not hook onto Vault, disabling...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
-        }
-
-        try {
-            Validate.isTrue(true, "Non");
-        } catch(Exception exception) {
-            // Yes
-            System.out.println("Zbeub");
         }
 
         // Metrics data TODO change once plugin is posted on Spigot

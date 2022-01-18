@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.gui;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.api.event.PlayerCloseShareEvent;
+import fr.lezoo.stonks.api.event.PlayerClaimShareEvent;
 import fr.lezoo.stonks.api.event.PlayerGenerateSharePaperEvent;
 import fr.lezoo.stonks.gui.objects.EditableInventory;
 import fr.lezoo.stonks.gui.objects.GeneratedInventory;
@@ -11,7 +11,6 @@ import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
-import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.version.ItemTag;
@@ -68,7 +67,7 @@ public class SpecificPortfolio extends EditableInventory {
 
         // Page indexing arbitrarily starts at 0
         private int page = 0;
-        private ShareStatus shareStatus = ShareStatus.OPEN;
+        private boolean displayOpenShares = true;
         private final List<Share> shares = new ArrayList<>();
         private int maxPage;
 
@@ -78,21 +77,20 @@ public class SpecificPortfolio extends EditableInventory {
             // Get amount of shares displayed per page
             this.perPage = editable.getByFunction("share").getSlots().size();
             this.quotation = quotation;
-            this.shareStatus = shareStatus;
 
             updateInventoryData();
         }
 
         private void updateInventoryData() {
             shares.clear();
-            shares.addAll(playerData.getShares(quotation, shareStatus));
+            shares.addAll(playerData.getShares(quotation, displayOpenShares));
             maxPage = Math.max(((int) Math.ceil((double) shares.size() / perPage)) - 1, 0);
         }
 
         @Override
         public String applyNamePlaceholders(String str) {
             return str.replace("{company}", quotation.getCompany())
-                    .replace("{share-status}", shareStatus.toString().toLowerCase())
+                    .replace("{share-status}", displayOpenShares ? "open" : "closed")
                     .replace("{page}", "" + (page + 1))
                     .replace("{max}", "" + (maxPage + 1));
         }
@@ -102,7 +100,7 @@ public class SpecificPortfolio extends EditableInventory {
 
             // Switch viewed shares
             if (item instanceof SwitchViewedSharesItem) {
-                this.shareStatus = shareStatus == ShareStatus.OPEN ? ShareStatus.CLOSED : ShareStatus.OPEN;
+                this.displayOpenShares = !displayOpenShares;
                 updateInventoryData();
                 open();
                 return;
@@ -158,13 +156,14 @@ public class SpecificPortfolio extends EditableInventory {
                     open();
 
                 } else if (event.getAction() == InventoryAction.PICKUP_ALL) {
-                    PlayerCloseShareEvent called = new PlayerCloseShareEvent(playerData, share);
+                    PlayerClaimShareEvent called = new PlayerClaimShareEvent(playerData, share);
                     Bukkit.getPluginManager().callEvent(called);
                     if (called.isCancelled())
                         return;
 
-                    // Close share
-                    double gain = share.calculateGain(), earned = share.getCloseEarning();
+                    // Close and claim share
+                    double taxRate = playerData.getTaxRate();
+                    double gain = share.calculateGain(taxRate), earned = share.getCloseEarning(taxRate);
                     Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getAmount()),
                             "company", quotation.getCompany(),
                             "gain", Utils.formatGain(gain)).send(player);
@@ -215,7 +214,7 @@ public class SpecificPortfolio extends EditableInventory {
 
         @Override
         public ItemStack getDisplayedItem(GeneratedSpecificPortfolio inv, int n) {
-            return inv.shareStatus == ShareStatus.OPEN ? super.getDisplayedItem(inv, n) : showOpen.getDisplayedItem(inv, n);
+            return inv.displayOpenShares ? super.getDisplayedItem(inv, n) : showOpen.getDisplayedItem(inv, n);
         }
 
         @Override
@@ -292,9 +291,10 @@ public class SpecificPortfolio extends EditableInventory {
             holders.register("current-stock", format.format(inv.quotation.getPrice()));
             holders.register("initial-stock", format.format(share.getInitialPrice()));
 
+            double taxRate = inv.getPlayerData().getTaxRate();
             holders.register("initial-share", format.format(share.getInitialPrice() * share.getAmount()));
-            holders.register("current-share", format.format(share.getCloseEarning()));
-            holders.register("gain", Utils.formatGain(share.calculateGain()));
+            holders.register("current-share", format.format(share.getCloseEarning(taxRate)));
+            holders.register("gain", Utils.formatGain(share.calculateGain(taxRate)));
 
             return holders;
         }

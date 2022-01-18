@@ -48,7 +48,7 @@ public class ConfigManager {
     public int dividendsRedeemHour;
 
     public long boardRefreshTime, quotationRefreshTime, shareRefreshTime;
-    public double offerDemandImpact, volatility;
+    public double offerDemandImpact, volatility, defaultTaxRate;
     public int quotationDataNumber, maxInteractionDistance;
 
     public void reload() {
@@ -73,6 +73,7 @@ public class ConfigManager {
         shareRefreshTime = Stonks.plugin.getConfig().getLong("share-refresh-time");
         quotationRefreshTime = TimeScale.QUARTERHOUR.getTime() / quotationDataNumber;
         maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
+        defaultTaxRate = Stonks.plugin.getConfig().getDouble("default-tax-rate");
 
         // Useful checks
         Validate.isTrue(displaySignFormat.size() == 4, "Display sign format should be of length 4");

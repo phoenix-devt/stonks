@@ -4,7 +4,6 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
-import fr.lezoo.stonks.share.ShareStatus;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.message.Message;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 public class PlayerData {
     private final UUID uuid;
     private Player player;
-    private PlayerStatus playerStatus;
+    private double taxRate;
 
     // Data not saved when logging off
     private double leverage = 1;
@@ -53,6 +52,8 @@ public class PlayerData {
                 if (!shares.isEmpty())
                     this.shares.put(quotationKey, shares);
             }
+
+        taxRate = config.contains("tax-rate") ? config.getDouble("tax-rate") : -1;
     }
 
     public void saveInConfig(FileConfiguration config) {
@@ -100,14 +101,29 @@ public class PlayerData {
     /**
      * @return Owned shares from a specific quotation with a specific ShareStatus
      */
-    public Set<Share> getShares(Quotation quotation, ShareStatus status) {
-        //We filter to only have the ones of the specified share Status
+    public Set<Share> getShares(Quotation quotation, boolean open) {
+        // We filter to only have the ones of the specified share Status
         return shares.getOrDefault(quotation.getId(), new HashSet<>())
                 .stream()
-                .filter((share) -> share.getStatus().equals(status))
+                .filter((share) -> share.isOpen() == open)
                 .collect(Collectors.toSet());
     }
 
+    public double getTaxRate() {
+        return taxRate == -1 ? Stonks.plugin.configManager.defaultTaxRate : taxRate;
+    }
+
+    /**
+     * Tax rate must be between 0 and 1
+     * <p>
+     * When set to -1, it uses the default tax rate input in the config file
+     *
+     * @param taxRate Player tax rate on benefits from 0 to 1, or -1 if default
+     */
+    public void setTaxRate(double taxRate) {
+        Validate.isTrue((taxRate >= 0 && taxRate <= 1) || taxRate == -1, "Tax rate must be positive");
+        this.taxRate = taxRate;
+    }
 
     /**
      * @return Owned shares from all quotations
@@ -115,8 +131,8 @@ public class PlayerData {
     public Set<Share> getAllShares() {
         Set<Share> total = new HashSet<>();
 
-        for (String key : shares.keySet())
-            total.addAll(shares.get(key));
+        for (Set<Share> shares : this.shares.values())
+            total.addAll(shares);
 
         return total;
     }
@@ -133,14 +149,15 @@ public class PlayerData {
     }
 
     public void unregisterShare(Share share) {
-        if (!shares.containsKey(share.getQuotation().getId()))
+        Set<Share> shares = this.shares.get(share.getQuotation().getId());
+        if (shares == null)
             return;
 
         // Unregister share from manager
         Stonks.plugin.shareManager.unregister(share);
 
         // Remove from list
-        this.shares.get(share.getQuotation().getId()).remove(share);
+        shares.remove(share);
     }
 
     public Share getShareById(Quotation quotation, UUID uuid) {
@@ -170,9 +187,8 @@ public class PlayerData {
     public double countShares() {
         double total = 0;
 
-        for (String quotationId : shares.keySet())
-            for (Share share : shares.get(quotationId))
-                total += share.getAmount();
+        for (Set<Share> shares : this.shares.values())
+            total += shares.size();
 
         return total;
     }
@@ -190,7 +206,7 @@ public class PlayerData {
         double price = quotation.getPrice() * amount;
 
         //If it exchanges money
-        if (quotation.getExchangeType().equals(Material.AIR)) {
+        if (!quotation.isVirtual()) {
             // Check for balance
             double bal = Stonks.plugin.economy.getBalance(player);
             if (bal < price) {

@@ -36,10 +36,11 @@ public class SharePaperListener implements Listener {
 
         // Clear item and give share afterwards
         player.getInventory().setItem(event.getHand(), null);
-        PlayerData.get(player).giveShare(share);
+        PlayerData playerData = PlayerData.get(player);
 
+        playerData.giveShare(share);
         Message.CLAIM_SHARE_PAPER.format("shares", Utils.fourDigits.format(share.getAmount()),
                 "company", share.getQuotation().getCompany(),
-                "value", Stonks.plugin.configManager.stockPriceFormat.format(share.getCloseEarning())).send(player);
+                "value", Stonks.plugin.configManager.stockPriceFormat.format(share.getCloseEarning(playerData.getTaxRate()))).send(player);
     }
 }
