@@ -43,12 +43,6 @@ public class Stonks extends JavaPlugin {
     public QuotationManager quotationManager = new QuotationManager();
     public BoardManager boardManager = new BoardManager();
 
-    // BUEBZUIBEUQZ
-
-    static {
-
-    }
-
     /*TODO Comment obtenir les lives de trading
     TODO Signs ,playerdata avec les shares
     */
@@ -57,12 +51,6 @@ public class Stonks extends JavaPlugin {
     }
 
     public void onEnable() {
-
-        try {
-            Validate.isTrue(true);
-        } catch(RuntimeException exception) {
-            // Yes
-        }
 
         // Read server version
         try {
@@ -74,6 +62,11 @@ public class Stonks extends JavaPlugin {
             return;
         }
 
+        if (true) {
+                long d = System.currentTimeMillis();
+                d /= 6;
+        }
+
         // Vault economy
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
         if (economyProvider != null) {
@@ -82,6 +75,13 @@ public class Stonks extends JavaPlugin {
             getLogger().log(Level.SEVERE, "Could not hook onto Vault, disabling...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
+        }
+
+        try {
+            Validate.isTrue(true, "Non");
+        } catch(Exception exception) {
+            // Yes
+            System.out.println("Zbeub");
         }
 
         // Metrics data TODO change once plugin is posted on Spigot
