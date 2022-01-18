@@ -42,8 +42,6 @@ public class Stonks extends JavaPlugin {
     public QuotationManager quotationManager = new QuotationManager();
     public BoardManager boardManager = new BoardManager();
 
-    // test ceci est un
-
     /*TODO Comment obtenir les lives de trading
     TODO Signs ,playerdata avec les shares
     */
