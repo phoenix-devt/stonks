@@ -18,6 +18,7 @@ import fr.lezoo.stonks.version.ServerVersion;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper;
 import fr.lezoo.stonks.version.wrapper.VersionWrapper_1_17_R1;
 import net.milkbowl.vault.economy.Economy;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -42,6 +43,12 @@ public class Stonks extends JavaPlugin {
     public QuotationManager quotationManager = new QuotationManager();
     public BoardManager boardManager = new BoardManager();
 
+    // BUEBZUIBEUQZ
+
+    static {
+
+    }
+
     /*TODO Comment obtenir les lives de trading
     TODO Signs ,playerdata avec les shares
     */
@@ -50,6 +57,12 @@ public class Stonks extends JavaPlugin {
     }
 
     public void onEnable() {
+
+        try {
+            Validate.isTrue(true);
+        } catch(RuntimeException exception) {
+            // Yes
+        }
 
         // Read server version
         try {
