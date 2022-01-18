@@ -30,7 +30,6 @@ public class ShareManager {
                 return;
             }
 
-            // TODO make this configurable
             if (share.getCloseEarning(0) <= 0) {
                 share.close(CloseReason.DEFICIT);
                 Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));

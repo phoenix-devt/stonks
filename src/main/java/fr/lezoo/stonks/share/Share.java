@@ -272,11 +272,14 @@ public class Share {
         // Find applicable share price
         double sharePrice = isOpen() ? quotation.getPrice() : sellPrice;
 
-        // Difference in price between when it was bought and now
-        double diff = (sharePrice - initialPrice) * (type == ShareType.SHORT ? -1 : 1);
+        // <Difference in price between when it was bought and now> * <leverage> * <number of shares>
+        double gain = (sharePrice - initialPrice) * (type == ShareType.SHORT ? -1 : 1) * leverage * shares;
 
-        // Multiply by leverage and shares
-        return diff * leverage * shares * (1 - taxRate);
+        // Tax on benefits only
+        if (gain > 0)
+            gain *= 1 - taxRate;
+
+        return gain;
     }
 
     @Override
