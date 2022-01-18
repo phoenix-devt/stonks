@@ -25,6 +25,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class Stonks extends JavaPlugin {
@@ -65,6 +66,10 @@ public class Stonks extends JavaPlugin {
         if (true) {
                 long d = System.currentTimeMillis();
                 d /= 6;
+
+
+                if (Objects.requireNonNull(true, "Shit"))
+                return;
         }
 
         // Vault economy
