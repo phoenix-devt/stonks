@@ -1,22 +1,26 @@
-
 ---- STONKS TODO
 
 TODO Guillaume
 - Pouvoir trade des objets specifiques et pas juste des material
-- centraliser POO
+-Bugs
+-Close quotation quand negatif ---OK
+-github wiki
+-Changements NBTItem -----OK
+
 
 TODO Jules
 - vérifier physical quotations
 - vérifier claim/close
 - option pour changer le taux de commission d'une personne
+- API Bourse  Quotations (Bots de Trading)
+
+
 
 A RAJOUTER / RENFORCER
 - support MySQL pour les données (avec BungeeCord)
 - afficher les STONKS sur une MAP
 - option pour changer le taux de comission d'une personne
 - quotation creation GUI
-
-
 
 
 

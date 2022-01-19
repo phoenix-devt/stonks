@@ -11,12 +11,15 @@ import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.version.ItemTag;
-import fr.lezoo.stonks.version.NBTItem;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -97,8 +100,10 @@ public class QuotationList extends EditableInventory {
             }
 
             if (item instanceof QuotationItem) {
-                NBTItem nbt = NBTItem.get(event.getCurrentItem());
-                String quotationId = nbt.getString("quotationId");
+                ItemStack itemStack = event.getCurrentItem();
+                ItemMeta meta = itemStack.getItemMeta();
+                PersistentDataContainer container = meta.getPersistentDataContainer();
+                String quotationId = container.get(new NamespacedKey(Stonks.plugin, "quoationId"), PersistentDataType.STRING);
                 if (quotationId.isEmpty())
                     return;
 
@@ -160,9 +165,14 @@ public class QuotationList extends EditableInventory {
 
             // Displayed required quotation
             ItemStack displayed = quotation.isVirtual() ? super.getDisplayedItem(inv, n) : physicalQuotation.getDisplayedItem(inv, n);
-            NBTItem nbt = NBTItem.get(displayed);
-            nbt.addTag(new ItemTag("quotationId", quotation.getId()));
-            return nbt.toItem();
+
+
+            ItemMeta meta = displayed.getItemMeta();
+            PersistentDataContainer container = meta.getPersistentDataContainer();
+            container.set(new NamespacedKey(Stonks.plugin, "quotationId"), PersistentDataType.STRING, quotation.getId());
+            displayed.setItemMeta(meta);
+
+            return displayed;
         }
 
         @Override

@@ -46,6 +46,7 @@ public enum Message {
     }
 
     /**
+     * Deep Copy !!
      * @return Message updated based on what's in the config files
      */
     public List<String> getCached() {

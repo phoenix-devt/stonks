@@ -30,7 +30,7 @@ public class ShareManager {
                 return;
             }
 
-            if (share.getCloseEarning(0) <= 0) {
+            if (share.isOpen()&&share.getCloseEarning(0) <= 0) {
                 share.close(CloseReason.DEFICIT);
                 Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
                 return;

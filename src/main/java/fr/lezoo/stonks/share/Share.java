@@ -256,9 +256,10 @@ public class Share {
      * @param taxRate Rate of tax on benefits
      * @return Money earned by the player if he were to close
      * this share right now. This might return a negative
+     * The share cannot be valued negatively
      */
     public double getCloseEarning(double taxRate) {
-        return calculateGain(taxRate) + initialPrice * shares;
+        return Math.max(calculateGain(taxRate) + initialPrice * shares,0);
     }
 
     /**

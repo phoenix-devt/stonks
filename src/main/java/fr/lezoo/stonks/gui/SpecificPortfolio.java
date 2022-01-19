@@ -14,14 +14,17 @@ import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
 import fr.lezoo.stonks.version.ItemTag;
-import fr.lezoo.stonks.version.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -128,8 +131,13 @@ public class SpecificPortfolio extends EditableInventory {
 
             if (item instanceof ShareItem) {
 
-                NBTItem nbt = NBTItem.get(event.getCurrentItem());
-                String shareId = nbt.getString("ShareId");
+
+                ItemStack itemStack=event.getCurrentItem();
+                ItemMeta meta= itemStack.getItemMeta();
+                PersistentDataContainer container= meta.getPersistentDataContainer();
+                String shareId=container.get(new NamespacedKey(Stonks.plugin,"shareId"), PersistentDataType.STRING);
+
+
                 if (shareId.isEmpty())
                     return;
 
@@ -264,10 +272,13 @@ public class SpecificPortfolio extends EditableInventory {
 
             Share share = inv.shares.get(index);
 
-            // Displayed required quotation
-            NBTItem nbt = NBTItem.get(super.getDisplayedItem(inv, n));
-            nbt.addTag(new ItemTag("ShareId", share.getUniqueId().toString()));
-            return nbt.toItem();
+            ItemStack itemStack=super.getDisplayedItem(inv,n);
+            ItemMeta meta= itemStack.getItemMeta();
+            PersistentDataContainer container=meta.getPersistentDataContainer();
+            container.set(new NamespacedKey(Stonks.plugin,"shareId"),PersistentDataType.STRING,share.getUniqueId().toString());
+            itemStack.setItemMeta(meta);
+
+            return itemStack;
         }
 
         @Override
