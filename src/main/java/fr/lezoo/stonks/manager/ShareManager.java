@@ -18,24 +18,25 @@ public class ShareManager {
     private final Map<UUID, Share> mapped = new HashMap<>();
 
     public void refresh() {
-        for (Share share : mapped.values()) {
+        for (Share share : mapped.values())
+            if (share.isOpen()) {
 
-            // Check if the share needs to be closed
-            if (share.isOpen() &&
-                    (share.getMaxPrice() <= share.getQuotation().getPrice() || share.getMinPrice() >= share.getQuotation().getPrice())) {
+                // Check if the share needs to be closed
+                if (share.getMaxPrice() <= share.getQuotation().getPrice() || share.getMinPrice() >= share.getQuotation().getPrice()) {
 
-                // We close the share
-                share.close(CloseReason.AUTOMATIC);
-                Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
-                return;
+                    // We close the share
+                    share.close(CloseReason.AUTOMATIC);
+                    Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
+                    return;
+                }
+
+                // Automatically closes share when in deficit
+                if (share.getCloseEarning(0) <= 0) {
+                    share.close(CloseReason.DEFICIT);
+                    Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
+                    return;
+                }
             }
-
-            if (share.isOpen()&&share.getCloseEarning(0) <= 0) {
-                share.close(CloseReason.DEFICIT);
-                Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
-                return;
-            }
-        }
     }
 
     public void load() {

@@ -252,14 +252,15 @@ public class Share {
 
     /**
      * Does not take dividends wallet into account
+     * <p>
+     * The share cannot be valued negatively
      *
      * @param taxRate Rate of tax on benefits
      * @return Money earned by the player if he were to close
-     * this share right now. This might return a negative
-     * The share cannot be valued negatively
+     * this share right now.
      */
     public double getCloseEarning(double taxRate) {
-        return Math.max(calculateGain(taxRate) + initialPrice * shares,0);
+        return Math.max(calculateGain(taxRate) + initialPrice * shares, 0);
     }
 
     /**

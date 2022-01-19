@@ -13,7 +13,6 @@ import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
-import fr.lezoo.stonks.version.ItemTag;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -131,14 +130,10 @@ public class SpecificPortfolio extends EditableInventory {
 
             if (item instanceof ShareItem) {
 
-
-                ItemStack itemStack=event.getCurrentItem();
-                ItemMeta meta= itemStack.getItemMeta();
-                PersistentDataContainer container= meta.getPersistentDataContainer();
-                String shareId=container.get(new NamespacedKey(Stonks.plugin,"shareId"), PersistentDataType.STRING);
-
-
-                if (shareId.isEmpty())
+                ItemStack itemStack = event.getCurrentItem();
+                PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
+                String shareId = container.get(new NamespacedKey(Stonks.plugin, "share_id"), PersistentDataType.STRING);
+                if (shareId == null || shareId.isEmpty())
                     return;
 
                 Share share = playerData.getShareById(quotation, UUID.fromString(shareId));
@@ -272,10 +267,10 @@ public class SpecificPortfolio extends EditableInventory {
 
             Share share = inv.shares.get(index);
 
-            ItemStack itemStack=super.getDisplayedItem(inv,n);
-            ItemMeta meta= itemStack.getItemMeta();
-            PersistentDataContainer container=meta.getPersistentDataContainer();
-            container.set(new NamespacedKey(Stonks.plugin,"shareId"),PersistentDataType.STRING,share.getUniqueId().toString());
+            ItemStack itemStack = super.getDisplayedItem(inv, n);
+            ItemMeta meta = itemStack.getItemMeta();
+            PersistentDataContainer container = meta.getPersistentDataContainer();
+            container.set(new NamespacedKey(Stonks.plugin, "share_id"), PersistentDataType.STRING, share.getUniqueId().toString());
             itemStack.setItemMeta(meta);
 
             return itemStack;

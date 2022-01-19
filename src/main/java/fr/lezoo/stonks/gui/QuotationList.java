@@ -10,7 +10,6 @@ import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.util.message.Message;
-import fr.lezoo.stonks.version.ItemTag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryAction;
@@ -101,10 +100,9 @@ public class QuotationList extends EditableInventory {
 
             if (item instanceof QuotationItem) {
                 ItemStack itemStack = event.getCurrentItem();
-                ItemMeta meta = itemStack.getItemMeta();
-                PersistentDataContainer container = meta.getPersistentDataContainer();
-                String quotationId = container.get(new NamespacedKey(Stonks.plugin, "quoationId"), PersistentDataType.STRING);
-                if (quotationId.isEmpty())
+                PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
+                String quotationId = container.get(new NamespacedKey(Stonks.plugin, "quotation_id"), PersistentDataType.STRING);
+                if (quotationId == null || quotationId.isEmpty())
                     return;
 
                 Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
@@ -165,11 +163,9 @@ public class QuotationList extends EditableInventory {
 
             // Displayed required quotation
             ItemStack displayed = quotation.isVirtual() ? super.getDisplayedItem(inv, n) : physicalQuotation.getDisplayedItem(inv, n);
-
-
             ItemMeta meta = displayed.getItemMeta();
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            container.set(new NamespacedKey(Stonks.plugin, "quotationId"), PersistentDataType.STRING, quotation.getId());
+            container.set(new NamespacedKey(Stonks.plugin, "quotation_id"), PersistentDataType.STRING, quotation.getId());
             displayed.setItemMeta(meta);
 
             return displayed;
