@@ -23,6 +23,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,19 +93,19 @@ public class Board {
      */
     public void saveBoard(FileConfiguration boarddata) {
         boarddata.set(uuid.toString() + ".quotationid", quotation.getId());
-        boarddata.set(uuid.toString() + ".width", width);
-        boarddata.set(uuid.toString() + ".height", height);
-        boarddata.set(uuid.toString() + ".x", location.getX());
-        boarddata.set(uuid.toString() + ".y", location.getY());
-        boarddata.set(uuid.toString() + ".z", location.getZ());
-        boarddata.set(uuid.toString() + ".world", location.getWorld().getName());
-        boarddata.set(uuid.toString() + ".time", time.toString().toLowerCase());
-        boarddata.set(uuid.toString() + ".direction", direction.name());
+        boarddata.set(uuid + ".width", width);
+        boarddata.set(uuid + ".height", height);
+        boarddata.set(uuid + ".x", location.getX());
+        boarddata.set(uuid + ".y", location.getY());
+        boarddata.set(uuid + ".z", location.getZ());
+        boarddata.set(uuid + ".world", location.getWorld().getName());
+        boarddata.set(uuid + ".time", time.toString().toLowerCase());
+        boarddata.set(uuid + ".direction", direction.name());
     }
 
     public void destroy() {
         // We unregister the board
-        Stonks.plugin.boardManager.removeBoard(uuid);
+        Stonks.plugin.boardManager.removeBoard(getUuid());
         // We destroy the entities
         Location newlocation = location.clone();
         // We create the wall to have the board with ItemFrames on it
@@ -118,7 +119,7 @@ public class Board {
         horizontalLineReturn.multiply(-width);
         Vector itemFrameDirection = Utils.getItemFrameDirection(direction);
 
-        // We get to the layer of ITemFrames
+        // We get to the layer of ItemFrames
         newlocation.add(itemFrameDirection);
         // We remove them all
         for (int i = 0; i < height; i++) {
@@ -132,6 +133,7 @@ public class Board {
             newlocation.add(verticalBuildDirection);
             newlocation.add(horizontalLineReturn);
         }
+
     }
 
     /**
@@ -150,11 +152,11 @@ public class Board {
         holders.register("company", quotation.getCompany());
         holders.register("current-price", format.format(quotation.getPrice()));
         holders.register("lowest-price", format.format(quotation.getLowest(time)));
-        holders.register("highest-price",format.format(quotation.getHighest(time)));
+        holders.register("highest-price", format.format(quotation.getHighest(time)));
         holders.register("evolution", quotation.getEvolution(time));
         holders.register("time-visualized", time.toString().toLowerCase());
-        holders.register("quotation-type",quotation.getClass().getSimpleName());
-        holders.register("exchange-type",quotation.getExchangeType().toString().toLowerCase());
+        holders.register("quotation-type", quotation.getClass().getSimpleName());
+        holders.register("exchange-type", quotation.getExchangeType() == null ? "money" : quotation.getExchangeType().toString().toLowerCase());
         return holders;
     }
 
@@ -173,7 +175,7 @@ public class Board {
         Graphics2D g2d = (Graphics2D) image.getGraphics();
         List<QuotationInfo> quotationData = quotation.getData(time);
         //If the quotation is Empty we print an error
-        Validate.isTrue(quotationData.size()!=0,"The quotation : "+quotation.getId()+" has no values!!");
+        Validate.isTrue(quotationData.size() != 0, "The quotation : " + quotation.getId() + " has no values!!");
 
         int data_taken = Math.min(Stonks.plugin.configManager.quotationDataNumber, quotationData.size());
 
@@ -203,10 +205,10 @@ public class Board {
         g2d.drawString(holders.apply(config.getString("time-visualized")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("company")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("quotation-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("exchange-type")),(int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("current-price")),(int) (0.45 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("lowest-price")),(int) (0.45 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("highest-price")),(int) (0.45 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("exchange-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("current-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("lowest-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("highest-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("evolution")), (int) (0.45 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
 
         g2d.setColor(new Color(80, 30, 0));
@@ -217,7 +219,7 @@ public class Board {
         g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.5 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.75 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.setColor(Color.GRAY);
-        g2d.setFont(new Font(null, Font.BOLD, (int)(BOARD_HEIGHT * 3.5 / 128)));
+        g2d.setFont(new Font(null, Font.BOLD, (int) (BOARD_HEIGHT * 3.5 / 128)));
         g2d.drawString("Leverage", (int) (0.83 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
         g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 4 / 128));
         g2d.drawString("BUY", (int) (0.83 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
@@ -229,12 +231,12 @@ public class Board {
         // If price = maxVal y =0.25 IMAGE_SIZE
         // If price = min Val y=0.95*IMAGE_SIZE (BOTTOM)
         double x = 0;
-        double y = 0.95*BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (quotationData.get(index).getPrice() - minVal) / (maxVal - minVal));
+        double y = 0.95 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (quotationData.get(index).getPrice() - minVal) / (maxVal - minVal));
         curve.moveTo(x, y);
         for (int i = 1; i < data_taken; i++) {
             // if data_taken < NUMBER_DATA,the graphics will be on the left of the screen mainly
             x = i * BOARD_WIDTH * 0.8 / Stonks.plugin.configManager.quotationDataNumber;
-            y = 0.95*BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (quotationData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
+            y = 0.95 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (quotationData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
             curve.lineTo(x, y);
         }
 

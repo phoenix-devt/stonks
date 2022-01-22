@@ -38,7 +38,7 @@ public class Quotation {
      * The material that will be exchanged. If this is set to null,
      * that means the quotation is virtual and exchanges money instead
      */
-    private final Material exchangeType;
+    private final ExchangeType exchangeType;
 
     /**
      * List of data for every scale. Allows to store just the right
@@ -67,7 +67,7 @@ public class Quotation {
      * @param exchangeType       The material being exchanged, or null if the quotation is virtual
      * @param firstQuotationData Info containing the quotation initial price
      */
-    public Quotation(String id, String name, Material exchangeType, QuotationInfo firstQuotationData) {
+    public Quotation(String id, String name, ExchangeType exchangeType, QuotationInfo firstQuotationData) {
         this(id, name, null, exchangeType, firstQuotationData);
     }
 
@@ -92,7 +92,7 @@ public class Quotation {
      * @param exchangeType       The material being exchanged, or null if the quotation is virtual
      * @param firstQuotationData The only QuotationInfo that exists
      */
-    public Quotation(String id, String name, Dividends dividends, Material exchangeType, QuotationInfo firstQuotationData) {
+    public Quotation(String id, String name, Dividends dividends, ExchangeType exchangeType, QuotationInfo firstQuotationData) {
         this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.name = name;
         this.dividends = dividends;
@@ -108,8 +108,12 @@ public class Quotation {
         this.id = config.getName();
         this.name = config.getString("name");
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
-        this.exchangeType = config.contains("exchange-type") ? Material.valueOf(config.getString("exchange-type").toUpperCase().replace("-", "_").replace(" ", "_")) : null;
-        Validate.isTrue(exchangeType != Material.AIR, "Cannot use AIR as exchange type");
+        ConfigurationSection section=config.getConfigurationSection("exchange-type");
+        Material material=Material.valueOf(section.contains("material")?
+                section.getString("material").toUpperCase().replace("-", "_").replace(" ", "_"):null);
+        int modelData=section.contains("model-data")? section.getInt("model-data"):0;
+        Validate.isTrue(material!=Material.AIR,"Cannot use AIR as exchange type");
+        exchangeType=material==null?null:new ExchangeType(material,modelData);
 
         // We load the different data from the yml
         for (TimeScale time : TimeScale.values()) {
@@ -142,7 +146,7 @@ public class Quotation {
         return dividends;
     }
 
-    public Material getExchangeType() {
+    public ExchangeType getExchangeType() {
         return exchangeType;
     }
 
@@ -181,7 +185,7 @@ public class Quotation {
          * We need a division by zero check?
          */
         double oldest = quotationData.get(0).getPrice();
-        double latest = quotationData.get(quotationData.size() - 1).getPrice();
+        double latest = getPrice();
 
         return Utils.truncate(100 * (latest - oldest) / oldest, 1);
     }
@@ -286,7 +290,10 @@ public class Quotation {
         }
 
         config.set(id + ".name", name);
-        config.set(id + ".exchange-type", exchangeType == null ? null : exchangeType.name());
+
+
+        config.set(id + ".exchange-type.material", exchangeType == null ? null : exchangeType.getMaterial().name());
+        config.set(id+".exchange-type.model-data",exchangeType==null?0:exchangeType.getModelData());
         //We save the information of the data
         for (TimeScale time : TimeScale.values()) {
             List<QuotationInfo> quotationData = this.getData(time);

@@ -9,6 +9,7 @@ import fr.lezoo.stonks.gui.objects.item.InventoryItem;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.quotation.ExchangeType;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.util.Utils;
@@ -178,11 +179,15 @@ public class SpecificPortfolio extends EditableInventory {
 
                         // Physical quotation
                     } else {
-                        Material material = share.getQuotation().getExchangeType();
+                        ExchangeType exchangeType = share.getQuotation().getExchangeType();
                         int realGain = (int) Math.floor(earned);
+                        ItemStack giveItem = new ItemStack(exchangeType.getMaterial());
+                        ItemMeta meta=giveItem.getItemMeta();
+                        meta.setCustomModelData(exchangeType.getModelData());
+                        giveItem.setItemMeta(meta);
                         while (realGain >= 0) {
                             int withdraw = Math.min(realGain, 64);
-                            player.getInventory().addItem(new ItemStack(material, withdraw));
+                            player.getInventory().addItem();
                             realGain -= withdraw;
                             playerData.unregisterShare(share);
                         }

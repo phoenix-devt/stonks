@@ -7,12 +7,21 @@ TODO Guillaume
 -github wiki
 -Changements NBTItem -----OK
 
-
 TODO Jules
 - vérifier physical quotations
 - vérifier claim/close
 - option pour changer le taux de commission d'une personne
 - API Bourse  Quotations (Bots de Trading)
+
+
+TODO
+-Real Data for stonks even with longer timeScale board -OK
+-Update sign info  OK
+Refresh board concurrent modification exception OK
+
+-Tradig book debug
+-Problem avec trading item modelData etc Curtom name quand le custom model data change
+
 
 
 

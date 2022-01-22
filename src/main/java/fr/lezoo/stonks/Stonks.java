@@ -87,12 +87,15 @@ public class Stonks extends JavaPlugin {
         signManager.load();
         playerManager.load();
 
+        /*
         // PlaceholderAPI compatibility
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             placeholderParser = new PlaceholderAPIParser();
             new StonksPlaceholders().register();
             getLogger().log(Level.INFO, "Hooked onto PlaceholderAPI");
         }
+
+         */
 
         // Register commands
         StonksCommandRoot commandRoot = new StonksCommandRoot();
@@ -107,6 +110,17 @@ public class Stonks extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new SharePaperListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplaySignListener(), this);
         Bukkit.getPluginManager().registerEvents(new TradingInteractListener(), this);
+
+        //Refresh the signs
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                if (Bukkit.getOnlinePlayers().size() > 0)
+                    signManager.refreshSigns();
+            }
+        }.runTaskTimer(this, 0L, configManager.signRefreshTime);
+
 
         // Refresh boards
         new BukkitRunnable() {
@@ -148,7 +162,7 @@ public class Stonks extends JavaPlugin {
 
     /**
      * @return If the stock market is closed and no shares
-     *         can be bought or closed
+     * can be bought or closed
      */
     public boolean isClosed() {
 

@@ -47,7 +47,7 @@ public class ConfigManager {
     public List<String> displaySignFormat;
     public int dividendsRedeemHour;
 
-    public long boardRefreshTime, quotationRefreshTime, shareRefreshTime;
+    public long boardRefreshTime, quotationRefreshTime, shareRefreshTime, signRefreshTime;
     public double offerDemandImpact, volatility, defaultTaxRate;
     public int quotationDataNumber, maxInteractionDistance;
 
@@ -71,6 +71,7 @@ public class ConfigManager {
         quotationDataNumber = Stonks.plugin.getConfig().getInt("quotation-data-number");
         quotationRefreshTime = TimeScale.QUARTERHOUR.getTime() / quotationDataNumber;
         shareRefreshTime = Stonks.plugin.getConfig().getLong("share-refresh-time");
+        signRefreshTime =Stonks.plugin.getConfig().getLong("sign-refresh-time");
         quotationRefreshTime = TimeScale.QUARTERHOUR.getTime() / quotationDataNumber;
         maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
         defaultTaxRate = Stonks.plugin.getConfig().getDouble("default-tax-rate");

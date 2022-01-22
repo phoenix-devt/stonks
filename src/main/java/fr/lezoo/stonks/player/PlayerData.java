@@ -2,6 +2,7 @@ package fr.lezoo.stonks.player;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
+import fr.lezoo.stonks.quotation.ExchangeType;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
@@ -230,9 +231,9 @@ public class PlayerData {
             price = Math.ceil(price);
 
             int bal = 0;
-            //We check the amount of the material the player has in his inventory
+            //We check the amount of the item the player has in his inventory (hte material is defined by custom model data and material
             for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack != null && itemStack.getType().equals(quotation.getExchangeType()))
+                if (itemStack != null && new ExchangeType(itemStack.getType(),itemStack.getItemMeta().getCustomModelData()).equals(quotation.getExchangeType()))
                     bal += itemStack.getAmount();
             }
             if (bal < price) {

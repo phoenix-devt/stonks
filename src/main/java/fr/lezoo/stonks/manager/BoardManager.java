@@ -8,6 +8,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -23,6 +24,9 @@ public class BoardManager implements FileManager {
         boards.remove(uuid);
     }
 
+    public void removeBoard(Iterator<Board> it) {
+        it.remove();
+    }
     /**
      * The location and direction of the board is a key for the boards that we can use
      *
@@ -50,9 +54,12 @@ public class BoardManager implements FileManager {
     }
 
     public void refreshBoards() {
-        //We avoid ConcurrentModificationException
-        for (UUID key : boards.keySet())
-            boards.get(key).refreshBoard();
+       //We use a deep copy to avoid concurrentModification exception
+        HashMap<UUID,Board> copy=new HashMap<>();
+       copy.putAll(boards);
+       for(Board board:copy.values())
+           board.refreshBoard();
+
     }
 
     @Override

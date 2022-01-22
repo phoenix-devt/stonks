@@ -18,6 +18,14 @@ public class SignManager implements FileManager {
         return mapped.containsKey(position);
     }
 
+    /**
+     * Update the information given by all the signs
+     */
+    public void refreshSigns() {
+        for (DisplaySign sign : Stonks.plugin.signManager.getActive())
+            sign.update();
+    }
+
     public Collection<DisplaySign> getActive() {
         return mapped.values();
     }
@@ -31,6 +39,9 @@ public class SignManager implements FileManager {
     public void unregister(Position pos) {
         mapped.remove(pos);
     }
+
+
+
 
     /**
      * @return Current display signs linked to given quotation

@@ -193,7 +193,7 @@ public class QuotationList extends EditableInventory {
             holders.register("week-high", format.format(quotation.getHighest(TimeScale.WEEK)));
             holders.register("month-low", format.format(quotation.getLowest(TimeScale.MONTH)));
             holders.register("month-high", format.format(quotation.getHighest(TimeScale.MONTH)));
-            holders.register("exchange-type", quotation.isVirtual() ? "None" : quotation.getExchangeType().toString().toLowerCase());
+            holders.register("exchange-type", quotation.isVirtual() ? "money" : quotation.getExchangeType().toString().toLowerCase());
             holders.register("quotation-type", quotation.getClass().getSimpleName());
             return holders;
         }
