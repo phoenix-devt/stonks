@@ -32,7 +32,7 @@ public class BoardManager implements FileManager {
      *
      * @return Board at target location
      */
-    @Deprecated
+
     public Board getBoard(Location location, BlockFace direction) {
         for (Board board : boards.values())
             if (board.getLocation().equals(location) && board.getDirection().equals(direction))

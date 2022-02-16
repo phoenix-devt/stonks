@@ -108,12 +108,12 @@ public class Quotation {
         this.id = config.getName();
         this.name = config.getString("name");
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
-        ConfigurationSection section=config.getConfigurationSection("exchange-type");
-        Material material=Material.valueOf(section.contains("material")?
-                section.getString("material").toUpperCase().replace("-", "_").replace(" ", "_"):null);
-        int modelData=section.contains("model-data")? section.getInt("model-data"):0;
-        Validate.isTrue(material!=Material.AIR,"Cannot use AIR as exchange type");
-        exchangeType=material==null?null:new ExchangeType(material,modelData);
+
+        Material material = config.contains("exchange-type.material") ?
+                Material.valueOf(config.getString("exchange-type.material").toUpperCase().replace("-", "_").replace(" ", "_")) : null;
+        int modelData = config.contains("exchange-type.model-data") ? config.getInt("exchange-type.model-data") : 0;
+        Validate.isTrue(material != Material.AIR, "Cannot use AIR as exchange type");
+        exchangeType = material == null ? null : new ExchangeType(material, modelData);
 
         // We load the different data from the yml
         for (TimeScale time : TimeScale.values()) {
@@ -197,23 +197,17 @@ public class Quotation {
     public Board createQuotationBoard(boolean hasBeenCreated, Location initiallocation, BlockFace
             blockFace, TimeScale time, int BOARD_WIDTH, int BOARD_HEIGHT) {
 
-        // We get the board corresponding to the one we are creating or updating
-        Board board = !hasBeenCreated ? new Board(this, BOARD_HEIGHT, BOARD_WIDTH, initiallocation, time, blockFace)
-                : Stonks.plugin.boardManager.getBoard(initiallocation, blockFace);
 
         //If there is no blocks in the board it destroys itself
         boolean isEmpty = true;
 
-        // If the board has never been created we register it
-        if (!hasBeenCreated)
-            Stonks.plugin.boardManager.register(board);
 
-        BufferedImage image = board.getImage(time, BOARD_WIDTH, BOARD_HEIGHT);
-
-        // We make sure to not chang the location given in argument
+        // We make sure to not change the location given in argument
         Location location = initiallocation.clone();
         // We create the wall to have the board with ItemFrames on it
+        //offset otherwise the location where the block is ambiguous
         location.add(0.5, 0.5, 0.5);
+
         // We get the direction to build horizontally and vertically
         Vector verticalBuildDirection = new Vector(0, 1, 0);
         Vector horizontalBuildDirection = blockFace.getDirection();
@@ -223,6 +217,29 @@ public class Quotation {
         horizontalLineReturn.multiply(-BOARD_WIDTH);
 
         Vector itemFrameDirection = Utils.getItemFrameDirection(blockFace);
+
+        // We get the board corresponding to the one we are creating or updating
+        Board board = !hasBeenCreated ? new Board(this, BOARD_HEIGHT, BOARD_WIDTH, initiallocation, time, blockFace)
+                : Stonks.plugin.boardManager.getBoard(initiallocation, blockFace);
+
+        //Because of offset bugs about where the block spawns etc relative to the location
+
+        //TODO : FIX LE BUG (Problème: offset quand on clique sur les boutons avec le trading book (parfois il y a un offset d'un bloc parfois pas ...bizarre)
+        //Idée : On store dans chaque itemframe la loc de celle ci et on regarde juste la position relative au sein de l'itemframe.
+
+
+        // we fix it by taking the loc in the middle and then getting the loc at the top left corner of it
+        Location saveLocation = location.clone();
+        saveLocation.setY(Math.ceil(saveLocation.getY()));
+        saveLocation.setX(itemFrameDirection.getX() == 1 ? Math.floor(saveLocation.getX()) : Math.ceil(saveLocation.getX()));
+        saveLocation.setZ(itemFrameDirection.getZ() == 1 ? Math.floor(saveLocation.getZ()) : Math.ceil(saveLocation.getZ()));
+        // If the board has never been created we register it
+        if (!hasBeenCreated)
+            Stonks.plugin.boardManager.register(board);
+
+
+        //get the img for the board
+        BufferedImage image = board.getImage(time, BOARD_WIDTH, BOARD_HEIGHT);
 
         for (int i = 0; i < BOARD_HEIGHT; i++) {
             // i stands for the line of the board and j the column
@@ -293,7 +310,7 @@ public class Quotation {
 
 
         config.set(id + ".exchange-type.material", exchangeType == null ? null : exchangeType.getMaterial().name());
-        config.set(id+".exchange-type.model-data",exchangeType==null?0:exchangeType.getModelData());
+        config.set(id + ".exchange-type.model-data", exchangeType == null ? 0 : exchangeType.getModelData());
         //We save the information of the data
         for (TimeScale time : TimeScale.values()) {
             List<QuotationInfo> quotationData = this.getData(time);
@@ -364,6 +381,7 @@ public class Quotation {
 
         change = (change + offset) * Stonks.plugin.configManager.volatility * currentPrice / 20 * Math.sqrt((double) (Stonks.plugin.configManager.quotationRefreshTime) / 3600);
 
+        //The amount of data wanted for each timescale fo the quotation
         int datanumber = Stonks.plugin.configManager.quotationDataNumber;
         //We update all the data List
         for (TimeScale time : TimeScale.values()) {

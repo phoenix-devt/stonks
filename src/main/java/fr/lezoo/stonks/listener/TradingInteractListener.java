@@ -42,7 +42,6 @@ public class TradingInteractListener implements Listener {
         if (event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK)
             return;
 
-
         //Check if the player is trying to interact with a board with a tradingbook
         if ((player.getInventory().getItemInMainHand() != null) && (player.getInventory().getItemInMainHand().getItemMeta() != null)
                 && player.getInventory().getItemInMainHand().getItemMeta().getDisplayName()
@@ -55,9 +54,10 @@ public class TradingInteractListener implements Listener {
 
                 return;
             }
-            double minDistance = 2;
+            player.sendMessage("Interact with book");
+            double minDistance = 4;
             ItemFrame itemFrame = null;
-            for (Entity entity : block.getLocation().getChunk().getEntities()) {
+            for (Entity entity : block.getWorld().getNearbyEntities(block.getLocation(),8,8,8)) {
                 if (entity.getLocation().distance(block.getLocation()) < minDistance && entity instanceof ItemFrame) {
                     minDistance = entity.getLocation().distance(block.getLocation());
                     itemFrame = (ItemFrame) entity;
@@ -69,14 +69,15 @@ public class TradingInteractListener implements Listener {
             if (itemFrame == null) {
                 return;
             }
-
+            player.sendMessage("Interact with itemframe");
             //We get the board of the entity
             PersistentDataContainer container = itemFrame.getPersistentDataContainer();
             //If it is not a Stonks itemFrame we return nothing
             if (!container.has(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING))
                 return;
-            board = Stonks.plugin.boardManager.getBoard(UUID.fromString(container.get(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING)));
+            player.sendMessage(container.get(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING));
 
+            board = Stonks.plugin.boardManager.getBoard(UUID.fromString(container.get(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING)));
             //We get the perpendicular straight line
             Vector perpendicular = Utils.getItemFrameDirection(board.getDirection());
 
@@ -92,10 +93,13 @@ public class TradingInteractListener implements Listener {
             //After that we have a better precision
             location.add(direction);
 
+            //Origine de l'offset arrondi a la valeur pour le board
+
             //Between  and 0 and 1, represents where the board is
             verticalOffset = (board.getLocation().getY() + board.getHeight() - location.getY()) / board.getHeight();
             //The same, we use a scalar product
             horizontalOffset = location.subtract(board.getLocation()).toVector().dot(board.getDirection().getDirection()) / board.getWidth();
+            player.sendMessage("horiz:"+horizontalOffset+" verti "+verticalOffset);
 
             //We then check if it corresponds to the location of a button
             checkDownSquare();
@@ -112,12 +116,14 @@ public class TradingInteractListener implements Listener {
     //Does what need to be done when the top square is touched
     public void checkUpSquare() {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.21) && (verticalOffset > 0.02)) {
+            player.sendMessage("up");
 
         }
     }
 
     public void checkMiddleUpSquare() {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.45) && (verticalOffset > 0.25)) {
+            player.sendMessage("midup");
 
             //We do nothing if there is a problem
             if (readBook() == null)
@@ -135,6 +141,7 @@ public class TradingInteractListener implements Listener {
 
     public void checkMiddleDownSquare() {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.7) && (verticalOffset > 0.5)) {
+            player.sendMessage("middown");
             //We do nothing if there is a problem
             if (readBook() == null)
                 return;
@@ -150,6 +157,8 @@ public class TradingInteractListener implements Listener {
 
     public void checkDownSquare() {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.95) && (verticalOffset > 0.75)) {
+            player.sendMessage("down");
+
             Stonks.plugin.configManager.QUOTATION_LIST.generate(Stonks.plugin.playerManager.get(player)).open();
         }
     }
@@ -168,27 +177,32 @@ public class TradingInteractListener implements Listener {
             return null;
         }
         //We cast into double but want it to be an int, we cant lose half a diamond... easier to do so.
+        pages.set(0,pages.get(0).replace("\n","").replace(" ",""));
+
         try {
             amount = (double) Integer.parseInt(pages.get(0));
         } catch (IllegalArgumentException e) {
-            player.sendMessage(ChatColor.RED + "You didn't enter the money normally");
+            player.sendMessage(ChatColor.RED + "You should only put the money you want to spend on the stock in the first page");
             return null;
         }
         double maxPrice = Float.POSITIVE_INFINITY;
         double minPrice = 0;
         if (pages.size() >= 2) {
+            pages.set(1,pages.get(1).replace("\n","").replace(" ",""));
             try {
                 maxPrice = Double.parseDouble(pages.get(1));
             } catch (IllegalArgumentException e) {
-                player.sendMessage(ChatColor.RED + "You didn't enter the maxPrice normally");
+                player.sendMessage(ChatColor.RED + "You should only put the maxprice in the second page");
                 return null;
             }
         }
         if (pages.size() >= 3) {
+
+            pages.set(2,pages.get(2).replace("\n","").replace(" ",""));
             try {
                 minPrice = Double.parseDouble(pages.get(2));
             } catch (IllegalArgumentException e) {
-                player.sendMessage(ChatColor.RED + "You didn't enter the minPrice normally");
+                player.sendMessage(ChatColor.RED + "You should only put the minprice in the third page");
                 return null;
             }
         }

@@ -76,7 +76,7 @@ public class CreateTreeNode extends CommandTreeNode {
         }
 
         // Work with integers instead to simplify calculations
-        Location location = new Location(player.getWorld(), player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+        Location location = new Location(player.getWorld(),Math.round(player.getLocation().getX()), Math.round(player.getLocation().getY()), Math.round(player.getLocation().getZ()));
         Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
         quotation.createQuotationBoard(false, location.add(face.getDirection().multiply(2)), face, time, width, height);
         return CommandResult.SUCCESS;

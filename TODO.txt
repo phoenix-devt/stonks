@@ -1,9 +1,14 @@
 ---- STONKS TODO
 
+Idées
+
+
 TODO Guillaume
-- Pouvoir trade des objets specifiques et pas juste des material
+- Pouvoir trade des objets specifiques et pas juste des material --OK
 -Bugs
 -Close quotation quand negatif ---OK
+-Problème display board entre 2 chunks OK
+-trading book offset horizontal fix
 -github wiki
 -Changements NBTItem -----OK
 

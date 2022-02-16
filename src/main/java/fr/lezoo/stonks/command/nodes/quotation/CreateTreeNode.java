@@ -7,7 +7,11 @@ import fr.lezoo.stonks.command.objects.parameter.SimpleParameter;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 
 public class CreateTreeNode extends CommandTreeNode {
     public CreateTreeNode(CommandTreeNode parent) {
@@ -42,4 +46,10 @@ public class CreateTreeNode extends CommandTreeNode {
         Stonks.plugin.quotationManager.register(new Quotation(args[2], args[3], null, null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
         return CommandResult.SUCCESS;
     }
+
+
+
+
+
+
 }
