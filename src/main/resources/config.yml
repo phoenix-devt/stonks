@@ -3,6 +3,14 @@
 # for download. Requires a server reload when changed.
 update-notify: true
 
+
+#The stock API you want to use : it can be :
+#finnhub : 60 call/min,15min delay (with a free API key)
+#alphavantage : 5 call/min with 500/day, roughly 20 min delay (with a free API key)
+stock-api: 'finnhub'
+api-key: ''
+
+
 # How stock prices display in item lores
 # Check out 'DecimalFormat java' online for more info
 stock-price-decimal-format: '0.##'
@@ -23,7 +31,8 @@ sign-refresh-time: 80
 default-tax-rate: 0
 
 # The number of data that can be visualised when you see a board/map!
-# Also defines the refresh time of the quotation, lower it if your server is overloaded
+# Also defines the refresh time of the quotation, lower it if your server is overloaded.
+# Be careful with real stock quotations quotation-data-number*number_of_real_stock_quotations/60 must be <60 or the API will not work
 quotation-data-number: 100
 
 # The impact of the offer and demand on the stock price 1 : maximal and 0 not any impact

@@ -8,11 +8,7 @@ import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,12 +16,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
 import java.util.List;
-import java.util.UUID;
 
 public class TradingInteractListener implements Listener {
 
@@ -38,6 +31,7 @@ public class TradingInteractListener implements Listener {
     public void onInteract(PlayerInteractEvent event) {
         player = event.getPlayer();
 
+
         //We check if the player is left clicking
         if (event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK)
             return;
@@ -47,65 +41,43 @@ public class TradingInteractListener implements Listener {
                 && player.getInventory().getItemInMainHand().getItemMeta().getDisplayName()
                 .equalsIgnoreCase(Stonks.plugin.configManager.tradingBook.getPlaceholders(player, null).apply(Stonks.plugin.configManager.tradingBook.getDisplayName()))) {
 
-            // We get the block that the player is interacting with and check if
-            // the nearest entity is an item frame wich belongs to a board
-            Block block = player.getTargetBlockExact(Stonks.plugin.configManager.maxInteractionDistance);
-            if (block == null) {
+            player.sendMessage(Stonks.plugin.boardManager.getBoards().size() + "boards");
 
-                return;
-            }
-            player.sendMessage("Interact with book");
-            double minDistance = 4;
-            ItemFrame itemFrame = null;
-            for (Entity entity : block.getWorld().getNearbyEntities(block.getLocation(),8,8,8)) {
-                if (entity.getLocation().distance(block.getLocation()) < minDistance && entity instanceof ItemFrame) {
-                    minDistance = entity.getLocation().distance(block.getLocation());
-                    itemFrame = (ItemFrame) entity;
 
+            for (Board board : Stonks.plugin.boardManager.getBoards()) {
+                //We get the perpendicular straight line
+                Location boardLocation = board.getLocation().clone();
+                Vector perpendicular = Utils.getItemFrameDirection(board.getDirection());
+                double scalar = (boardLocation.clone().subtract(player.getLocation()).toVector().dot(perpendicular));
+                //if the scalar product is positive we are behind the block and if it is too big we are too far
+                if (scalar >= 0 || scalar <= -Stonks.plugin.configManager.maxInteractionDistance)
+                    return;
+                Location location = player.getEyeLocation();
+                //We normalize the vector so that coordinate corresponding to perpendicular is one
+                Vector direction = player.getEyeLocation().getDirection().multiply(1 / (player.getEyeLocation().getDirection().dot(perpendicular)));
+                direction.multiply(scalar);
+                //After that we have a better precision
+                location.add(direction);
+
+                //Origine de l'offset arrondi a la valeur pour le board
+                //Between  and 0 and 1, represents where the board is
+                verticalOffset = (boardLocation.getY() + board.getHeight() - location.getY()) / board.getHeight();
+                //The same, we use a scalar product
+                horizontalOffset = location.subtract(boardLocation).toVector().dot(board.getDirection().getDirection()) / board.getWidth();
+
+
+                //If we are really clicking on a board we check where it has been clicked and stop the method
+
+                if (horizontalOffset >= 0 && horizontalOffset <= 1 && verticalOffset >= 0 && verticalOffset <= 1) {
+
+                    //We then check if it corresponds to the location of a button
+                    checkDownSquare();
+                    checkMiddleDownSquare();
+                    checkMiddleUpSquare();
+                    checkUpSquare();
+                    return;
                 }
             }
-
-            //If there is no itemFrame the player is not interacting with a board
-            if (itemFrame == null) {
-                return;
-            }
-            player.sendMessage("Interact with itemframe");
-            //We get the board of the entity
-            PersistentDataContainer container = itemFrame.getPersistentDataContainer();
-            //If it is not a Stonks itemFrame we return nothing
-            if (!container.has(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING))
-                return;
-            player.sendMessage(container.get(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING));
-
-            board = Stonks.plugin.boardManager.getBoard(UUID.fromString(container.get(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING)));
-            //We get the perpendicular straight line
-            Vector perpendicular = Utils.getItemFrameDirection(board.getDirection());
-
-            double scalar = (itemFrame.getLocation().subtract(player.getLocation()).toVector().dot(perpendicular));
-            //if the scalar product is positive we are behind the block
-            if (scalar >= 0)
-                return;
-            Location location = player.getEyeLocation();
-            //We normalize the vector so that coordonate corresponding to perpendicular is one
-            Vector direction = player.getEyeLocation().getDirection().multiply(1 / (player.getEyeLocation().getDirection().dot(perpendicular)));
-            direction.multiply(scalar);
-
-            //After that we have a better precision
-            location.add(direction);
-
-            //Origine de l'offset arrondi a la valeur pour le board
-
-            //Between  and 0 and 1, represents where the board is
-            verticalOffset = (board.getLocation().getY() + board.getHeight() - location.getY()) / board.getHeight();
-            //The same, we use a scalar product
-            horizontalOffset = location.subtract(board.getLocation()).toVector().dot(board.getDirection().getDirection()) / board.getWidth();
-            player.sendMessage("horiz:"+horizontalOffset+" verti "+verticalOffset);
-
-            //We then check if it corresponds to the location of a button
-            checkDownSquare();
-            checkMiddleDownSquare();
-            checkMiddleUpSquare();
-            checkUpSquare();
 
         }
 
@@ -177,7 +149,7 @@ public class TradingInteractListener implements Listener {
             return null;
         }
         //We cast into double but want it to be an int, we cant lose half a diamond... easier to do so.
-        pages.set(0,pages.get(0).replace("\n","").replace(" ",""));
+        pages.set(0, pages.get(0).replace("\n", "").replace(" ", ""));
 
         try {
             amount = (double) Integer.parseInt(pages.get(0));
@@ -188,7 +160,7 @@ public class TradingInteractListener implements Listener {
         double maxPrice = Float.POSITIVE_INFINITY;
         double minPrice = 0;
         if (pages.size() >= 2) {
-            pages.set(1,pages.get(1).replace("\n","").replace(" ",""));
+            pages.set(1, pages.get(1).replace("\n", "").replace(" ", ""));
             try {
                 maxPrice = Double.parseDouble(pages.get(1));
             } catch (IllegalArgumentException e) {
@@ -198,7 +170,7 @@ public class TradingInteractListener implements Listener {
         }
         if (pages.size() >= 3) {
 
-            pages.set(2,pages.get(2).replace("\n","").replace(" ",""));
+            pages.set(2, pages.get(2).replace("\n", "").replace(" ", ""));
             try {
                 minPrice = Double.parseDouble(pages.get(2));
             } catch (IllegalArgumentException e) {

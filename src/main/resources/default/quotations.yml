@@ -1,19 +1,5 @@
-
-
-spacex:
-
-  # Stock name
-  name: 'SpaceX'
-
-  dividends:
-
-    # Period in days
-    period: 1
-
-    # Formula for dividends
-    formula: '{amount} * {price} * 0.005 * (1 + {random} / 50)'
-
-
-
+aapl:
+  name: 'Apple'
+  type: 'real-stock'
 
 

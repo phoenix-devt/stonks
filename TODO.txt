@@ -11,12 +11,19 @@ TODO Guillaume
 -trading book offset horizontal fix
 -github wiki
 -Changements NBTItem -----OK
+-Système mathématique plus dépendant de l'offre et demande : %de quotation apparue/vendue
+
+-Iterer Board uniquement
+-Resoudre problème API avec 60 call/min
+-Dissocier le setup des quotation avec les data
+-Changer de token pour chaque serveur
+-Register chaque serveur et qu'ils mettent un token...
 
 TODO Jules
 - vérifier physical quotations
 - vérifier claim/close
 - option pour changer le taux de commission d'une personne
-- API Bourse  Quotations (Bots de Trading)
+- API Bourse  Quotations (Bots de Trading) OK
 
 
 TODO

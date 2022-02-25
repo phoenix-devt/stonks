@@ -3,14 +3,12 @@ package fr.lezoo.stonks.manager;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.Board;
 import fr.lezoo.stonks.util.ConfigFile;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class BoardManager implements FileManager {
@@ -27,11 +25,17 @@ public class BoardManager implements FileManager {
     public void removeBoard(Iterator<Board> it) {
         it.remove();
     }
+
     /**
      * The location and direction of the board is a key for the boards that we can use
      *
      * @return Board at target location
      */
+
+    public HashSet<Board> getBoards() {
+        return new HashSet(boards.values());
+    }
+
 
     public Board getBoard(Location location, BlockFace direction) {
         for (Board board : boards.values())
@@ -54,11 +58,11 @@ public class BoardManager implements FileManager {
     }
 
     public void refreshBoards() {
-       //We use a deep copy to avoid concurrentModification exception
-        HashMap<UUID,Board> copy=new HashMap<>();
-       copy.putAll(boards);
-       for(Board board:copy.values())
-           board.refreshBoard();
+        //We use a deep copy to avoid concurrentModification exception
+        HashMap<UUID, Board> copy = new HashMap<>();
+        copy.putAll(boards);
+        for (Board board : copy.values())
+            board.refreshBoard();
 
     }
 

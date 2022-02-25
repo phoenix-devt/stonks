@@ -55,7 +55,7 @@ public class CreateTreeNode extends CommandTreeNode {
         try {
             time = TimeScale.valueOf(args[4].toUpperCase());
         } catch (IllegalArgumentException exception) {
-            sender.sendMessage(ChatColor.RED + "Available time scales: QUARTERHOUR, HOUR, DAY, WEEK, MONTH, YEAR");
+            sender.sendMessage(ChatColor.RED + "Available time scales: HOUR, DAY, WEEK, MONTH, YEAR");
             return CommandResult.FAILURE;
         }
 

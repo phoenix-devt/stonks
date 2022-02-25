@@ -1,7 +1,10 @@
 package fr.lezoo.stonks.quotation;
 
 import fr.lezoo.stonks.Stonks;
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -41,45 +44,45 @@ public class RealStockQuotation extends Quotation {
     }
 
 
+
     @Override
     public void refreshQuotation() {
-        HttpClient client = HttpClient.newHttpClient();
-        String url = "https://finnhub.io/api/v1/quote?symbol=" + getId() + "&token=c3vd9a2ad3ia9vcboc9g";
-        try {
-            HttpRequest request = HttpRequest.newBuilder(new URI(url)).GET().build();
-            HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
-            String response = httpResponse.body();
-            JSONObject object = (JSONObject) new JSONParser().parse(response);
-            Double price = Double.parseDouble((String) object.get("c"));
 
-            int datanumber = Stonks.plugin.configManager.quotationDataNumber;
-            //We update all the data List
-            for (TimeScale time : TimeScale.values()) {
-                //We get the list corresponding to the time
-                List<QuotationInfo> workingData = new ArrayList<>();
-                workingData.addAll(this.getData(time));
-                //If the the latest data of workingData is too old we add another one
-                if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / datanumber) {
+        Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
 
-                    workingData.add(new QuotationInfo(System.currentTimeMillis(), price));
-                    //If the list contains too much data we remove the older ones
-                    if (workingData.size() > datanumber)
-                        workingData.remove(0);
-                    //We save the changes we made in the attribute
-                    this.setData(time, workingData);
+            try {
+                double price = Stonks.plugin.stockAPIManager.getPrice(getId());
+                int datanumber = Stonks.plugin.configManager.quotationDataNumber;
+                //We update all the data List
+                for (TimeScale time : TimeScale.values()) {
+                    //We get the list corresponding to the time
+                    List<QuotationInfo> workingData = new ArrayList<>();
+                    Validate.notNull(this.getData(time),"The data for"+getId()+"for"+time.toString()+"is null");
+                    workingData.addAll(this.getData(time));
+                    //If the the latest data of workingData is too old we add another one
+                    if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / datanumber) {
+
+                        workingData.add(new QuotationInfo(System.currentTimeMillis(), price));
+                        //If the list contains too much data we remove the older ones
+                        if (workingData.size() > datanumber)
+                            workingData.remove(0);
+                        //We save the changes we made in the attribute
+                        this.setData(time, workingData);
+                    }
                 }
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
 
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        });
+
     }
 }
 

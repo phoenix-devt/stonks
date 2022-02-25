@@ -5,17 +5,15 @@ import fr.lezoo.stonks.command.QuotationsCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
 import fr.lezoo.stonks.command.StonksCommandRoot;
 import fr.lezoo.stonks.compat.placeholder.DefaultPlaceholderParser;
-import fr.lezoo.stonks.compat.placeholder.PlaceholderAPIParser;
 import fr.lezoo.stonks.compat.placeholder.PlaceholderParser;
-import fr.lezoo.stonks.compat.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.DisplaySignListener;
 import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.listener.SharePaperListener;
 import fr.lezoo.stonks.listener.TradingInteractListener;
 import fr.lezoo.stonks.manager.*;
+import fr.lezoo.stonks.manager.StockAPI.StockAPIManager;
 import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.version.ServerVersion;
-
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,12 +32,14 @@ public class Stonks extends JavaPlugin {
     public final ShareManager shareManager = new ShareManager();
     public final SignManager signManager = new SignManager();
     public Economy economy;
+    public StockAPIManager stockAPIManager;
 
     // TODO fixer l'initialisation de ces classes
 
     public PlayerDataManager playerManager = new PlayerDataManager();
     public QuotationManager quotationManager = new QuotationManager();
     public BoardManager boardManager = new BoardManager();
+    public QuotationDataManager quotationDataManager = new QuotationDataManager();
 
     /*TODO Comment obtenir les lives de trading
     TODO Signs ,playerdata avec les shares
@@ -86,6 +86,9 @@ public class Stonks extends JavaPlugin {
         boardManager.load();
         signManager.load();
         playerManager.load();
+
+        //load stockAPIManager
+        stockAPIManager=StockAPIManager.getManager();
 
         /*
         // PlaceholderAPI compatibility

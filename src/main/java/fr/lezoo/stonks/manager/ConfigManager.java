@@ -32,6 +32,8 @@ public class ConfigManager {
     public TradingBook tradingBook;
     public QuotationMap quotationMap;
 
+    public String stockAPI,apiKey;
+
     // Accessible public GUIs
     public final QuotationList QUOTATION_LIST = new QuotationList();
     public final QuotationShareMenu QUOTATION_SHARE = new QuotationShareMenu();
@@ -51,11 +53,18 @@ public class ConfigManager {
     public double offerDemandImpact, volatility, defaultTaxRate;
     public int quotationDataNumber, maxInteractionDistance;
 
+
+
     public void reload() {
 
         // Reload default config
         Stonks.plugin.reloadConfig();
 
+
+        //The getString method returns null if there is no value associated
+        stockAPI=Stonks.plugin.getConfig().getString("stock-api");
+        apiKey=Stonks.plugin.getConfig().getString("api-key").equals("")?
+                null:Stonks.plugin.getConfig().getString("api-key");
         // Update public config fields
         dateFormat = new SimpleDateFormat(Stonks.plugin.getConfig().getString("date-format"));
         stockPriceFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("stock-price-decimal-format"));
@@ -69,10 +78,9 @@ public class ConfigManager {
         displaySignFormat = Stonks.plugin.getConfig().getStringList("custom-sign-format");
         dividendsRedeemHour = Stonks.plugin.getConfig().getInt("dividends-redeem-hour");
         quotationDataNumber = Stonks.plugin.getConfig().getInt("quotation-data-number");
-        quotationRefreshTime = TimeScale.QUARTERHOUR.getTime() / quotationDataNumber;
+        quotationRefreshTime = TimeScale.HOUR.getTime() / quotationDataNumber;
         shareRefreshTime = Stonks.plugin.getConfig().getLong("share-refresh-time");
         signRefreshTime =Stonks.plugin.getConfig().getLong("sign-refresh-time");
-        quotationRefreshTime = TimeScale.QUARTERHOUR.getTime() / quotationDataNumber;
         maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
         defaultTaxRate = Stonks.plugin.getConfig().getDouble("default-tax-rate");
 
@@ -133,7 +141,16 @@ public class ConfigManager {
             } catch (IllegalArgumentException exception) {
                 Stonks.plugin.getLogger().log(Level.WARNING, "Could not load custom inventory '" + inv.getId() + "': " + exception.getMessage());
             }
+
+
+
+        //Reload quotations
+        Stonks.plugin.quotationManager.reload();
+
+
+
     }
+
 
     /**
      * All config files that have a default configuration are stored here,

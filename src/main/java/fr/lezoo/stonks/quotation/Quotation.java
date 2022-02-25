@@ -114,20 +114,10 @@ public class Quotation {
         int modelData = config.contains("exchange-type.model-data") ? config.getInt("exchange-type.model-data") : 0;
         Validate.isTrue(material != Material.AIR, "Cannot use AIR as exchange type");
         exchangeType = material == null ? null : new ExchangeType(material, modelData);
+        //We set the data of the quotation
+        Stonks.plugin.quotationDataManager.setQuotationData(this);
 
-        // We load the different data from the yml
-        for (TimeScale time : TimeScale.values()) {
-            int i = 0;
-            List<QuotationInfo> workingQuotation = new ArrayList<>();
 
-            while (config.contains(time.toString().toLowerCase() + "data." + i)) {
-                workingQuotation.add(new QuotationInfo(config.getConfigurationSection(time.toString().toLowerCase() + "data." + i)));
-                i++;
-            }
-
-            // We change the attribute
-            this.setData(time, workingQuotation);
-        }
     }
 
     public String getId() {
@@ -145,6 +135,7 @@ public class Quotation {
     public Dividends getDividends() {
         return dividends;
     }
+
 
     public ExchangeType getExchangeType() {
         return exchangeType;
@@ -206,7 +197,19 @@ public class Quotation {
         Location location = initiallocation.clone();
         // We create the wall to have the board with ItemFrames on it
         //offset otherwise the location where the block is ambiguous
-        location.add(0.5, 0.5, 0.5);
+        //We make sure the offset put the location at the top right corner of the board
+        double x=blockFace.getDirection().getX()*0.5;
+        double z=blockFace.getDirection().getZ()*0.5;
+        // We want the block placed behind the location if we are looking at it
+        if(x==0) {
+            x=-Utils.getItemFrameDirection(blockFace).getX()*0.5;
+        }
+        if(z==0) {
+            z=-Utils.getItemFrameDirection(blockFace).getZ()*0.5;
+        }
+
+
+        location.add(x, 0.5, z);
 
         // We get the direction to build horizontally and vertically
         Vector verticalBuildDirection = new Vector(0, 1, 0);
@@ -254,7 +257,8 @@ public class Quotation {
                     isEmpty = false;
                     location.add(itemFrameDirection);
                     ItemFrame itemFrame = null;
-                    for (Entity entity : location.getChunk().getEntities()) {
+                    //The getEntities method will in all the case loop through all the entities of the world
+                    for (Entity entity : location.getWorld().getEntities()) {
                         if (entity.getLocation().distance(location) <= 1 && entity instanceof ItemFrame)
                             itemFrame = (ItemFrame) entity;
 
@@ -263,10 +267,8 @@ public class Quotation {
                     //If no item frames have been found we create one
                     if (itemFrame == null)
                         itemFrame = (ItemFrame) location.getWorld().spawnEntity(location, EntityType.ITEM_FRAME);
-
-                    //We store the uuid of the board into the entity
-                    PersistentDataContainer container = itemFrame.getPersistentDataContainer();
-                    container.set(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING, board.getUuid().toString());
+                    //We register the uuid of the board in each itemFrame
+                    itemFrame.getPersistentDataContainer().set(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING, board.getUuid().toString());
 
                     // We create the map that will go in the itemframe
                     ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
@@ -300,26 +302,29 @@ public class Quotation {
 
     public void save(FileConfiguration config) {
 
+
         // If the quotation is empty we destroy it to not overload memory and avoid errors
-        if (quotationData.get(TimeScale.QUARTERHOUR).size() == 0) {
+        if (quotationData.get(TimeScale.HOUR)==null|| quotationData.get(TimeScale.HOUR).size() == 0) {
             config.set(id + ".name", null);
             return;
         }
 
         config.set(id + ".name", name);
 
+        if (this instanceof RealStockQuotation) {
+            config.set(id + ".type", "real-stock");
+        }
+        //Si la quotation n'est pas une realStockQuotation alors c'est une virtual quotation
+        else {
+            config.set(id + ".type", "virtual");
+        }
 
         config.set(id + ".exchange-type.material", exchangeType == null ? null : exchangeType.getMaterial().name());
         config.set(id + ".exchange-type.model-data", exchangeType == null ? 0 : exchangeType.getModelData());
-        //We save the information of the data
-        for (TimeScale time : TimeScale.values()) {
-            List<QuotationInfo> quotationData = this.getData(time);
-            //We load the data needed
-            for (int i = 0; i < quotationData.size(); i++) {
-                config.set(id + "." + time.toString().toLowerCase() + "data." + i + ".price", quotationData.get(i).getPrice());
-                config.set(id + "." + time.toString().toLowerCase() + "data." + i + ".timestamp", quotationData.get(i).getTimeStamp());
-            }
-        }
+
+
+        Stonks.plugin.quotationDataManager.save(this);
+
     }
 
     /**
@@ -358,7 +363,7 @@ public class Quotation {
      * @return Current quotation price
      */
     public double getPrice() {
-        List<QuotationInfo> latest = quotationData.get(TimeScale.QUARTERHOUR);
+        List<QuotationInfo> latest = quotationData.get(TimeScale.HOUR);
         return latest.get(latest.size() - 1).getPrice();
     }
 
@@ -366,7 +371,7 @@ public class Quotation {
      * Changes the quotation price
      */
     public void refreshQuotation() {
-        if (getData(TimeScale.QUARTERHOUR).isEmpty())
+        if (getData(TimeScale.HOUR).isEmpty())
             return;
 
         Random random = new Random();
