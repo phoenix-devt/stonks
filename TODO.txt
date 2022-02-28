@@ -4,20 +4,12 @@ Idées
 
 
 TODO Guillaume
-- Pouvoir trade des objets specifiques et pas juste des material --OK
--Bugs
--Close quotation quand negatif ---OK
--Problème display board entre 2 chunks OK
--trading book offset horizontal fix
 -github wiki
--Changements NBTItem -----OK
+-Formule de base pour les dividendes
+-Item carrement en exchange-type
+-save pour les dividendes (bugs)
 -Système mathématique plus dépendant de l'offre et demande : %de quotation apparue/vendue
-
--Iterer Board uniquement
--Resoudre problème API avec 60 call/min
--Dissocier le setup des quotation avec les data
--Changer de token pour chaque serveur
--Register chaque serveur et qu'ils mettent un token...
+-Changer le principe du trading book
 
 TODO Jules
 - vérifier physical quotations

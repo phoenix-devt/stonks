@@ -7,6 +7,8 @@ update-notify: true
 #The stock API you want to use : it can be :
 #finnhub : 60 call/min,15min delay (with a free API key)
 #alphavantage : 5 call/min with 500/day, roughly 20 min delay (with a free API key)
+#twelvedata : 8call/min with 800 call/day, with nearly delay (with a free API key)
+
 stock-api: 'finnhub'
 api-key: ''
 
@@ -17,6 +19,9 @@ stock-price-decimal-format: '0.##'
 
 # How the amount of shares are displayed in messages
 shares-decimal-format: '0.#'
+
+#The refresh time of quotationMap in seconds
+map-refresh-time: 30
 
 # The time between 2 boards refresh in seconds
 board-refresh-time: 30
@@ -39,7 +44,7 @@ quotation-data-number: 100
 offer-demand-impact: 0.5
 
 # The volatily of the stocks 0 is no volatility and 1 is very volatile
-# With volatality around 1 demandimpact the stocks can change by 10% in 1 hour in the worst case
+# With volatity around 1 demand impact the stocks can change by 10% in 1 hour in the worst case
 volatility: 0.01
 
 # The way dates are formatted in the plugin

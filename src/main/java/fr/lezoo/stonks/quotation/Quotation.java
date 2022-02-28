@@ -124,7 +124,7 @@ public class Quotation {
         return id;
     }
 
-    public String getCompany() {
+    public String getName() {
         return name;
     }
 

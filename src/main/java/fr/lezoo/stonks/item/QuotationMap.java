@@ -5,7 +5,9 @@ import fr.lezoo.stonks.display.board.DisplayInfo;
 import fr.lezoo.stonks.display.map.QuotationMapRenderer;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.quotation.RealStockQuotation;
 import fr.lezoo.stonks.quotation.TimeScale;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +16,7 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 import java.text.DecimalFormat;
+import java.util.Map;
 
 public class QuotationMap extends CustomItem<DisplayInfo> {
 
@@ -29,9 +32,13 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
 
         ItemStack item = super.build(player, info);
         MapMeta meta = (MapMeta) item.getItemMeta();
-        MapView mapView = meta.getMapView();
+        //We create a mpa view
+        MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
         mapView.getRenderers().clear();
-        mapView.addRenderer(new QuotationMapRenderer(quotation, time));
+        mapView.addRenderer(new QuotationMapRenderer(player, item,quotation, time));
+        mapView.setUnlimitedTracking(false);
+        mapView.setTrackingPosition(false);
+        meta.setMapView(mapView);
         item.setItemMeta(meta);
         return item;
 
@@ -44,13 +51,13 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
         DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
         Placeholders holders = new Placeholders();
         holders.register("quotation-id", quotation.getId());
-        holders.register("company", quotation.getCompany());
+        holders.register("quotation-name", quotation.getName());
         holders.register("current-price", format.format(quotation.getPrice()));
         holders.register("lowest-price", format.format(quotation.getLowest(timeDisplay)));
         holders.register("highest-price", format.format(quotation.getHighest(timeDisplay)));
         holders.register("evolution", quotation.getEvolution(timeDisplay));
         holders.register("time-scale", timeDisplay.toString().toLowerCase());
-        holders.register("quotation-type", quotation.getClass().getName());
+        holders.register("quotation-type", quotation instanceof RealStockQuotation?"real-stock":"virtual");
         return holders;
 
     }

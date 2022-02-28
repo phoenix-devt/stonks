@@ -30,3 +30,5 @@ QUOTATION_MAP:
     - '&7Company: {company}'
     - '&7Time Scale: {time-scale}'
     - '&7Quotation Type: {quotation-type}'
+    - '&7Highest Price: {highest-price}'
+    - '&7Lowest Price: {lowest-price}'

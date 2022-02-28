@@ -81,14 +81,14 @@ public class Stonks extends JavaPlugin {
 
         // Initialize managers
         configManager.reload();
+        //load stockAPIManager
+        stockAPIManager=StockAPIManager.getManager();
         quotationManager.load();
         shareManager.load();
         boardManager.load();
         signManager.load();
         playerManager.load();
 
-        //load stockAPIManager
-        stockAPIManager=StockAPIManager.getManager();
 
         /*
         // PlaceholderAPI compatibility

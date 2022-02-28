@@ -8,6 +8,7 @@ import fr.lezoo.stonks.gui.objects.EditableInventory;
 import fr.lezoo.stonks.item.QuotationMap;
 import fr.lezoo.stonks.item.SharePaper;
 import fr.lezoo.stonks.item.TradingBook;
+import fr.lezoo.stonks.manager.StockAPI.StockAPIManager;
 import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.ConfigSchedule;
@@ -32,7 +33,7 @@ public class ConfigManager {
     public TradingBook tradingBook;
     public QuotationMap quotationMap;
 
-    public String stockAPI,apiKey;
+    public String stockAPI, apiKey;
 
     // Accessible public GUIs
     public final QuotationList QUOTATION_LIST = new QuotationList();
@@ -49,10 +50,9 @@ public class ConfigManager {
     public List<String> displaySignFormat;
     public int dividendsRedeemHour;
 
-    public long boardRefreshTime, quotationRefreshTime, shareRefreshTime, signRefreshTime;
+    public long boardRefreshTime, quotationRefreshTime, shareRefreshTime, signRefreshTime,mapRefreshTime;
     public double offerDemandImpact, volatility, defaultTaxRate;
     public int quotationDataNumber, maxInteractionDistance;
-
 
 
     public void reload() {
@@ -62,9 +62,9 @@ public class ConfigManager {
 
 
         //The getString method returns null if there is no value associated
-        stockAPI=Stonks.plugin.getConfig().getString("stock-api");
-        apiKey=Stonks.plugin.getConfig().getString("api-key").equals("")?
-                null:Stonks.plugin.getConfig().getString("api-key");
+        stockAPI = Stonks.plugin.getConfig().getString("stock-api");
+        apiKey = Stonks.plugin.getConfig().getString("api-key").equals("") ?
+                null : Stonks.plugin.getConfig().getString("api-key");
         // Update public config fields
         dateFormat = new SimpleDateFormat(Stonks.plugin.getConfig().getString("date-format"));
         stockPriceFormat = new DecimalFormat(Stonks.plugin.getConfig().getString("stock-price-decimal-format"));
@@ -79,8 +79,9 @@ public class ConfigManager {
         dividendsRedeemHour = Stonks.plugin.getConfig().getInt("dividends-redeem-hour");
         quotationDataNumber = Stonks.plugin.getConfig().getInt("quotation-data-number");
         quotationRefreshTime = TimeScale.HOUR.getTime() / quotationDataNumber;
+        mapRefreshTime=Stonks.plugin.getConfig().getLong("map-refresh-time");
         shareRefreshTime = Stonks.plugin.getConfig().getLong("share-refresh-time");
-        signRefreshTime =Stonks.plugin.getConfig().getLong("sign-refresh-time");
+        signRefreshTime = Stonks.plugin.getConfig().getLong("sign-refresh-time");
         maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
         defaultTaxRate = Stonks.plugin.getConfig().getDouble("default-tax-rate");
 
@@ -143,10 +144,12 @@ public class ConfigManager {
             }
 
 
+        //Reload stockAPIManager
+        Stonks.plugin.stockAPIManager = StockAPIManager.getManager();
+
 
         //Reload quotations
         Stonks.plugin.quotationManager.reload();
-
 
 
     }

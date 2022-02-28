@@ -26,6 +26,10 @@ public abstract class StockAPIManager {
                 APIManager = new AlphaVantageAPI();
                 break;
             }
+            case "twelvedata": {
+                APIManager = new TwelveDataAPI();
+                break;
+            }
 
         }
         //Check if the stock-api field is correctly filled

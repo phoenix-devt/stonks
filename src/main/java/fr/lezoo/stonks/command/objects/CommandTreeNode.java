@@ -67,11 +67,14 @@ public abstract class CommandTreeNode {
 
     public List<String> calculateTabCompletion(CommandTreeExplorer explorer, int parameterIndex) {
 
-        /*
-         * Add extra child keys
-         */
+
         List<String> list = new ArrayList<>();
-        getChildren().forEach(child -> list.add(child.getId()));
+        /*
+         * Add extra child keys only if there are no parameters
+         */
+        if(parameterIndex==0) {
+            getChildren().forEach(child -> list.add(child.getId()));
+        }
 
         /*
          * If the player is at the end of a command branch, display the
