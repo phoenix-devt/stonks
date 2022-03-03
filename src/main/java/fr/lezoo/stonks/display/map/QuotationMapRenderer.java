@@ -9,6 +9,7 @@ import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import fr.lezoo.stonks.quotation.TimeScale;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -33,14 +34,12 @@ public class QuotationMapRenderer extends MapRenderer {
     private final ItemStack map;
 
     private final Quotation quotation;
-    //Number of pixels on the BufferedImage drawn
-    private static final double IMAGE_SIZE = 512;
     private int datataken;
     //Count the number of ticks
     private List<QuotationInfo> quotationData;
     private TimeScale time;
-    private int counter = 0;
     private final int counterTrigger = (int) (Stonks.plugin.configManager.mapRefreshTime * 20);
+    private int counter = counterTrigger;
 
 
     public QuotationMapRenderer(Player player, ItemStack map, Quotation quotation, TimeScale time) {
@@ -62,7 +61,6 @@ public class QuotationMapRenderer extends MapRenderer {
         Validate.isTrue(quotationData.size() != 0, "The quotation : " + quotation.getId() + " has no values!!");
 
         int data_taken = Math.min(Stonks.plugin.configManager.quotationDataNumber, quotationData.size());
-
         int index = quotationData.size() - data_taken;
 
         // We look at the lowest val in the time we look backward to set the scale
@@ -76,7 +74,6 @@ public class QuotationMapRenderer extends MapRenderer {
         }
         g2d.setColor(Color.WHITE);
         g2d.fill(new Rectangle2D.Double(0, 0, 128, 128));
-
 
         g2d.setColor(Color.RED);
         Path2D.Double curve = new Path2D.Double();

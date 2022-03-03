@@ -53,7 +53,7 @@ public class SignDisplayEditionListener extends TemporaryListener {
 
             Stonks.plugin.signManager.unregister(pos);
             close();
-            player.sendMessage(ChatColor.YELLOW + "You successfully registered a display sign at the target location for " + quotation.getCompany());
+            player.sendMessage(ChatColor.YELLOW + "You successfully registered a display sign at the target location for " + quotation.getName());
             return;
         }
 
@@ -65,7 +65,7 @@ public class SignDisplayEditionListener extends TemporaryListener {
 
         DisplaySign sign = new DisplaySign(quotation, pos);
         Stonks.plugin.signManager.register(sign);
-        player.sendMessage(ChatColor.YELLOW + "You successfully registered a display sign at the target location for " + quotation.getCompany());
+        player.sendMessage(ChatColor.YELLOW + "You successfully registered a display sign at the target location for " + quotation.getName());
         close();
     }
 

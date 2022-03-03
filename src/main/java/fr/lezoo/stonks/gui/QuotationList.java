@@ -185,7 +185,7 @@ public class QuotationList extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("company", quotation.getCompany());
+            holders.register("name", quotation.getName());
             holders.register("price", format.format(quotation.getPrice()));
             holders.register("day-low", format.format(quotation.getLowest(TimeScale.DAY)));
             holders.register("day-high", format.format(quotation.getHighest(TimeScale.DAY)));

@@ -74,7 +74,7 @@ dividends-redeem-hour: 10
 
 # How a custom sign displays information about a quotation.
 custom-sign-format:
-  - '{company}'
+  - '{name}'
   - '${price}'
   - ''
   - '{day-evolution}'

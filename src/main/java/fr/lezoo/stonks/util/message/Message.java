@@ -21,10 +21,22 @@ public enum Message {
 
     MARKET_CLOSING("&cThe stock market is closed for now."),
 
+    SET_PARAMETER_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP,1,2),"&e[1]Leverage: {leverage}\n" +
+            "[2]Amount:{amount}\n" +
+            "*opt*[3]Min price: {min-price}\n" +
+            "*opt[4]Max price: {max-price}\n" +
+            "[100]Save"),
+    SET_LEVERAGE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"&eWrite in the chat the leverage you want to have "),
+    SET_AMOUNT_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"&eWrite in the chat the amount of shares you want"),
+    SET_MIN_PRICE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"&eWrite in the chat the min-price you want your share to automatically sell at"),
+    SET_MAX_PRICE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"&&eWrite in the chat the max-price you want your share to automatically sell at"),
+
     BUY_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eWrite in the chat the amount of shares you would like to buy."),
     SELL_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eWrite in the chat the amount of shares you would like to buy."),
-
     NOT_VALID_NUMBER("&c{input} is not a valid number."),
+    NOT_VALID_AMOUNT("&c{input} is not a valid amount."),
+    NOT_VALID_MIN_PRICE("&c{input} is not a valid min price."),
+    NOT_VALID_MAX_PRICE("&c{input} is not a valid max price."),
     NOT_VALID_LEVERAGE("&cThe leverage must be a positive number"),
     NOT_ENOUGH_PERMISSIONS("&cYou don't have enough permissions."),
     ;

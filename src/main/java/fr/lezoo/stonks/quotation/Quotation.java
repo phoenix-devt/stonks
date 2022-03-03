@@ -404,8 +404,8 @@ public class Quotation {
                 this.setData(time, workingData);
             }
 
-
         }
+
 
     }
 

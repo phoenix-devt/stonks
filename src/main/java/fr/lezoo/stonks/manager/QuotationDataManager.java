@@ -67,37 +67,39 @@ public class QuotationDataManager {
         //Otherwise we create the firstQuotationData depending on the quotation type
         else {
 
+
+            if (quotation instanceof RealStockQuotation) {
+
+                HttpClient client = HttpClient.newHttpClient();
+
+                Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
+                    try {
+                        double price = Stonks.plugin.stockAPIManager.getPrice(quotation.getId());
+                        QuotationInfo firstQuotationData = new QuotationInfo(System.currentTimeMillis(), price);
+                        for (TimeScale disp : TimeScale.values())
+                            quotation.setData(disp, Arrays.asList(firstQuotationData));
+
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                });
+
+            }
+            //If it a virtual Quotation we set the initial price at 10
+            else {
+                for (TimeScale disp : TimeScale.values())
+                    quotation.setData(disp, Arrays.asList(new QuotationInfo(System.currentTimeMillis(), 10)));
+
+            }
         }
-        if (quotation instanceof RealStockQuotation) {
 
-            HttpClient client = HttpClient.newHttpClient();
-
-            Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
-                try {
-                   double price =Stonks.plugin.stockAPIManager.getPrice(quotation.getId());
-                    QuotationInfo firstQuotationData = new QuotationInfo(System.currentTimeMillis(), price);
-                    for (TimeScale disp : TimeScale.values())
-                        quotation.setData(disp, Arrays.asList(firstQuotationData));
-
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-            });
-
-        }
-        //If it a virtual Quotation we set the initial price at 10
-        else {
-            for (TimeScale disp : TimeScale.values())
-                quotation.setData(disp, Arrays.asList(new QuotationInfo(System.currentTimeMillis(), 10)));
-
-        }
     }
 
 
@@ -108,7 +110,11 @@ public class QuotationDataManager {
         ConfigFile configFile = new ConfigFile("quotations-data");
         FileConfiguration config = configFile.getConfig();
 
-
+        //We remove the old data
+        ConfigurationSection section = config.getConfigurationSection(quotation.getId());
+        for (String key : section.getKeys(true)) {
+            section.set(key, null);
+        }
         //We save the information of the data using quotationDataManager
         for (TimeScale time : TimeScale.values()) {
             List<QuotationInfo> quotationData = quotation.getData(time);

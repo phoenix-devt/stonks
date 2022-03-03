@@ -63,7 +63,7 @@ public class QuotationShareMenu extends EditableInventory {
 
         @Override
         public String applyNamePlaceholders(String str) {
-            return str.replace("{company}", quotation.getCompany());
+            return str.replace("{name}", quotation.getName());
         }
 
         @Override
@@ -237,7 +237,7 @@ public class QuotationShareMenu extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("company", inv.quotation.getCompany());
+            holders.register("name", inv.quotation.getName());
 
             holders.register("week-low", format.format(inv.quotation.getLowest(TimeScale.WEEK)));
             holders.register("week-high", format.format(inv.quotation.getHighest(TimeScale.WEEK)));

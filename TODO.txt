@@ -10,6 +10,9 @@ TODO Guillaume
 -save pour les dividendes (bugs)
 -Système mathématique plus dépendant de l'offre et demande : %de quotation apparue/vendue
 -Changer le principe du trading book
+-Bug board display
+
+
 
 TODO Jules
 - vérifier physical quotations

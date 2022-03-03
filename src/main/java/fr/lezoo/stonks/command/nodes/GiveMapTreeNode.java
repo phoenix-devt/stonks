@@ -22,7 +22,9 @@ public class GiveMapTreeNode extends CommandTreeNode {
 
     @Override
     public CommandResult execute(CommandSender sender, String[] args) {
-
+        //returning a throw usage will automatically send all the usage list to the player.
+        if (args.length == 0)
+            return CommandResult.THROW_USAGE;
         Quotation quotation = Stonks.plugin.quotationManager.get(args[1]);
         if (quotation == null) {
             sender.sendMessage(ChatColor.RED + "Could not find target quotation");

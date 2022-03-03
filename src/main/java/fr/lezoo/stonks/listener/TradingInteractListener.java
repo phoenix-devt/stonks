@@ -3,7 +3,10 @@ package fr.lezoo.stonks.listener;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.Board;
 import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.ShareType;
+import fr.lezoo.stonks.util.InputHandler;
+import fr.lezoo.stonks.util.SimpleChatInput;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.ChatColor;
@@ -69,7 +72,7 @@ public class TradingInteractListener implements Listener {
                 //If we are really clicking on a board we check where it has been clicked and stop the method
 
                 if (horizontalOffset >= 0 && horizontalOffset <= 1 && verticalOffset >= 0 && verticalOffset <= 1) {
-
+                    this.board = board;
                     //We then check if it corresponds to the location of a button
                     checkDownSquare();
                     checkMiddleDownSquare();
@@ -88,7 +91,15 @@ public class TradingInteractListener implements Listener {
     //Does what need to be done when the top square is touched
     public void checkUpSquare() {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.21) && (verticalOffset > 0.02)) {
-            player.sendMessage("up");
+            PlayerData playerData = Stonks.plugin.playerManager.get(player);
+            OrderInfo orderInfo = playerData.getOrderInfo(board.getQuotation().getId());
+            Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
+                    "amount", orderInfo.hasAmount() ? "\n" + orderInfo.getAmount() : "",
+                    "min-price", orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : "",
+                    "max-price", orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "").send(player);
+            //We listen to the player
+            new SimpleChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
+
 
         }
     }

@@ -149,7 +149,7 @@ public class Board {
         Placeholders holders = new Placeholders();
         DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
         holders.register("quotation-id", quotation.getId());
-        holders.register("company", quotation.getCompany());
+        holders.register("quotation-name", quotation.getName());
         holders.register("current-price", format.format(quotation.getPrice()));
         holders.register("lowest-price", format.format(quotation.getLowest(time)));
         holders.register("highest-price", format.format(quotation.getHighest(time)));
@@ -203,7 +203,7 @@ public class Board {
         g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 3 / 128));
         // We want only 2 numbers after the comma
         g2d.drawString(holders.apply(config.getString("time-visualized")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("company")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("quotation-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("quotation-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("exchange-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("current-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
@@ -220,7 +220,7 @@ public class Board {
         g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.75 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.setColor(Color.GRAY);
         g2d.setFont(new Font(null, Font.BOLD, (int) (BOARD_HEIGHT * 3.5 / 128)));
-        g2d.drawString("Leverage", (int) (0.83 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
+        g2d.drawString("Parameters", (int) (0.83 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
         g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 4 / 128));
         g2d.drawString("BUY", (int) (0.83 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
         g2d.drawString("SHORT", (int) (0.83 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));

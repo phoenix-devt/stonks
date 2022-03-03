@@ -92,7 +92,7 @@ public class SpecificPortfolio extends EditableInventory {
 
         @Override
         public String applyNamePlaceholders(String str) {
-            return str.replace("{company}", quotation.getCompany())
+            return str.replace("{name}", quotation.getName())
                     .replace("{share-status}", displayOpenShares ? "open" : "closed")
                     .replace("{page}", "" + (page + 1))
                     .replace("{max}", "" + (maxPage + 1));
@@ -153,7 +153,7 @@ public class SpecificPortfolio extends EditableInventory {
                     for (ItemStack dropped : player.getInventory().addItem(paper).values())
                         player.getWorld().dropItem(player.getLocation(), dropped);
 
-                    Message.GET_SHARE_PAPER.format("company", quotation.getCompany(),
+                    Message.GET_SHARE_PAPER.format("name", quotation.getName(),
                             "shares", Utils.fourDigits.format(share.getAmount())).send(player);
 
                     updateInventoryData();
@@ -169,7 +169,7 @@ public class SpecificPortfolio extends EditableInventory {
                     double taxRate = playerData.getTaxRate();
                     double gain = share.calculateGain(taxRate), earned = share.getCloseEarning(taxRate);
                     Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getAmount()),
-                            "company", quotation.getCompany(),
+                            "name", quotation.getName(),
                             "gain", Utils.formatGain(gain)).send(player);
 
                     // Virtual quotation
@@ -295,7 +295,7 @@ public class SpecificPortfolio extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("company", inv.quotation.getCompany());
+            holders.register("name", inv.quotation.getName());
             holders.register("leverage", Utils.fourDigits.format(share.getLeverage()));
             holders.register("amount", format.format(share.getAmount()));
 

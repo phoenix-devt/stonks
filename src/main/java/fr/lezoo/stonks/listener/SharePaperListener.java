@@ -40,7 +40,7 @@ public class SharePaperListener implements Listener {
 
         playerData.giveShare(share);
         Message.CLAIM_SHARE_PAPER.format("shares", Utils.fourDigits.format(share.getAmount()),
-                "company", share.getQuotation().getCompany(),
+                "name", share.getQuotation().getName(),
                 "value", Stonks.plugin.configManager.stockPriceFormat.format(share.getCloseEarning(playerData.getTaxRate()))).send(player);
     }
 }

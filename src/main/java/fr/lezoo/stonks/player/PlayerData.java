@@ -4,6 +4,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
 import fr.lezoo.stonks.quotation.ExchangeType;
 import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.ConfigFile;
@@ -24,8 +25,12 @@ public class PlayerData {
     private double taxRate;
 
     // Data not saved when logging off
-    private double leverage = 1;
 
+    private double leverage = 1;
+    //links quotation Id to an order info
+    private final HashMap<String, OrderInfo> orderInfos = new HashMap<>();
+    //the quotation the player is currently interacting with
+    private Quotation currentQuotation = null;
     /**
      * Mapped shares the player bought from a particular quotation
      */
@@ -69,6 +74,28 @@ public class PlayerData {
             if (!toList.isEmpty())
                 config.set("shares." + quotationId, toList);
         }
+    }
+
+    public boolean hasOrderInfo(String quotationId) {
+        return orderInfos.containsKey(quotationId);
+    }
+
+    public void addOrderInfo(String quotationId) {
+        if (!hasOrderInfo(quotationId))
+            orderInfos.put(quotationId, new OrderInfo());
+    }
+
+    public OrderInfo getOrderInfo(String quotationId) {
+        if (!this.hasOrderInfo(quotationId))
+            this.addOrderInfo(quotationId);
+        return orderInfos.get(quotationId);
+    }
+
+    public Quotation getCurrentQuotation() {
+        return currentQuotation;
+    }
+    public void setCurrentQuotation(Quotation quotation) {
+        this.currentQuotation=quotation;
     }
 
     public UUID getUniqueId() {
@@ -233,7 +260,7 @@ public class PlayerData {
             int bal = 0;
             //We check the amount of the item the player has in his inventory (hte material is defined by custom model data and material
             for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack != null && new ExchangeType(itemStack.getType(),itemStack.getItemMeta().getCustomModelData()).equals(quotation.getExchangeType()))
+                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().getCustomModelData()).equals(quotation.getExchangeType()))
                     bal += itemStack.getAmount();
             }
             if (bal < price) {
@@ -267,7 +294,7 @@ public class PlayerData {
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(
                 "shares", Stonks.plugin.configManager.shareFormat.format(amount),
                 "price", Stonks.plugin.configManager.stockPriceFormat.format(price),
-                "company", quotation.getCompany()).send(player);
+                "name", quotation.getName()).send(player);
 
         // Successfully bought
         return true;
