@@ -74,7 +74,7 @@ public class QuotationDataManager {
 
                 Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
                     try {
-                        double price = Stonks.plugin.stockAPIManager.getPrice(quotation.getId());
+                        double price = Stonks.plugin.configManager.stockApi.getPrice(quotation.getId());
                         QuotationInfo firstQuotationData = new QuotationInfo(System.currentTimeMillis(), price);
                         for (TimeScale disp : TimeScale.values())
                             quotation.setData(disp, Arrays.asList(firstQuotationData));

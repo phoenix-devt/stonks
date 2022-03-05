@@ -4,17 +4,10 @@ import fr.lezoo.stonks.Stonks;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,21 +36,19 @@ public class RealStockQuotation extends Quotation {
         super(config);
     }
 
-
-
     @Override
     public void refreshQuotation() {
 
         Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
 
             try {
-                double price = Stonks.plugin.stockAPIManager.getPrice(getId());
+                double price = Stonks.plugin.configManager.stockApi.getPrice(getId());
                 int datanumber = Stonks.plugin.configManager.quotationDataNumber;
                 //We update all the data List
                 for (TimeScale time : TimeScale.values()) {
                     //We get the list corresponding to the time
                     List<QuotationInfo> workingData = new ArrayList<>();
-                    Validate.notNull(this.getData(time),"The data for"+getId()+"for"+time.toString()+"is null");
+                    Validate.notNull(this.getData(time), "The data for" + getId() + "for" + time.toString() + "is null");
                     workingData.addAll(this.getData(time));
                     //If the the latest data of workingData is too old we add another one
                     if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / datanumber) {
