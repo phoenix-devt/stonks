@@ -22,7 +22,7 @@ items:
 
     # Used when a quotation exchanges physical items
     physical:
-      name: '&a{company}'
+      name: '&a{name}'
       item: BOOK
       lore:
         - '&7Current Price: ${price}'
@@ -39,7 +39,7 @@ items:
         - '&3► Right click to see your orders'
 
     # When a quotation exchanges money
-    name: '&a{company}'
+    name: '&a{name}'
     item: BOOK
     lore:
       - '&7Current Price: ${price}'

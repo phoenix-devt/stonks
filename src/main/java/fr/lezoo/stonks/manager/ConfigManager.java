@@ -38,6 +38,7 @@ public class ConfigManager {
     // Accessible public GUIs
     public final QuotationList QUOTATION_LIST = new QuotationList();
     public final QuotationShareMenu QUOTATION_SHARE = new QuotationShareMenu();
+
     public final SpecificPortfolio SPECIFIC_PORTFOLIO = new SpecificPortfolio();
 
     private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, SPECIFIC_PORTFOLIO};

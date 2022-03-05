@@ -109,11 +109,13 @@ public class QuotationDataManager {
     public void save(Quotation quotation) {
         ConfigFile configFile = new ConfigFile("quotations-data");
         FileConfiguration config = configFile.getConfig();
-
         //We remove the old data
-        ConfigurationSection section = config.getConfigurationSection(quotation.getId());
-        for (String key : section.getKeys(true)) {
-            section.set(key, null);
+        if (config.contains(quotation.getId())) {
+            ConfigurationSection section = config.getConfigurationSection(quotation.getId());
+            for (String key : section.getKeys(true)) {
+                section.set(key, null);
+
+            }
         }
         //We save the information of the data using quotationDataManager
         for (TimeScale time : TimeScale.values()) {

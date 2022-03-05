@@ -9,10 +9,14 @@ import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.ChatInput;
+import fr.lezoo.stonks.util.ConfigFile;
+import fr.lezoo.stonks.util.InputHandler;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
+import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -45,6 +49,12 @@ public class QuotationShareMenu extends EditableInventory {
         if (function.startsWith("sell"))
             return new SellShareItem(config);
 
+        if (function.startsWith("max-price"))
+            return new MaxPriceItem(config);
+
+        if (function.startsWith("min-price"))
+            return new MinPriceItem(config);
+
         return new SimpleItem(config);
     }
 
@@ -57,8 +67,13 @@ public class QuotationShareMenu extends EditableInventory {
 
         public GeneratedShareMenu(PlayerData playerData, EditableInventory editable, Quotation quotation) {
             super(playerData, editable);
-
             this.quotation = quotation;
+            //We change the current quotation of the player to the actual one
+            playerData.setCurrentQuotation(quotation);
+        }
+
+        public Quotation getQuotation() {
+            return quotation;
         }
 
         @Override
@@ -81,45 +96,29 @@ public class QuotationShareMenu extends EditableInventory {
                 return;
             }
 
-            if (item instanceof LeverageItem)
-                new ChatInput(this, (playerData, input) -> {
-                    double amount;
-                    try {
-                        amount = Double.parseDouble(input);
-                    } catch (IllegalArgumentException exception) {
-                        Message.NOT_VALID_NUMBER.format("input", input).send(player);
-                        return false;
-                    }
-
-                    if (amount <= 0) {
-                        Message.NOT_VALID_LEVERAGE.format("input", input).send(player);
-                        return false;
-                    }
-
-                    playerData.setLeverage(amount);
-                    return true;
-                });
+            if (item instanceof LeverageItem) {
+                Message.SET_LEVERAGE_ASK.format().send(player);
+                new ChatInput(this, InputHandler.SET_LEVERAGE_HANDLER);
+            }
+            if (item instanceof MinPriceItem) {
+                Message.SET_MIN_PRICE_ASK.format().send(player);
+                new ChatInput(this, InputHandler.SET_MIN_PRICE_HANDLER);
+            }
+            if (item instanceof MaxPriceItem) {
+                Message.SET_MAX_PRICE_ASK.format().send(player);
+                new ChatInput(this, InputHandler.SET_MAX_PRICE_HANDLER);
+            }
 
             if (item instanceof CustomActionItem) {
                 ShareType type = item.getFunction().equalsIgnoreCase("buy-custom") ? ShareType.NORMAL : ShareType.SHORT;
                 (type == ShareType.NORMAL ? Message.BUY_CUSTOM_ASK : Message.SELL_CUSTOM_ASK).format().send(player);
 
-                new ChatInput(this, (playerData, input) -> {
-                    double amount;
-                    try {
-                        amount = Double.parseDouble(input);
-                    } catch (IllegalArgumentException exception) {
-                        Message.NOT_VALID_NUMBER.format("input", input).send(player);
-                        return false;
-                    }
+                new ChatInput(this, InputHandler.SET_AMOUNT_HANDLER);
 
-                    playerData.buyShare(quotation, type, amount, -1, -1);
-                    return true;
-                });
+
+                if (item instanceof AmountActionItem)
+                    playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.NORMAL : ShareType.SHORT);
             }
-
-            if (item instanceof AmountActionItem)
-                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.NORMAL : ShareType.SHORT, ((AmountActionItem) item).getAmount(), -1, -1);
         }
 
         @Override
@@ -132,7 +131,7 @@ public class QuotationShareMenu extends EditableInventory {
      * Used to reduce code multiplication
      */
     public interface AmountActionItem {
-        public int getAmount();
+        int getAmount();
     }
 
     /**
@@ -150,9 +149,11 @@ public class QuotationShareMenu extends EditableInventory {
         @Override
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
-
+            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getQuotation().getId());
             holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.quotation.getPrice() * amount));
-            holders.register("leverage", Utils.fourDigits.format(inv.getPlayerData().getLeverage()));
+            holders.register("leverage", Utils.fourDigits.format(orderInfo.getLeverage()));
+            holders.register("min-price", orderInfo.getStringMinPrice());
+            holders.register("max-price", orderInfo.getStringMaxPrice());
             holders.register("amount", amount);
 
             return holders;
@@ -179,9 +180,11 @@ public class QuotationShareMenu extends EditableInventory {
         @Override
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
-
+            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getQuotation().getId());
             holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.quotation.getPrice() * amount));
-            holders.register("leverage", Utils.fourDigits.format(inv.getPlayerData().getLeverage()));
+            holders.register("leverage", Utils.fourDigits.format(orderInfo.getLeverage()));
+            holders.register("min-price", orderInfo.getStringMinPrice());
+            holders.register("max-price", orderInfo.getStringMaxPrice());
             holders.register("amount", amount);
 
             return holders;
@@ -204,9 +207,10 @@ public class QuotationShareMenu extends EditableInventory {
         @Override
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
-
-            holders.register("leverage", Utils.fourDigits.format(inv.getPlayerData().getLeverage()));
-
+            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getQuotation().getId());
+            holders.register("leverage", Utils.fourDigits.format(orderInfo.getLeverage()));
+            holders.register("min-price", orderInfo.getStringMinPrice());
+            holders.register("max-price", orderInfo.getStringMaxPrice());
             return holders;
         }
     }
@@ -219,12 +223,39 @@ public class QuotationShareMenu extends EditableInventory {
         @Override
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
-
-            holders.register("leverage", Utils.fourDigits.format(inv.getPlayerData().getLeverage()));
-
+            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getQuotation().getId());
+            holders.register("leverage", Utils.fourDigits.format(orderInfo.getLeverage()));
+            holders.register("min-price", orderInfo.getStringMinPrice());
+            holders.register("max-price", orderInfo.getStringMaxPrice());
             return holders;
         }
     }
+
+    public class MinPriceItem extends InventoryItem<GeneratedShareMenu> {
+        public MinPriceItem(ConfigurationSection config) {
+            super(config);
+        }
+
+        public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
+            Placeholders placeholders = new Placeholders();
+            placeholders.register("min-price", inv.getPlayerData().getOrderInfo(inv.getQuotation().getId()).getStringMinPrice());
+            return placeholders;
+        }
+
+    }
+
+    public class MaxPriceItem extends InventoryItem<GeneratedShareMenu> {
+        public MaxPriceItem(ConfigurationSection config) {
+            super(config);
+        }
+
+        public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
+            Placeholders placeholders = new Placeholders();
+            placeholders.register("max-price", inv.getPlayerData().getOrderInfo(inv.getQuotation().getId()).getStringMaxPrice());
+            return placeholders;
+        }
+    }
+
 
     public class QuotationInfoItem extends InventoryItem<GeneratedShareMenu> {
         public QuotationInfoItem(ConfigurationSection config) {

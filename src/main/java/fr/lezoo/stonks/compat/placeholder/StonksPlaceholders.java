@@ -41,8 +41,7 @@ public class StonksPlaceholders extends PlaceholderExpansion {
         Player player = offlinePlayer.getPlayer();
         PlayerData playerData = PlayerData.get(player);
 
-        if (params.equals("leverage"))
-            return Double.toString(playerData.getLeverage());
+
 
         if (params.startsWith("shares_")) {
             String id = params.substring(7);

@@ -26,7 +26,6 @@ public class PlayerData {
 
     // Data not saved when logging off
 
-    private double leverage = 1;
     //links quotation Id to an order info
     private final HashMap<String, OrderInfo> orderInfos = new HashMap<>();
     //the quotation the player is currently interacting with
@@ -94,8 +93,9 @@ public class PlayerData {
     public Quotation getCurrentQuotation() {
         return currentQuotation;
     }
+
     public void setCurrentQuotation(Quotation quotation) {
-        this.currentQuotation=quotation;
+        this.currentQuotation = quotation;
     }
 
     public UUID getUniqueId() {
@@ -110,14 +110,6 @@ public class PlayerData {
         this.player = player;
     }
 
-    public double getLeverage() {
-        return leverage;
-    }
-
-    public void setLeverage(double leverage) {
-        Validate.isTrue(leverage > 0, "Leverage must be >0");
-        this.leverage = leverage;
-    }
 
     /**
      * @return Owned shares from a specific quotation
@@ -222,6 +214,23 @@ public class PlayerData {
     }
 
     /**
+     *buyS a share by using the orderinfo of the player if there is one
+     */
+    public boolean buyShare(Quotation quotation, ShareType type) {
+        if (!hasOrderInfo(quotation.getId())) {
+            Message.NO_ORDER.format("quotation-name", quotation.getName()).send(player);
+            return false;
+        }
+        OrderInfo orderInfo = getOrderInfo(quotation.getId());
+        double amount = orderInfo.getAmount();
+        if (amount == 0) {
+            Message.NO_AMOUNT.format("quotation-name", quotation.getName()).send(player);
+            return false;
+        }
+        return buyShare(quotation, type, amount,orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
+    }
+
+    /**
      * Called when a player tries to buy a share. This checks for the
      * player's balance and calls a bukkit cancelable event.
      *
@@ -230,11 +239,11 @@ public class PlayerData {
      * @param amount    Amount of shares bought
      * @return If the share was successfully bought or not
      */
-    public boolean buyShare(Quotation quotation, ShareType type, double amount, double maxPrice, double minPrice) {
+    public boolean buyShare(Quotation quotation, ShareType type,double amount,double leverage, double maxPrice, double minPrice) {
         double price = quotation.getPrice() * amount;
 
         //If it exchanges money
-        if (!quotation.isVirtual()) {
+        if (quotation.isVirtual()) {
             // Check for balance
             double bal = Stonks.plugin.economy.getBalance(player);
             if (bal < price) {
@@ -243,7 +252,7 @@ public class PlayerData {
             }
 
             // Check for Bukkit event
-            Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, minPrice, maxPrice);
+            Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, maxPrice, minPrice);
 
             PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, share);
             Bukkit.getPluginManager().callEvent(called);
@@ -260,7 +269,7 @@ public class PlayerData {
             int bal = 0;
             //We check the amount of the item the player has in his inventory (hte material is defined by custom model data and material
             for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().getCustomModelData()).equals(quotation.getExchangeType()))
+                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData()?itemStack.getItemMeta().getCustomModelData():0).equals(quotation.getExchangeType()))
                     bal += itemStack.getAmount();
             }
             if (bal < price) {
@@ -279,7 +288,7 @@ public class PlayerData {
             giveShare(share);
             //We withdraw the amount of shares he bought
             for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack != null && itemStack.getType().equals(quotation.getExchangeType())) {
+                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData()?itemStack.getItemMeta().getCustomModelData():0).equals(quotation.getExchangeType())) {
                     double withdraw = Math.min(itemStack.getAmount(), price);
                     itemStack.setAmount(itemStack.getAmount() - (int) withdraw);
                     price -= withdraw;

@@ -1,5 +1,5 @@
 # GUI display name
-name: 'Shares for {company}'
+name: 'Shares for{name}'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -19,6 +19,8 @@ items:
     lore:
       - ''
       - '&7Buy {amount} share with leverage {leverage}'
+      - '&7Min price is {min-price}'
+      - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
       - ''
       - '&e► Click to buy.'
@@ -30,6 +32,8 @@ items:
     lore:
       - ''
       - '&7Buy {amount} shares with leverage {leverage}'
+      - '&7Min price is {min-price}'
+      - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
       - ''
       - '&e► Click to buy.'
@@ -41,6 +45,8 @@ items:
     lore:
       - ''
       - '&7Buy {amount} shares with leverage {leverage}'
+      - '&7Min price is {min-price}'
+      - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
       - ''
       - '&e► Click to buy.'
@@ -52,6 +58,8 @@ items:
     lore:
       - ''
       - '&7Buy a custom amount of shares with leverage {leverage}'
+      - '&7Min price is {min-price}'
+      - '&7Max-price is {max-price}'
       - '&7(Write in the chat the amount you want)'
       - ''
       - '&e► Click to buy.'
@@ -63,6 +71,8 @@ items:
     lore:
       - ''
       - '&7Sell {amount} share with leverage {leverage}'
+      - '&7Min price is {min-price}'
+      - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
       - ''
       - '&e► Click to sell.'
@@ -74,6 +84,8 @@ items:
     lore:
       - ''
       - '&7Sell {amount} shares with leverage {leverage}'
+      - '&7Min price is {min-price}'
+      - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
       - ''
       - '&e► Click to sell.'
@@ -85,6 +97,8 @@ items:
     lore:
       - ''
       - '&7Sell {amount} shares with leverage {leverage}'
+      - '&7Min price is {min-price}'
+      - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
       - ''
       - '&e► Click to sell.'
@@ -96,13 +110,15 @@ items:
     lore:
       - ''
       - '&7Sell a custom amount of shares with leverage {leverage}'
+      - '&7Min price is {min-price}'
+      - '&7Max-price is {max-price}'
       - '&7(Write in the chat the amount you want)'
       - ''
       - '&e► Click to sell.'
   stock-info:
     slots: [ 13 ]
     function: info
-    name: '&a{company}'
+    name: '&a{name}'
     item: BOOK
     lore:
       - ''
@@ -121,5 +137,26 @@ items:
     lore:
       - ''
       - '&7Current leverage is &f{leverage}'
+      - ''
+      - '&e► Click to change it.'
+  min-price:
+    slots: [41]
+    function: min-price
+    name: '&aMin price'
+    item: ORANGE_CONCRETE
+    lore:
+      -  '*Optionnal*'
+      - '&7Current Min Price is &f{min-price}'
+      - ''
+      - '&e► Click to change it.'
+
+  max-price:
+    slots: [42]
+    function: max-price
+    name: '&aMax price'
+    item: LIGHT_BLUE_CONCRETE
+    lore:
+      -  '*Optionnal*'
+      - '&7Current Max Price is &f{max-price}'
       - ''
       - '&e► Click to change it.'

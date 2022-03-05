@@ -3,6 +3,7 @@ package fr.lezoo.stonks.gui.objects;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.gui.objects.item.InventoryItem;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -20,6 +21,7 @@ public abstract class GeneratedInventory extends PluginInventory {
 
         this.editable = editable;
         this.guiName = editable.getName();
+        Validate.notNull(guiName,"guiName is null");
     }
 
     public List<InventoryItem> getLoaded() {

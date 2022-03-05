@@ -1,5 +1,7 @@
 package fr.lezoo.stonks.share;
 
+import fr.lezoo.stonks.util.Utils;
+
 public class OrderInfo {
     private double leverage,amount,minPrice,maxPrice;
 
@@ -50,8 +52,15 @@ public class OrderInfo {
     public double getMinPrice() {
         return minPrice;
     }
-
     public double getMaxPrice() {
         return maxPrice;
+    }
+
+    public String getStringMinPrice() {
+        return minPrice==-1?"none": Utils.fourDigits.format(minPrice);
+    }
+
+    public String getStringMaxPrice() {
+        return maxPrice==-1?"none":Utils.fourDigits.format(maxPrice);
     }
 }

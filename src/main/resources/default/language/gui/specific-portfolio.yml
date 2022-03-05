@@ -1,5 +1,5 @@
 # GUI display name
-name: '{share-status} Shares of {company}'
+name: '{share-status} Shares of {name}'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.

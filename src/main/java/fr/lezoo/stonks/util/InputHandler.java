@@ -85,6 +85,7 @@ public class InputHandler {
 
             }
             case 100:
+                Message.SAVE_PARAMETER.format().send(playerData.getPlayer());
                 //We stop the dialog with the player because he jsut want to save the data
                 return true;
         }
@@ -109,7 +110,7 @@ public class InputHandler {
             return false;
         }
 
-        playerData.getOrderInfo(quotation.getId()).setAmount(amount);
+        playerData.getOrderInfo(quotation.getId()).setLeverage(amount);
 
         return true;
     };

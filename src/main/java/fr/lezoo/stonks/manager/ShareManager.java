@@ -23,7 +23,6 @@ public class ShareManager {
 
                 // Check if the share needs to be closed
                 if (share.getMaxPrice() <= share.getQuotation().getPrice() || share.getMinPrice() >= share.getQuotation().getPrice()) {
-
                     // We close the share
                     share.close(CloseReason.AUTOMATIC);
                     Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
