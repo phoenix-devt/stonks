@@ -9,7 +9,6 @@ import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import fr.lezoo.stonks.quotation.TimeScale;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,13 +33,11 @@ public class QuotationMapRenderer extends MapRenderer {
     private final ItemStack map;
 
     private final Quotation quotation;
-    private int datataken;
-    //Count the number of ticks
+    private final int datataken;
     private List<QuotationInfo> quotationData;
     private TimeScale time;
-    private final int counterTrigger = (int) (Stonks.plugin.configManager.mapRefreshTime * 20);
-    private int counter = counterTrigger;
-
+    private final int refreshRate = (int) (Stonks.plugin.configManager.mapRefreshTime * 20);
+    private int counter = refreshRate;
 
     public QuotationMapRenderer(Player player, ItemStack map, Quotation quotation, TimeScale time) {
         this.player = player;
@@ -48,7 +45,7 @@ public class QuotationMapRenderer extends MapRenderer {
         this.quotation = quotation;
         quotationData = quotation.getData(time);
         this.time = time;
-        //We take the min of the theoric DATA_NUMBER that we want and the real length size of quotationData to avoid IndexOutOfBounds
+        // We take the min of the theoric DATA_NUMBER that we want and the real length size of quotationData to avoid IndexOutOfBounds
         this.datataken = Math.min(quotationData.size(), Stonks.plugin.configManager.quotationDataNumber);
     }
 
@@ -57,7 +54,7 @@ public class QuotationMapRenderer extends MapRenderer {
         Graphics2D g2d = (Graphics2D) image.getGraphics();
 
         List<QuotationInfo> quotationData = quotation.getData(time);
-        //If the quotation is Empty we print an error
+        // If the quotation is Empty we print an error
         Validate.isTrue(quotationData.size() != 0, "The quotation : " + quotation.getId() + " has no values!!");
 
         int data_taken = Math.min(Stonks.plugin.configManager.quotationDataNumber, quotationData.size());
@@ -92,10 +89,9 @@ public class QuotationMapRenderer extends MapRenderer {
         return image;
     }
 
-
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
-        if (counter >= counterTrigger) {
+        if (counter++ >= refreshRate) {
             //We update the meta of the map in order to keep it relevant.
             updateMeta();
             BufferedImage image = getQuotationImage();
@@ -105,9 +101,6 @@ public class QuotationMapRenderer extends MapRenderer {
             mapCanvas.drawImage(0, 0, image);
             counter = 0;
         }
-        counter++;
-
-
     }
 
     /**
@@ -122,7 +115,5 @@ public class QuotationMapRenderer extends MapRenderer {
         meta.setLore(quotationMap.getLore().stream().map(str -> str = placeholder.apply(str)).collect(Collectors.toList()));
         map.setItemMeta(meta);
     }
-
-
 }
 

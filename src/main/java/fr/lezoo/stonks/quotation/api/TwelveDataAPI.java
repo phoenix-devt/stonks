@@ -1,17 +1,19 @@
-package fr.lezoo.stonks.manager.StockAPI;
+package fr.lezoo.stonks.quotation.api;
 
-import fr.lezoo.stonks.Stonks;
 import org.apache.commons.lang.Validate;
+import org.bukkit.configuration.ConfigurationSection;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class TwelveDataAPI  extends StockAPIManager{
-
+public class TwelveDataAPI extends StockAPI {
+    public TwelveDataAPI(ConfigurationSection config) {
+        super(config);
+    }
 
     @Override
     public String getURL(String quotationId) {
-        return "https://api.twelvedata.com/price?symbol="+quotationId+"&apikey="+ Stonks.plugin.configManager.apiKey;
+        return "https://api.twelvedata.com/price?symbol=" + quotationId + "&apikey=" + getStockKey();
     }
 
     @Override
@@ -19,8 +21,8 @@ public class TwelveDataAPI  extends StockAPIManager{
         Validate.isTrue(!response.contains("\"code\":429"), "Max amount of 800 API calls/day (for free version of twelve data api) has been surpassed");
         Validate.isTrue(!response.contains("\"code\":401"), "Wrong API key for Twelve Data");
 
-        JSONObject object= (JSONObject) new JSONParser().parse(response);
-        Validate.notNull(object.get("price"),"TwelveData API Problem with" + quotationId + "\n" + response);
+        JSONObject object = (JSONObject) new JSONParser().parse(response);
+        Validate.notNull(object.get("price"), "TwelveData API Problem with" + quotationId + "\n" + response);
         return Double.parseDouble(object.get("price").toString());
     }
 }

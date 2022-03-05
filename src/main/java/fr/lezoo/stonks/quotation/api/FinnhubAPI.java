@@ -1,17 +1,19 @@
-package fr.lezoo.stonks.manager.StockAPI;
+package fr.lezoo.stonks.quotation.api;
 
-import fr.lezoo.stonks.Stonks;
 import org.apache.commons.lang.Validate;
+import org.bukkit.configuration.ConfigurationSection;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class FinnhubAPI extends StockAPIManager {
-
+public class FinnhubAPI extends StockAPI {
+    public FinnhubAPI(ConfigurationSection config) {
+        super(config);
+    }
 
     @Override
     public String getURL(String quotationId) {
-        return "https://finnhub.io/api/v1/quote?symbol=" + quotationId.toUpperCase() + "&token=" + Stonks.plugin.configManager.apiKey;
+        return "https://finnhub.io/api/v1/quote?symbol=" + quotationId.toUpperCase() + "&token=" + getStockKey();
     }
 
     @Override

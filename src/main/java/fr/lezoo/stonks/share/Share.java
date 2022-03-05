@@ -44,6 +44,10 @@ public class Share {
      */
     private double leverage, shares, maxPrice, minPrice;
 
+    /**
+     * Amount of money that can be claimed by the share owner
+     * due to dividends.
+     */
     private double wallet;
 
     /**

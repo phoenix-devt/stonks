@@ -1,18 +1,19 @@
-package fr.lezoo.stonks.manager.StockAPI;
+package fr.lezoo.stonks.quotation.api;
 
-import fr.lezoo.stonks.Stonks;
 import org.apache.commons.lang.Validate;
+import org.bukkit.configuration.ConfigurationSection;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
-
-public class AlphaVantageAPI extends StockAPIManager {
+public class AlphaVantageAPI extends StockAPI {
+    public AlphaVantageAPI(ConfigurationSection config) {
+        super(config);
+    }
 
     @Override
     public String getURL(String quotationId) {
-        return "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + quotationId + "&apikey=" + Stonks.plugin.configManager.apiKey;
+        return "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + quotationId + "&apikey=" + getStockKey();
     }
 
     @Override
@@ -23,6 +24,5 @@ public class AlphaVantageAPI extends StockAPIManager {
         JSONObject globalQuotes = (JSONObject) jsonObject.get("Global Quote");
         Validate.notNull(globalQuotes.get("05. price"), "AlphaVantage API Problem with" + quotationId + "\n" + response);
         return Double.parseDouble(globalQuotes.get("05. price").toString());
-
     }
 }

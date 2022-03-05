@@ -5,13 +5,15 @@ import fr.lezoo.stonks.command.QuotationsCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
 import fr.lezoo.stonks.command.StonksCommandRoot;
 import fr.lezoo.stonks.compat.placeholder.DefaultPlaceholderParser;
+import fr.lezoo.stonks.compat.placeholder.PlaceholderAPIParser;
 import fr.lezoo.stonks.compat.placeholder.PlaceholderParser;
+import fr.lezoo.stonks.compat.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.DisplaySignListener;
 import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.listener.SharePaperListener;
 import fr.lezoo.stonks.listener.TradingInteractListener;
 import fr.lezoo.stonks.manager.*;
-import fr.lezoo.stonks.manager.StockAPI.StockAPIManager;
+import fr.lezoo.stonks.quotation.api.StockAPI;
 import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.version.ServerVersion;
 import net.milkbowl.vault.economy.Economy;
@@ -32,7 +34,6 @@ public class Stonks extends JavaPlugin {
     public final ShareManager shareManager = new ShareManager();
     public final SignManager signManager = new SignManager();
     public Economy economy;
-    public StockAPIManager stockAPIManager;
 
     // TODO fixer l'initialisation de ces classes
 
@@ -82,7 +83,6 @@ public class Stonks extends JavaPlugin {
         // Initialize managers
         configManager.reload();
         //load stockAPIManager
-        stockAPIManager=StockAPIManager.getManager();
         quotationManager.load();
         shareManager.load();
         boardManager.load();
@@ -90,15 +90,12 @@ public class Stonks extends JavaPlugin {
         playerManager.load();
 
 
-        /*
         // PlaceholderAPI compatibility
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             placeholderParser = new PlaceholderAPIParser();
             new StonksPlaceholders().register();
             getLogger().log(Level.INFO, "Hooked onto PlaceholderAPI");
         }
-
-         */
 
         // Register commands
         StonksCommandRoot commandRoot = new StonksCommandRoot();
@@ -165,7 +162,7 @@ public class Stonks extends JavaPlugin {
 
     /**
      * @return If the stock market is closed and no shares
-     * can be bought or closed
+     *         can be bought or closed
      */
     public boolean isClosed() {
 

@@ -1,3 +1,4 @@
+
 ---- STONKS TODO
 
 Idées
@@ -37,6 +38,8 @@ A RAJOUTER / RENFORCER
 - afficher les STONKS sur une MAP
 - option pour changer le taux de comission d'une personne
 - quotation creation GUI
+
+
 
 
 
