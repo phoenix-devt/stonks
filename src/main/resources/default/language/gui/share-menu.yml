@@ -66,11 +66,11 @@ items:
   sell1:
     slots: [ 21 ]
     function: sell1
-    name: '&aSell {amount} Share'
+    name: '&aShort {amount} Share'
     item: RED_CONCRETE
     lore:
       - ''
-      - '&7Sell {amount} share with leverage {leverage}'
+      - '&Short {amount} share with leverage {leverage}'
       - '&7Min price is {min-price}'
       - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
@@ -79,11 +79,11 @@ items:
   sell10:
     slots: [ 20 ]
     function: sell10
-    name: '&aSell {amount} Shares'
+    name: '&aShort {amount} Shares'
     item: RED_CONCRETE
     lore:
       - ''
-      - '&7Sell {amount} shares with leverage {leverage}'
+      - '&7Short {amount} shares with leverage {leverage}'
       - '&7Min price is {min-price}'
       - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
@@ -92,11 +92,11 @@ items:
   sell100:
     slots: [ 19 ]
     function: sell100
-    name: '&aSell {amount} Shares'
+    name: '&aShort {amount} Shares'
     item: RED_CONCRETE
     lore:
       - ''
-      - '&7Sell {amount} shares with leverage {leverage}'
+      - '&7Short {amount} shares with leverage {leverage}'
       - '&7Min price is {min-price}'
       - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
@@ -105,11 +105,11 @@ items:
   sell-custom:
     slots: [ 30 ]
     function: sell-custom
-    name: '&aSell Shares'
+    name: '&aShort Shares'
     item: MAGENTA_TERRACOTTA
     lore:
       - ''
-      - '&7Sell a custom amount of shares with leverage {leverage}'
+      - '&7Short a custom amount of shares with leverage {leverage}'
       - '&7Min price is {min-price}'
       - '&7Max-price is {max-price}'
       - '&7(Write in the chat the amount you want)'

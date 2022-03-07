@@ -98,36 +98,36 @@ public class Share {
         this.timeStamp = config.getLong("timestamp");
         this.initialPrice = config.getDouble("initial");
         this.maxPrice = config.getDouble("max-price");
-        this.maxPrice = config.getDouble("min-price");
+        this.minPrice = config.getDouble("min-price");
         this.wallet = config.getDouble("wallet");
         this.closeReason = config.contains("close-reason") ? CloseReason.valueOf(config.getString("close-reason")) : null;
         this.sellPrice = isOpen() ? 0 : config.getDouble("sell-price");
     }
 
     /**
-     * Reads a share from a NBT in which share data was saved.
+     * Reads a share from a container in which share data was saved.
      * See {@link fr.lezoo.stonks.item.SharePaper} to see the data format
      *
-     * @param nbt Item NBT to read
+     * @param container Item container to read
      */
-    public Share(UUID owner, PersistentDataContainer nbt) {
+    public Share(UUID owner, PersistentDataContainer container) {
 
         // Info generated randomly
         this.owner = owner;
         this.uuid = UUID.randomUUID();
 
         // Mandatory info
-        this.type = ShareType.valueOf(nbt.get(Utils.namespacedKey("ShareType"), PersistentDataType.STRING));
-        this.quotation = Objects.requireNonNull(Stonks.plugin.quotationManager.get(nbt.get(Utils.namespacedKey("StockId"), PersistentDataType.STRING)), "Could not find quotation");
-        this.timeStamp = nbt.get(Utils.namespacedKey("ShareTimeStamp"), PersistentDataType.LONG);
-        this.initialPrice = nbt.get(Utils.namespacedKey("ShareInitialPrice"), PersistentDataType.DOUBLE);
+        this.type = ShareType.valueOf(container.get(Utils.namespacedKey("ShareType"), PersistentDataType.STRING));
+        this.quotation = Objects.requireNonNull(Stonks.plugin.quotationManager.get(container.get(Utils.namespacedKey("StockId"), PersistentDataType.STRING)), "Could not find quotation");
+        this.timeStamp = container.get(Utils.namespacedKey("ShareTimeStamp"), PersistentDataType.LONG);
+        this.initialPrice = container.get(Utils.namespacedKey("ShareInitialPrice"), PersistentDataType.DOUBLE);
 
         // Non final info
-        this.shares = nbt.get(Utils.namespacedKey("ShareAmount"), PersistentDataType.DOUBLE);
-        this.leverage = nbt.get(Utils.namespacedKey("ShareLeverage"), PersistentDataType.DOUBLE);
-        this.wallet = nbt.get(Utils.namespacedKey("ShareWallet"), PersistentDataType.DOUBLE);
-        this.closeReason = nbt.has(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING) ? CloseReason.valueOf(nbt.get(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING)) : null;
-        this.sellPrice = isOpen() ? 0 : nbt.get(Utils.namespacedKey("SellPrice"), PersistentDataType.DOUBLE);
+        this.shares = container.get(Utils.namespacedKey("ShareAmount"), PersistentDataType.DOUBLE);
+        this.leverage = container.get(Utils.namespacedKey("ShareLeverage"), PersistentDataType.DOUBLE);
+        this.wallet = container.get(Utils.namespacedKey("ShareWallet"), PersistentDataType.DOUBLE);
+        this.closeReason = container.has(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING) ? CloseReason.valueOf(container.get(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING)) : null;
+        this.sellPrice = isOpen() ? 0 : container.get(Utils.namespacedKey("SellPrice"), PersistentDataType.DOUBLE);
     }
 
     public void saveInConfig(ConfigurationSection config) {
@@ -203,6 +203,15 @@ public class Share {
 
     public double getMinPrice() {
         return minPrice;
+    }
+
+
+    public String getStringMinPrice() {
+        return minPrice==0?"none": Utils.fourDigits.format(minPrice);
+    }
+
+    public String getStringMaxPrice() {
+        return maxPrice==Double.POSITIVE_INFINITY?"none":Utils.fourDigits.format(maxPrice);
     }
 
     @NotNull

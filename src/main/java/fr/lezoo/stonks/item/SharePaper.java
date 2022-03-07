@@ -40,5 +40,6 @@ public class SharePaper extends CustomItem<Share> {
         nbt.set(Utils.namespacedKey("ShareType"), PersistentDataType.STRING, share.getType().name());
         nbt.set(Utils.namespacedKey("ShareInitialPrice"), PersistentDataType.DOUBLE, share.getInitialPrice());
         nbt.set(Utils.namespacedKey("ShareWallet"), PersistentDataType.DOUBLE, share.getWallet());
+        item.setItemMeta(meta);
     }
 }

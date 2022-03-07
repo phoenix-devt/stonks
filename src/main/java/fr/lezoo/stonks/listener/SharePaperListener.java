@@ -5,6 +5,7 @@ import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,6 +19,7 @@ public class SharePaperListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void a(PlayerInteractEvent event) {
+
         if (!event.getAction().name().contains("RIGHT_CLICK") || !event.hasItem())
             return;
 
@@ -25,13 +27,13 @@ public class SharePaperListener implements Listener {
         if (!item.hasItemMeta())
             return;
 
-        PersistentDataContainer nbt = item.getItemMeta().getPersistentDataContainer();
-        if (!nbt.has(Utils.namespacedKey("ShareType"), PersistentDataType.STRING))
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        if (!container.has(Utils.namespacedKey("ShareType"), PersistentDataType.STRING))
             return;
 
         // Find share and give to player
         Player player = event.getPlayer();
-        Share share = new Share(player.getUniqueId(), nbt);
+        Share share = new Share(player.getUniqueId(), container);
         share.setAmount(share.getAmount() * item.getAmount());
 
         // Clear item and give share afterwards

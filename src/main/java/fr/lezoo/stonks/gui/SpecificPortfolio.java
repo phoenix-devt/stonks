@@ -298,7 +298,8 @@ public class SpecificPortfolio extends EditableInventory {
             holders.register("name", inv.quotation.getName());
             holders.register("leverage", Utils.fourDigits.format(share.getLeverage()));
             holders.register("amount", format.format(share.getAmount()));
-
+            holders.register("min-price",share.getStringMinPrice());
+            holders.register("max-price",share.getStringMaxPrice());
             holders.register("current-stock", format.format(inv.quotation.getPrice()));
             holders.register("initial-stock", format.format(share.getInitialPrice()));
 

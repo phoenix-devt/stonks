@@ -314,14 +314,22 @@ public class Quotation {
         if (this instanceof RealStockQuotation) {
             config.set(id + ".type", "real-stock");
         }
-        //Si la quotation n'est pas une realStockQuotation alors c'est une virtual quotation
+        //If the quotation is not a realStockQuotation then it is virtual quotation
         else {
             config.set(id + ".type", "virtual");
+        }
+
+        //If the quotation has dividends we save it
+        if(hasDividends()){
+            config.set("dividends.formula",dividends.getFormula());
+            config.set("dividends.period",dividends.getPeriod());
+            config.set("dividends.last",dividends.getLastApplication());
         }
 
         config.set(id + ".exchange-type.material", exchangeType == null ? null : exchangeType.getMaterial().name());
         config.set(id + ".exchange-type.model-data", exchangeType == null ? 0 : exchangeType.getModelData());
 
+        //If t
 
         Stonks.plugin.quotationDataManager.save(this);
 

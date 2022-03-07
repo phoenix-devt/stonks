@@ -3,6 +3,7 @@ package fr.lezoo.stonks.util;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.OrderInfo;
+import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.message.Message;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
@@ -115,6 +116,45 @@ public class InputHandler {
         return true;
     };
 
+
+    public static final BiFunction<PlayerData,String,Boolean> BUY_CUSTOM_AMOUNT_HANDLER=(playerData,input)->{
+        Quotation quotation = playerData.getCurrentQuotation();
+        Validate.notNull(quotation, "The current quotation of " + playerData.getPlayer().getName() + "is null");
+        double amount;
+        Player player = playerData.getPlayer();
+        try {
+            amount = Double.parseDouble(input);
+        } catch (IllegalArgumentException exception) {
+            Message.NOT_VALID_NUMBER.format("input", input).send(player);
+            return false;
+        }
+
+        if (amount <= 0) {
+            Message.NOT_VALID_AMOUNT.format("input", input).send(player);
+            return false;
+        }
+        playerData.buyShare(quotation, ShareType.SHORT,amount);
+        return true;
+    };
+    public static final BiFunction<PlayerData,String,Boolean> SHORT_CUSTOM_AMOUNT_HANDLER=(playerData,input)->{
+        Quotation quotation = playerData.getCurrentQuotation();
+        Validate.notNull(quotation, "The current quotation of " + playerData.getPlayer().getName() + "is null");
+        double amount;
+        Player player = playerData.getPlayer();
+        try {
+            amount = Double.parseDouble(input);
+        } catch (IllegalArgumentException exception) {
+            Message.NOT_VALID_NUMBER.format("input", input).send(player);
+            return false;
+        }
+
+        if (amount <= 0) {
+            Message.NOT_VALID_AMOUNT.format("input", input).send(player);
+            return false;
+        }
+        playerData.buyShare(quotation, ShareType.SHORT,amount);
+        return true;
+    };
 
     public static final BiFunction<PlayerData, String, Boolean> SET_AMOUNT_HANDLER = (playerData, input) -> {
         Quotation quotation = playerData.getCurrentQuotation();

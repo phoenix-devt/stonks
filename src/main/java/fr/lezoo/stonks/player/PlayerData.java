@@ -214,7 +214,7 @@ public class PlayerData {
     }
 
     /**
-     *buyS a share by using the orderinfo of the player if there is one
+     *Buys a share by using the orderinfo of the player if there is one
      */
     public boolean buyShare(Quotation quotation, ShareType type) {
         if (!hasOrderInfo(quotation.getId())) {
@@ -227,6 +227,18 @@ public class PlayerData {
             Message.NO_AMOUNT.format("quotation-name", quotation.getName()).send(player);
             return false;
         }
+        return buyShare(quotation, type, amount,orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
+    }
+
+    /**
+     *
+     * Used to buy a share using order info except the amount (for the fixed amount shares on the quotationShareMenu GUI)
+     */
+    public boolean buyShare(Quotation quotation,ShareType type,double amount){
+        if(!hasOrderInfo(quotation.getId())){
+            return  buyShare(quotation,type,amount,1,Double.POSITIVE_INFINITY,0);
+        }
+        OrderInfo orderInfo=getOrderInfo(quotation.getId());
         return buyShare(quotation, type, amount,orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
     }
 

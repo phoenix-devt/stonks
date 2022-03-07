@@ -109,16 +109,26 @@ public class QuotationShareMenu extends EditableInventory {
                 new ChatInput(this, InputHandler.SET_MAX_PRICE_HANDLER);
             }
 
+            //We buy the shares using the leverage,minPrice,maxPrice provided
+            if (item instanceof AmountActionItem)
+                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.NORMAL : ShareType.SHORT,((AmountActionItem) item).getAmount());
+
             if (item instanceof CustomActionItem) {
                 ShareType type = item.getFunction().equalsIgnoreCase("buy-custom") ? ShareType.NORMAL : ShareType.SHORT;
                 (type == ShareType.NORMAL ? Message.BUY_CUSTOM_ASK : Message.SELL_CUSTOM_ASK).format().send(player);
 
-                new ChatInput(this, InputHandler.SET_AMOUNT_HANDLER);
+                //We set the currentQuotation to be the current one to set properly the amount
+                playerData.setCurrentQuotation(quotation);
 
+                if (type == ShareType.NORMAL) {
+                    new ChatInput(this, InputHandler.BUY_CUSTOM_AMOUNT_HANDLER);
+                } else {
+                    new ChatInput(this, InputHandler.SHORT_CUSTOM_AMOUNT_HANDLER);
+                }
 
-                if (item instanceof AmountActionItem)
-                    playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.NORMAL : ShareType.SHORT);
             }
+
+
         }
 
         @Override
