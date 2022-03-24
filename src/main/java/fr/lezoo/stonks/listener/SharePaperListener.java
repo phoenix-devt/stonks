@@ -34,14 +34,14 @@ public class SharePaperListener implements Listener {
         // Find share and give to player
         Player player = event.getPlayer();
         Share share = new Share(player.getUniqueId(), container);
-        share.setAmount(share.getAmount() * item.getAmount());
+        share.getOrderInfo().setAmount(share.getOrderInfo().getAmount() * item.getAmount());
 
         // Clear item and give share afterwards
         player.getInventory().setItem(event.getHand(), null);
         PlayerData playerData = PlayerData.get(player);
 
         playerData.giveShare(share);
-        Message.CLAIM_SHARE_PAPER.format("shares", Utils.fourDigits.format(share.getAmount()),
+        Message.CLAIM_SHARE_PAPER.format("shares", Utils.fourDigits.format(share.getOrderInfo().getAmount()),
                 "name", share.getQuotation().getName(),
                 "value", Stonks.plugin.configManager.stockPriceFormat.format(share.getCloseEarning(playerData.getTaxRate()))).send(player);
     }

@@ -180,7 +180,7 @@ public class Board {
         holders.register("lowest-price", format.format(quotation.getLowest(time)));
         holders.register("highest-price", format.format(quotation.getHighest(time)));
         holders.register("evolution", quotation.getEvolution(time));
-        holders.register("time-visualized", time.toString().toLowerCase());
+        holders.register("time-scale", time.toString().toLowerCase());
         holders.register("quotation-type", quotation.getClass().getSimpleName());
         holders.register("exchange-type", quotation.getExchangeType() == null ? "money" : quotation.getExchangeType().toString().toLowerCase());
         return holders;
@@ -228,7 +228,7 @@ public class Board {
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 3 / 128));
         // We want only 2 numbers after the comma
-        g2d.drawString(holders.apply(config.getString("time-visualized")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("time-scale")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("quotation-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("quotation-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("exchange-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));

@@ -21,20 +21,20 @@ public enum Message {
 
     MARKET_CLOSING("&cThe stock market is closed for now."),
 
-    SET_PARAMETER_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP,1,2),"&e[1]Leverage: {leverage}\n" +
+    SET_PARAMETER_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP,1,2),"\n\n\n\n\n\n&e[1]Leverage: {leverage}\n" +
             "[2]Amount:{amount}\n" +
             "*opt*[3]Min price: {min-price}\n" +
             "*opt[4]Max price: {max-price}\n" +
-            "[100]Save"),
-    SET_LEVERAGE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"&eWrite in the chat the leverage you want to have "),
-    SET_AMOUNT_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"&eWrite in the chat the amount of shares you want"),
-    SET_MIN_PRICE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"&eWrite in the chat the min-price you want your share to automatically sell at"),
-    SET_MAX_PRICE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"&&eWrite in the chat the max-price you want your share to automatically sell at"),
-    SAVE_PARAMETER(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"&eYou successfully saved your parameters for your order"),
+            "[100]Save "),
+    SET_LEVERAGE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"\n\n\n\n\n\n&eWrite in the chat the leverage you want to have "),
+    SET_AMOUNT_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"\n\n\n\n\n\n&eWrite in the chat the amount of shares you want"),
+    SET_MIN_PRICE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"\n\n\n\n\n\n&eWrite in the chat the min-price you want your share to automatically sell at"),
+    SET_MAX_PRICE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"\n\n\n\n\n\n&eWrite in the chat the max-price you want your share to automatically sell at"),
+    SAVE_PARAMETER(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2),"\n\n\n\n\n\n&eYou successfully saved your parameters for your order"),
 
 
-    BUY_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eWrite in the chat the amount of shares you would like to buy."),
-    SELL_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eWrite in the chat the amount of shares you would like to buy."),
+    BUY_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "\n\n\n\n\n\n&eWrite in the chat the amount of shares you would like to buy."),
+    SELL_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "\n\n\n\n\n\n&eWrite in the chat the amount of shares you would like to buy."),
     NOT_VALID_NUMBER("&c{input} is not a valid number."),
     NO_ORDER("You don't have any order for {quotation-name}"),
     NO_AMOUNT("You didn't specify the amount of shares you wanted for {quotation-name}"),

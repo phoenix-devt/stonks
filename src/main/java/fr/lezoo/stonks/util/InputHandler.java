@@ -96,11 +96,11 @@ public class InputHandler {
 
     public static final BiFunction<PlayerData, String, Boolean> SET_LEVERAGE_HANDLER = (playerData, input) -> {
         Quotation quotation = playerData.getCurrentQuotation();
-        double amount;
+        int amount;
 
         Player player = playerData.getPlayer();
         try {
-            amount = Double.parseDouble(input);
+            amount = Integer.parseInt(input);
         } catch (IllegalArgumentException exception) {
             Message.NOT_VALID_NUMBER.format("input", input).send(player);
             return false;

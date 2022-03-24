@@ -32,7 +32,7 @@ import java.util.logging.Level;
  */
 public class Quotation {
     protected final String id, name;
-    private final Dividends dividends;
+    private Dividends dividends;
 
     /**
      * The material that will be exchanged. If this is set to null,
@@ -69,6 +69,7 @@ public class Quotation {
      */
     public Quotation(String id, String name, ExchangeType exchangeType, QuotationInfo firstQuotationData) {
         this(id, name, null, exchangeType, firstQuotationData);
+
     }
 
     /**
@@ -107,7 +108,8 @@ public class Quotation {
     public Quotation(ConfigurationSection config) {
         this.id = config.getName();
         this.name = config.getString("name");
-        this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : null;
+        //If it doesn't have a field dividends we use the default dividends given in the config.yml
+        this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : new Dividends(this);
 
         Material material = config.contains("exchange-type.material") ?
                 Material.valueOf(config.getString("exchange-type.material").toUpperCase().replace("-", "_").replace(" ", "_")) : null;
@@ -134,6 +136,10 @@ public class Quotation {
 
     public Dividends getDividends() {
         return dividends;
+    }
+
+    public void setDividends(Dividends dividends) {
+        this.dividends=dividends;
     }
 
 

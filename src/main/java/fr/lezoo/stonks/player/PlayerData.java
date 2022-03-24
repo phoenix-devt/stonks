@@ -196,7 +196,7 @@ public class PlayerData {
         double total = 0;
 
         for (Share share : getShares(quotation))
-            total += share.getAmount();
+            total += share.getOrderInfo().getAmount();
 
         return total;
     }
@@ -251,7 +251,7 @@ public class PlayerData {
      * @param amount    Amount of shares bought
      * @return If the share was successfully bought or not
      */
-    public boolean buyShare(Quotation quotation, ShareType type,double amount,double leverage, double maxPrice, double minPrice) {
+    public boolean buyShare(Quotation quotation, ShareType type,double amount,int leverage, double maxPrice, double minPrice) {
         double price = quotation.getPrice() * amount;
 
         //If it exchanges money

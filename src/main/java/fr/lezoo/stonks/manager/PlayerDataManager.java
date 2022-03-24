@@ -19,7 +19,6 @@ public class PlayerDataManager implements FileManager {
 
     @Override
     public void load() {
-
         // Load player data of online players
         Bukkit.getOnlinePlayers().forEach(player -> map.put(player.getUniqueId(), new PlayerData(player)));
     }

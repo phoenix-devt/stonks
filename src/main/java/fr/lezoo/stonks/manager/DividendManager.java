@@ -21,6 +21,7 @@ public class DividendManager {
 
     public DividendManager() {
 
+        //:: ->reference to a method instead of having to use lambda expression
         // Check for dividends every hour
         Bukkit.getScheduler().runTaskTimer(Stonks.plugin, this::checkForDividends, 0, 20 * 60 * 10);
     }

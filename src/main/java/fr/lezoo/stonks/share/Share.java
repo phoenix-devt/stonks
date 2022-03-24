@@ -42,7 +42,7 @@ public class Share {
      * These fields can be modified by other plugins freely. maxPrice
      * and minPrice corresponds to the prices where it sells automatically
      */
-    private double leverage, shares, maxPrice, minPrice;
+    private final OrderInfo orderInfo = new OrderInfo();
 
     private double wallet;
 
@@ -55,7 +55,7 @@ public class Share {
      *                  or lost by a share purchase
      * @param shares    Amount of shares purchased
      */
-    public Share(ShareType type, UUID owner, Quotation quotation, double leverage, double shares, double maxPrice, double minPrice) {
+    public Share(ShareType type, UUID owner, Quotation quotation, int leverage, double shares, double maxPrice, double minPrice) {
         this(UUID.randomUUID(), owner, type, quotation, quotation.getPrice(), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
     }
 
@@ -72,16 +72,16 @@ public class Share {
      * @param shares       Amount of shares purchased
      * @param timeStamp    Time of share creation (millis)
      */
-    public Share(UUID uuid, UUID owner, ShareType type, Quotation quotation, double initialPrice, double leverage, double shares, double maxPrice, double minPrice, long timeStamp) {
+    public Share(UUID uuid, UUID owner, ShareType type, Quotation quotation, double initialPrice, int leverage, double shares, double maxPrice, double minPrice, long timeStamp) {
         this.uuid = uuid;
         this.owner = owner;
         this.type = type;
         this.quotation = quotation;
         this.initialPrice = initialPrice;
-        this.leverage = leverage;
-        this.shares = shares;
-        this.minPrice = minPrice;
-        this.maxPrice = maxPrice;
+        orderInfo.setLeverage(leverage);
+        orderInfo.setAmount(shares);
+        orderInfo.setMaxPrice(maxPrice);
+        orderInfo.setMinPrice(minPrice);
         this.timeStamp = timeStamp;
     }
 
@@ -93,12 +93,12 @@ public class Share {
         this.owner = UUID.fromString(config.getString("owner"));
         this.type = ShareType.valueOf(config.getString("type"));
         this.quotation = Stonks.plugin.quotationManager.get(config.getString("quotation"));
-        this.shares = config.getDouble("shares");
-        this.leverage = config.getDouble("leverage");
+        orderInfo.setAmount(config.getDouble("shares"));
+        orderInfo.setLeverage(config.getInt("leverage"));
         this.timeStamp = config.getLong("timestamp");
         this.initialPrice = config.getDouble("initial");
-        this.maxPrice = config.getDouble("max-price");
-        this.minPrice = config.getDouble("min-price");
+        orderInfo.setMinPrice(config.getDouble("min-price"));
+        orderInfo.setMaxPrice(config.getDouble("max-price"));
         this.wallet = config.getDouble("wallet");
         this.closeReason = config.contains("close-reason") ? CloseReason.valueOf(config.getString("close-reason")) : null;
         this.sellPrice = isOpen() ? 0 : config.getDouble("sell-price");
@@ -123,8 +123,8 @@ public class Share {
         this.initialPrice = container.get(Utils.namespacedKey("ShareInitialPrice"), PersistentDataType.DOUBLE);
 
         // Non final info
-        this.shares = container.get(Utils.namespacedKey("ShareAmount"), PersistentDataType.DOUBLE);
-        this.leverage = container.get(Utils.namespacedKey("ShareLeverage"), PersistentDataType.DOUBLE);
+        orderInfo.setAmount(container.get(Utils.namespacedKey("ShareAmount"), PersistentDataType.DOUBLE));
+        orderInfo.setLeverage(container.get(Utils.namespacedKey("ShareLeverage"), PersistentDataType.INTEGER));
         this.wallet = container.get(Utils.namespacedKey("ShareWallet"), PersistentDataType.DOUBLE);
         this.closeReason = container.has(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING) ? CloseReason.valueOf(container.get(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING)) : null;
         this.sellPrice = isOpen() ? 0 : container.get(Utils.namespacedKey("SellPrice"), PersistentDataType.DOUBLE);
@@ -134,12 +134,12 @@ public class Share {
         config.set(uuid + ".type", type.name());
         config.set(uuid + ".owner", owner.toString());
         config.set(uuid + ".quotation", quotation.getId());
-        config.set(uuid + ".shares", shares);
-        config.set(uuid + ".leverage", leverage);
+        config.set(uuid + ".shares", orderInfo.getAmount());
+        config.set(uuid + ".leverage", orderInfo.getLeverage());
         config.set(uuid + ".timestamp", timeStamp);
         config.set(uuid + ".initial", initialPrice);
-        config.set(uuid + ".max-price", maxPrice);
-        config.set(uuid + ".min-price", minPrice);
+        config.set(uuid + ".max-price", orderInfo.getMaxPrice());
+        config.set(uuid + ".min-price", orderInfo.getMinPrice());
         config.set(uuid + ".wallet", wallet);
         if (!isOpen()) {
             config.set(uuid + ".close-reason", closeReason.name());
@@ -163,13 +163,6 @@ public class Share {
         return quotation;
     }
 
-    public double getLeverage() {
-        return leverage;
-    }
-
-    public double getAmount() {
-        return shares;
-    }
 
     /**
      * @return Time (in millis) at which the share was created
@@ -182,12 +175,8 @@ public class Share {
         return initialPrice;
     }
 
-    public void setAmount(double shares) {
-        this.shares = shares;
-    }
-
-    public void setLeverage(double leverage) {
-        this.leverage = leverage;
+    public OrderInfo getOrderInfo() {
+        return orderInfo;
     }
 
     /**
@@ -198,20 +187,20 @@ public class Share {
     }
 
     public double getMaxPrice() {
-        return maxPrice;
+        return orderInfo.getMaxPrice();
     }
 
     public double getMinPrice() {
-        return minPrice;
+        return orderInfo.getMinPrice();
     }
 
 
     public String getStringMinPrice() {
-        return minPrice==0?"none": Utils.fourDigits.format(minPrice);
+        return orderInfo.getMinPrice() == 0 ? "none" : Utils.fourDigits.format(orderInfo.getMinPrice());
     }
 
     public String getStringMaxPrice() {
-        return maxPrice==Double.POSITIVE_INFINITY?"none":Utils.fourDigits.format(maxPrice);
+        return orderInfo.getMaxPrice() == Double.POSITIVE_INFINITY ? "none" : Utils.fourDigits.format(orderInfo.getMaxPrice());
     }
 
     @NotNull
@@ -220,7 +209,7 @@ public class Share {
     }
 
     public double getShares() {
-        return shares;
+        return orderInfo.getAmount();
     }
 
     public boolean isOpen() {
@@ -269,7 +258,7 @@ public class Share {
      * this share right now.
      */
     public double getCloseEarning(double taxRate) {
-        return Math.max(calculateGain(taxRate) + initialPrice * shares, 0);
+        return Math.max(calculateGain(taxRate) + initialPrice * orderInfo.getAmount(), 0);
     }
 
     /**
@@ -284,7 +273,7 @@ public class Share {
         double sharePrice = isOpen() ? quotation.getPrice() : sellPrice;
 
         // <Difference in price between when it was bought and now> * <leverage> * <number of shares>
-        double gain = (sharePrice - initialPrice) * (type == ShareType.SHORT ? -1 : 1) * leverage * shares;
+        double gain = (sharePrice - initialPrice) * (type == ShareType.SHORT ? -1 : 1) * orderInfo.getLeverage() * orderInfo.getAmount();
 
         // Tax on benefits only
         if (gain > 0)
