@@ -1,9 +1,12 @@
 
+
+
+
+
+
+
+
 ---- STONKS TODO
-
-Idées
-
-
 
 
 TODO
@@ -11,7 +14,6 @@ TODO
 -Systeme pour close et open la share a un peu ameliorer au niveau des messages
 -Ameliorer le rendu pour : Board image et dialog box
 -Ne pas close la share quand elle est transmise vers un paper
--Implementer une formule de base,period pour les dividendes qui s'appliquera sur toutes (qui peux etre changée dans la config)
 -Enlever le son pour refresh les board
 
 
@@ -43,6 +45,7 @@ OK
 - TRANSFORMER UN STOCK EN UN OBJET CLIQUABLE que l'on peut redeem au NPC
 - des stocks factices qui varient avec des formules mathématiques toutes configurables
 - deux types d'actions : virtuelles, où avec des objets réels (itemStacks)
+-Implementer une formule de base,period pour les dividendes qui s'appliquera sur toutes (qui peux etre changée dans la config)
 https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-other-stocks-on
 - commande pour simple pour rajouter un boarddisplay
 - les dividendes

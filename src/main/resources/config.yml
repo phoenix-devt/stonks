@@ -72,11 +72,10 @@ max-shares: 0
 # Hour of the day at which dividends are given to players.
 dividends-redeem-hour: 10
 
-#The dividends that will be applied to new quotations where no custom dividends was specified.
-default-dividend-formula: "0.1*{price}*{amount}"
-default-dividend-period: 1
-
-
+# The dividends that will be applied to new quotations where no custom dividends was specified.
+default-dividends:
+  formula: "0.1 * {price} * {amount}"
+  period: 1
 
 # How a custom sign displays information about a quotation.
 custom-sign-format:

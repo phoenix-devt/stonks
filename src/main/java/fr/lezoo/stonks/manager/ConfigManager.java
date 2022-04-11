@@ -52,8 +52,8 @@ public class ConfigManager {
     public long boardRefreshTime, quotationRefreshTime, shareRefreshTime, signRefreshTime, mapRefreshTime;
     public double offerDemandImpact, volatility, defaultTaxRate;
     public int quotationDataNumber, maxInteractionDistance;
-    public String dividendFormula;
-    public int dividendPeriod;
+    public String defaultDividendFormula;
+    public int defaultDividendPeriod;
 
     public void reload() {
 
@@ -79,8 +79,8 @@ public class ConfigManager {
         signRefreshTime = Stonks.plugin.getConfig().getLong("sign-refresh-time");
         maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
         defaultTaxRate = Stonks.plugin.getConfig().getDouble("default-tax-rate");
-        dividendFormula=Stonks.plugin.getConfig().getString("dividend-formula");
-        dividendPeriod=Stonks.plugin.getConfig().getInt("dividend-period");
+        defaultDividendFormula = Stonks.plugin.getConfig().getString("default-dividends.formula");
+        defaultDividendPeriod = Stonks.plugin.getConfig().getInt("default-dividends.period");
 
         // Useful checks
         Validate.isTrue(displaySignFormat.size() == 4, "Display sign format should be of length 4");
