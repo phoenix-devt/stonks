@@ -42,7 +42,7 @@ public class RealStockQuotation extends Quotation {
         Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
 
             try {
-                double price = Stonks.plugin.configManager.stockApi.getPrice(getId());
+                double price = Stonks.plugin.stockAPI.getPrice(getId());
                 int datanumber = Stonks.plugin.configManager.quotationDataNumber;
                 //We update all the data List
                 for (TimeScale time : TimeScale.values()) {

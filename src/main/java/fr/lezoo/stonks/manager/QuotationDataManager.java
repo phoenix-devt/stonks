@@ -70,11 +70,9 @@ public class QuotationDataManager {
 
             if (quotation instanceof RealStockQuotation) {
 
-                HttpClient client = HttpClient.newHttpClient();
-
                 Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
                     try {
-                        double price = Stonks.plugin.configManager.stockApi.getPrice(quotation.getId());
+                        double price = Stonks.plugin.stockAPI.getPrice(quotation.getId());
                         QuotationInfo firstQuotationData = new QuotationInfo(System.currentTimeMillis(), price);
                         for (TimeScale disp : TimeScale.values())
                             quotation.setData(disp, Arrays.asList(firstQuotationData));

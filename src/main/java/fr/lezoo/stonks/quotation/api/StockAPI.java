@@ -16,7 +16,7 @@ public abstract class StockAPI {
     private final String apiKey;
 
     public StockAPI(ConfigurationSection config) {
-        this.apiKey = Objects.requireNonNull(config.getString("key"), "Could not find API key");
+        this(config.getString("key"));
     }
 
     public StockAPI(String apiKey) {

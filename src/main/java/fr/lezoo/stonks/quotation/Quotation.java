@@ -19,9 +19,9 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -38,6 +38,7 @@ public class Quotation {
      * The material that will be exchanged. If this is set to null,
      * that means the quotation is virtual and exchanges money instead
      */
+    @Nullable
     private final ExchangeType exchangeType;
 
     /**
@@ -139,7 +140,7 @@ public class Quotation {
     }
 
     public void setDividends(Dividends dividends) {
-        this.dividends=dividends;
+        this.dividends = dividends;
     }
 
 
@@ -204,14 +205,14 @@ public class Quotation {
         // We create the wall to have the board with ItemFrames on it
         //offset otherwise the location where the block is ambiguous
         //We make sure the offset put the location at the top right corner of the board
-        double x=blockFace.getDirection().getX()*0.5;
-        double z=blockFace.getDirection().getZ()*0.5;
+        double x = blockFace.getDirection().getX() * 0.5;
+        double z = blockFace.getDirection().getZ() * 0.5;
         // We want the block placed behind the location if we are looking at it
-        if(x==0) {
-            x=-Utils.getItemFrameDirection(blockFace).getX()*0.5;
+        if (x == 0) {
+            x = -Utils.getItemFrameDirection(blockFace).getX() * 0.5;
         }
-        if(z==0) {
-            z=-Utils.getItemFrameDirection(blockFace).getZ()*0.5;
+        if (z == 0) {
+            z = -Utils.getItemFrameDirection(blockFace).getZ() * 0.5;
         }
 
 
@@ -310,7 +311,7 @@ public class Quotation {
 
 
         // If the quotation is empty we destroy it to not overload memory and avoid errors
-        if (quotationData.get(TimeScale.HOUR)==null|| quotationData.get(TimeScale.HOUR).size() == 0) {
+        if (quotationData.get(TimeScale.HOUR) == null || quotationData.get(TimeScale.HOUR).size() == 0) {
             config.set(id + ".name", null);
             return;
         }
@@ -326,10 +327,10 @@ public class Quotation {
         }
 
         //If the quotation has dividends we save it
-        if(hasDividends()){
-            config.set("dividends.formula",dividends.getFormula());
-            config.set("dividends.period",dividends.getPeriod());
-            config.set("dividends.last",dividends.getLastApplication());
+        if (hasDividends()) {
+            config.set("dividends.formula", dividends.getFormula());
+            config.set("dividends.period", dividends.getPeriod());
+            config.set("dividends.last", dividends.getLastApplication());
         }
 
         config.set(id + ".exchange-type.material", exchangeType == null ? null : exchangeType.getMaterial().name());

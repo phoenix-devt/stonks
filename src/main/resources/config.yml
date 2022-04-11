@@ -3,13 +3,15 @@
 # for download. Requires a server reload when changed.
 update-notify: true
 
-#The stock API you want to use : it can be :
-#finnhub : 60 call/min,15min delay (with a free API key)
-#alphavantage : 5 call/min with 500/day, roughly 20 min delay (with a free API key)
-#twelvedata : 8call/min with 800 call/day, with nearly delay (with a free API key)
+# The stock API you want to use, it can be:
+# Finnhub : 60 calls/min, 15min delay (with a free API key)
+# Alphavantage : 5 calls/min with 500calls/day, roughly 20min delay (with a free API key)
+# Twelvedata : 8 calls/min with 800 calls/day, with nearly delay (with a free API key)
 
-stock-api: 'finnhub'
-api-key: ''
+stock-api:
+  enabled: true
+  used: 'finnhub'
+  api-key: ''
 
 # How stock prices display in item lores
 # Check out 'DecimalFormat java' online for more info

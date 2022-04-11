@@ -22,29 +22,35 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.logging.Level;
 
 public class Stonks extends JavaPlugin {
     public static Stonks plugin;
 
-    public PlaceholderParser placeholderParser = new DefaultPlaceholderParser();
-    public ServerVersion version;
     public final ConfigManager configManager = new ConfigManager();
     public final ShareManager shareManager = new ShareManager();
     public final SignManager signManager = new SignManager();
+    public final PlayerDataManager playerManager = new PlayerDataManager();
+    public final QuotationManager quotationManager = new QuotationManager();
+    public final BoardManager boardManager = new BoardManager();
+    public final QuotationDataManager quotationDataManager = new QuotationDataManager();
+
+    @NotNull
+    public PlaceholderParser placeholderParser = new DefaultPlaceholderParser();
+    @NotNull
+    public ServerVersion version;
+    @Nullable
     public Economy economy;
+    @Nullable
+    public StockAPI stockAPI;
 
-    // TODO fixer l'initialisation de ces classes
-
-    public PlayerDataManager playerManager = new PlayerDataManager();
-    public QuotationManager quotationManager = new QuotationManager();
-    public BoardManager boardManager = new BoardManager();
-    public QuotationDataManager quotationDataManager = new QuotationDataManager();
-
-    /*TODO Comment obtenir les lives de trading
-    TODO Signs ,playerdata avec les shares
-    */
+    /*
+     * TODO Comment obtenir les lives de trading
+     * TODO Signs, playerdata avec les shares
+     */
     public void onLoad() {
         plugin = this;
     }
