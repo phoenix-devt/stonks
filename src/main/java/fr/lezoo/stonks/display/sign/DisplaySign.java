@@ -2,6 +2,7 @@ package fr.lezoo.stonks.display.sign;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.quotation.RealStockQuotation;
 import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.util.Utils;
@@ -87,9 +88,12 @@ public class DisplaySign {
     }
 
     private String applyPlaceholders(Quotation quotation, String input) {
-        return input.replace("{name}", quotation.getName())
-                .replace("{price}", Stonks.plugin.configManager.stockPriceFormat.format(quotation.getPrice()))
+        return input.replace("{quotation-name}", quotation.getName())
+                .replace("{quotation-id}", quotation.getId())
+                .replace("{current-price}", Stonks.plugin.configManager.stockPriceFormat.format(quotation.getPrice()))
+                .replace("{hour-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.HOUR)))
                 .replace("{day-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.DAY)))
-                .replace("{week-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.WEEK)));
+                .replace("{week-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.WEEK)))
+                .replace("{quotation-type}", quotation instanceof RealStockQuotation ? "real stock" : "virtual");
     }
 }

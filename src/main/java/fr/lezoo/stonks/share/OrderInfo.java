@@ -3,23 +3,16 @@ package fr.lezoo.stonks.share;
 import fr.lezoo.stonks.util.Utils;
 
 public class OrderInfo {
-    private double leverage = 1, amount = 0, minPrice = -1, maxPrice = -1;
+    private double amount, minPrice, maxPrice;
+    private int leverage;
 
-    public double getLeverage() {
-        return leverage;
+    public OrderInfo() {
+        leverage = 1;
+        amount = 0;
+        minPrice = 0;
+        maxPrice = Double.POSITIVE_INFINITY;
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public double getMinPrice() {
-        return minPrice;
-    }
-
-    public double getMaxPrice() {
-        return maxPrice;
-    }
 
     public boolean hasAmount() {
         return amount != 0;
@@ -33,7 +26,7 @@ public class OrderInfo {
         return minPrice != -1;
     }
 
-    public void setLeverage(double leverage) {
+    public void setLeverage(int leverage) {
         this.leverage = leverage;
     }
 
@@ -49,11 +42,27 @@ public class OrderInfo {
         this.maxPrice = maxPrice;
     }
 
+    public int getLeverage() {
+        return leverage;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public double getMinPrice() {
+        return minPrice;
+    }
+
+    public double getMaxPrice() {
+        return maxPrice;
+    }
+
     public String getStringMinPrice() {
-        return minPrice == -1 ? "none" : Utils.fourDigits.format(minPrice);
+        return minPrice == 0 ? "none" : Utils.fourDigits.format(minPrice);
     }
 
     public String getStringMaxPrice() {
-        return maxPrice == -1 ? "none" : Utils.fourDigits.format(maxPrice);
+        return maxPrice == Double.POSITIVE_INFINITY ? "none" : Utils.fourDigits.format(maxPrice);
     }
 }

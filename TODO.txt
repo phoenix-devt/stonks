@@ -4,32 +4,15 @@
 Idées
 
 
-TODO Guillaume
--github wiki
--Formule de base pour les dividendes
--Item carrement en exchange-type
--save pour les dividendes (bugs)
--Système mathématique plus dépendant de l'offre et demande : %de quotation apparue/vendue
--Changer le principe du trading book
--Bug board display
-
-
-
-TODO Jules
-- vérifier physical quotations
-- vérifier claim/close
-- option pour changer le taux de commission d'une personne
-- API Bourse  Quotations (Bots de Trading) OK
 
 
 TODO
--Real Data for stonks even with longer timeScale board -OK
--Update sign info  OK
-Refresh board concurrent modification exception OK
-
--Tradig book debug
--Problem avec trading item modelData etc Curtom name quand le custom model data change
-
+-Custom model data etc pour un stock mieux faire
+-Systeme pour close et open la share a un peu ameliorer au niveau des messages
+-Ameliorer le rendu pour : Board image et dialog box
+-Ne pas close la share quand elle est transmise vers un paper
+-Implementer une formule de base,period pour les dividendes qui s'appliquera sur toutes (qui peux etre changée dans la config)
+-Enlever le son pour refresh les board
 
 
 

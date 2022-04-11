@@ -154,7 +154,7 @@ public class SpecificPortfolio extends EditableInventory {
                         player.getWorld().dropItem(player.getLocation(), dropped);
 
                     Message.GET_SHARE_PAPER.format("name", quotation.getName(),
-                            "shares", Utils.fourDigits.format(share.getAmount())).send(player);
+                            "shares", Utils.fourDigits.format(share.getOrderInfo().getAmount())).send(player);
 
                     updateInventoryData();
                     open();
@@ -168,7 +168,7 @@ public class SpecificPortfolio extends EditableInventory {
                     // Close and claim share
                     double taxRate = playerData.getTaxRate();
                     double gain = share.calculateGain(taxRate), earned = share.getCloseEarning(taxRate);
-                    Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getAmount()),
+                    Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getOrderInfo().getAmount()),
                             "name", quotation.getName(),
                             "gain", Utils.formatGain(gain)).send(player);
 
@@ -296,14 +296,15 @@ public class SpecificPortfolio extends EditableInventory {
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
             holders.register("name", inv.quotation.getName());
-            holders.register("leverage", Utils.fourDigits.format(share.getLeverage()));
-            holders.register("amount", format.format(share.getAmount()));
-
+            holders.register("leverage", Utils.fourDigits.format(share.getOrderInfo().getLeverage()));
+            holders.register("amount", format.format(share.getOrderInfo().getAmount()));
+            holders.register("min-price",share.getStringMinPrice());
+            holders.register("max-price",share.getStringMaxPrice());
             holders.register("current-stock", format.format(inv.quotation.getPrice()));
             holders.register("initial-stock", format.format(share.getInitialPrice()));
 
             double taxRate = inv.getPlayerData().getTaxRate();
-            holders.register("initial-share", format.format(share.getInitialPrice() * share.getAmount()));
+            holders.register("initial-share", format.format(share.getInitialPrice() * share.getOrderInfo().getAmount()));
             holders.register("current-share", format.format(share.getCloseEarning(taxRate)));
             holders.register("gain", Utils.formatGain(share.calculateGain(taxRate)));
 

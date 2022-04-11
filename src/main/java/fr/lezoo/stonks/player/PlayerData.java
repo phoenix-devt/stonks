@@ -196,7 +196,7 @@ public class PlayerData {
         double total = 0;
 
         for (Share share : getShares(quotation))
-            total += share.getAmount();
+            total += share.getOrderInfo().getAmount();
 
         return total;
     }
@@ -214,7 +214,7 @@ public class PlayerData {
     }
 
     /**
-     *buyS a share by using the orderinfo of the player if there is one
+     *Buys a share by using the orderinfo of the player if there is one
      */
     public boolean buyShare(Quotation quotation, ShareType type) {
         if (!hasOrderInfo(quotation.getId())) {
@@ -231,6 +231,18 @@ public class PlayerData {
     }
 
     /**
+     *
+     * Used to buy a share using order info except the amount (for the fixed amount shares on the quotationShareMenu GUI)
+     */
+    public boolean buyShare(Quotation quotation,ShareType type,double amount){
+        if(!hasOrderInfo(quotation.getId())){
+            return  buyShare(quotation,type,amount,1,Double.POSITIVE_INFINITY,0);
+        }
+        OrderInfo orderInfo=getOrderInfo(quotation.getId());
+        return buyShare(quotation, type, amount,orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
+    }
+
+    /**
      * Called when a player tries to buy a share. This checks for the
      * player's balance and calls a bukkit cancelable event.
      *
@@ -239,7 +251,7 @@ public class PlayerData {
      * @param amount    Amount of shares bought
      * @return If the share was successfully bought or not
      */
-    public boolean buyShare(Quotation quotation, ShareType type,double amount,double leverage, double maxPrice, double minPrice) {
+    public boolean buyShare(Quotation quotation, ShareType type,double amount,int leverage, double maxPrice, double minPrice) {
         double price = quotation.getPrice() * amount;
 
         //If it exchanges money

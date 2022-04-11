@@ -2,6 +2,9 @@ package fr.lezoo.stonks.display.board;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
+import fr.lezoo.stonks.listener.temp.DropItemListener;
+import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
+import fr.lezoo.stonks.listener.temp.TemporaryListener;
 import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
@@ -10,10 +13,12 @@ import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.util.Vector;
 
@@ -106,10 +111,23 @@ public class Board {
     public void destroy() {
         // We unregister the board
         Stonks.plugin.boardManager.removeBoard(getUuid());
+        BlockFace blockFace = getDirection();
         // We destroy the entities
-        Location newlocation = location.clone();
+        Location newLocation = location.clone();
         // We create the wall to have the board with ItemFrames on it
-        newlocation.add(0.5, 0.5, 0.5);
+        double x = blockFace.getDirection().getX() * 0.5;
+        double z = blockFace.getDirection().getZ() * 0.5;
+        // We want the block placed behind the location if we are looking at it
+        if (x == 0) {
+            x = -Utils.getItemFrameDirection(blockFace).getX() * 0.5;
+        }
+        if (z == 0) {
+            z = -Utils.getItemFrameDirection(blockFace).getZ() * 0.5;
+        }
+
+
+        newLocation.add(x, 0.5, z);
+
         // We get the direction to build horizontally and vertically
         Vector verticalBuildDirection = new Vector(0, 1, 0);
         Vector horizontalBuildDirection = direction.getDirection();
@@ -119,21 +137,29 @@ public class Board {
         horizontalLineReturn.multiply(-width);
         Vector itemFrameDirection = Utils.getItemFrameDirection(direction);
 
-        // We get to the layer of ItemFrames
-        newlocation.add(itemFrameDirection);
+        //We register a new Listener to cancel all the DropItemEvent
+        TemporaryListener listener = new DropItemListener();
+
+
+        // We remove all the blocks of the board
         // We remove them all
         for (int i = 0; i < height; i++) {
             // i stands for the line of the board and j the column
             for (int j = 0; j < width; j++) {
-                // We remove the frame on the block
-                newlocation.getWorld().getNearbyEntities(newlocation, 0.5, 0.5, 0.5, entity -> entity instanceof ItemFrame)
-                        .forEach(itemFrame -> itemFrame.remove());
-                newlocation.add(horizontalBuildDirection);
+                // We remove the block
+                newLocation.getBlock().setType(Material.AIR);
+                for (Entity entity : newLocation.getWorld().getEntities()) {
+                    if (entity instanceof ItemFrame && entity.getLocation().distance(newLocation) < 2) {
+                        entity.remove();
+                    }
+                }
+                newLocation.add(horizontalBuildDirection);
             }
-            newlocation.add(verticalBuildDirection);
-            newlocation.add(horizontalLineReturn);
+            newLocation.add(verticalBuildDirection);
+            newLocation.add(horizontalLineReturn);
         }
-
+        //We close the listener now that the destruction is done
+        listener.close();
     }
 
     /**
@@ -154,7 +180,7 @@ public class Board {
         holders.register("lowest-price", format.format(quotation.getLowest(time)));
         holders.register("highest-price", format.format(quotation.getHighest(time)));
         holders.register("evolution", quotation.getEvolution(time));
-        holders.register("time-visualized", time.toString().toLowerCase());
+        holders.register("time-scale", time.toString().toLowerCase());
         holders.register("quotation-type", quotation.getClass().getSimpleName());
         holders.register("exchange-type", quotation.getExchangeType() == null ? "money" : quotation.getExchangeType().toString().toLowerCase());
         return holders;
@@ -202,7 +228,7 @@ public class Board {
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 3 / 128));
         // We want only 2 numbers after the comma
-        g2d.drawString(holders.apply(config.getString("time-visualized")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("time-scale")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("quotation-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("quotation-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("exchange-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
@@ -220,9 +246,9 @@ public class Board {
         g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.75 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.setColor(Color.GRAY);
         g2d.setFont(new Font(null, Font.BOLD, (int) (BOARD_HEIGHT * 3.5 / 128)));
-        g2d.drawString("Parameters", (int) (0.83 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
+        g2d.drawString("PARAMETERS", (int) (0.825 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
         g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 4 / 128));
-        g2d.drawString("BUY", (int) (0.83 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
+        g2d.drawString("BUY", (int) (0.835 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
         g2d.drawString("SHORT", (int) (0.83 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));
         g2d.drawString("ORDERS", (int) (0.83 * BOARD_WIDTH), (int) (0.85 * BOARD_HEIGHT));
 
