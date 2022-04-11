@@ -5,7 +5,6 @@ import fr.lezoo.stonks.display.board.DisplayInfo;
 import fr.lezoo.stonks.display.map.QuotationMapRenderer;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.RealStockQuotation;
 import fr.lezoo.stonks.quotation.TimeScale;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,7 +15,6 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 import java.text.DecimalFormat;
-import java.util.Map;
 
 public class QuotationMap extends CustomItem<DisplayInfo> {
 
@@ -57,7 +55,7 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
         holders.register("highest-price", format.format(quotation.getHighest(timeDisplay)));
         holders.register("evolution", quotation.getEvolution(timeDisplay));
         holders.register("time-scale", timeDisplay.toString().toLowerCase());
-        holders.register("quotation-type", quotation instanceof RealStockQuotation?"real-stock":"virtual");
+        holders.register("quotation-type", quotation instanceof RealQuotation ?"real-stock":"virtual");
         return holders;
 
     }

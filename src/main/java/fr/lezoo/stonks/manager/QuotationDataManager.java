@@ -3,27 +3,18 @@ package fr.lezoo.stonks.manager;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
-import fr.lezoo.stonks.quotation.RealStockQuotation;
 import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.util.ConfigFile;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 
 /**
@@ -68,7 +59,7 @@ public class QuotationDataManager {
         else {
 
 
-            if (quotation instanceof RealStockQuotation) {
+            if (quotation instanceof RealQuotation) {
 
                 Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
                     try {

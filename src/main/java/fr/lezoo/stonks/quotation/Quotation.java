@@ -4,6 +4,9 @@ package fr.lezoo.stonks.quotation;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.Board;
 import fr.lezoo.stonks.display.board.QuotationBoardRenderer;
+import fr.lezoo.stonks.quotation.handler.FictiveStockHandler;
+import fr.lezoo.stonks.quotation.handler.RealStockHandler;
+import fr.lezoo.stonks.quotation.handler.StockHandler;
 import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -21,10 +24,12 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 /**
@@ -32,6 +37,8 @@ import java.util.logging.Level;
  */
 public class Quotation {
     protected final String id, name;
+
+    @NotNull
     private Dividends dividends;
 
     /**
@@ -41,49 +48,14 @@ public class Quotation {
     @Nullable
     private final ExchangeType exchangeType;
 
+    @NotNull
+    private final StockHandler handler;
+
     /**
      * List of data for every scale. Allows to store just the right
      * amount of data needed so that there aren't 10s timestamps on the yearly scale.
      */
     protected final Map<TimeScale, List<QuotationInfo>> quotationData = new HashMap<>();
-
-    private double previousDemand, currentDemand;
-
-    /**
-     * New virtual quotation without dividends
-     *
-     * @param id                 Internal quotation id
-     * @param name               Name of the stock
-     * @param firstQuotationData Info containing the quotation initial price
-     */
-    public Quotation(String id, String name, QuotationInfo firstQuotationData) {
-        this(id, name, null, null, firstQuotationData);
-    }
-
-    /**
-     * New virtual or physical quotations without dividends
-     *
-     * @param id                 Internal quotation id
-     * @param name               Name of the stock
-     * @param exchangeType       The material being exchanged, or null if the quotation is virtual
-     * @param firstQuotationData Info containing the quotation initial price
-     */
-    public Quotation(String id, String name, ExchangeType exchangeType, QuotationInfo firstQuotationData) {
-        this(id, name, null, exchangeType, firstQuotationData);
-
-    }
-
-    /**
-     * New virtual quotation with dividends
-     *
-     * @param id                 Internal quotation id
-     * @param name               Name of the stock
-     * @param dividends          Information about quotation dividends
-     * @param firstQuotationData Info containing the quotation initial price
-     */
-    public Quotation(String id, String name, Dividends dividends, QuotationInfo firstQuotationData) {
-        this(id, name, dividends, null, firstQuotationData);
-    }
 
     /**
      * Public constructor to create a new Quotation from scratch
@@ -94,9 +66,10 @@ public class Quotation {
      * @param exchangeType       The material being exchanged, or null if the quotation is virtual
      * @param firstQuotationData The only QuotationInfo that exists
      */
-    public Quotation(String id, String name, Dividends dividends, ExchangeType exchangeType, QuotationInfo firstQuotationData) {
+    public Quotation(String id, String name, Function<Quotation, StockHandler> handlerProvider, Dividends dividends, @Nullable ExchangeType exchangeType, QuotationInfo firstQuotationData) {
         this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.name = name;
+        this.handler = handlerProvider.apply(this);
         this.dividends = dividends;
         this.exchangeType = exchangeType;
         for (TimeScale disp : TimeScale.values())
@@ -109,8 +82,11 @@ public class Quotation {
     public Quotation(ConfigurationSection config) {
         this.id = config.getName();
         this.name = config.getString("name");
-        //If it doesn't have a field dividends we use the default dividends given in the config.yml
+
+        // If it doesn't have a field dividends we use the default dividends given in the config.yml
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : new Dividends(this);
+
+        this.handler = config.getString("type").equalsIgnoreCase("real") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
 
         Material material = config.contains("exchange-type.material") ?
                 Material.valueOf(config.getString("exchange-type.material").toUpperCase().replace("-", "_").replace(" ", "_")) : null;
@@ -119,8 +95,6 @@ public class Quotation {
         exchangeType = material == null ? null : new ExchangeType(material, modelData);
         //We set the data of the quotation
         Stonks.plugin.quotationDataManager.setQuotationData(this);
-
-
     }
 
     public String getId() {
@@ -143,7 +117,6 @@ public class Quotation {
         this.dividends = dividends;
     }
 
-
     public ExchangeType getExchangeType() {
         return exchangeType;
     }
@@ -154,6 +127,10 @@ public class Quotation {
 
     public List<QuotationInfo> getData(TimeScale disp) {
         return quotationData.get(disp);
+    }
+
+    public StockHandler getHandler() {
+        return handler;
     }
 
     /**
@@ -309,7 +286,6 @@ public class Quotation {
 
     public void save(FileConfiguration config) {
 
-
         // If the quotation is empty we destroy it to not overload memory and avoid errors
         if (quotationData.get(TimeScale.HOUR) == null || quotationData.get(TimeScale.HOUR).size() == 0) {
             config.set(id + ".name", null);
@@ -317,14 +293,7 @@ public class Quotation {
         }
 
         config.set(id + ".name", name);
-
-        if (this instanceof RealStockQuotation) {
-            config.set(id + ".type", "real-stock");
-        }
-        //If the quotation is not a realStockQuotation then it is virtual quotation
-        else {
-            config.set(id + ".type", "virtual");
-        }
+        handler.saveInFile(config);
 
         //If the quotation has dividends we save it
         if (hasDividends()) {
@@ -382,51 +351,6 @@ public class Quotation {
         return latest.get(latest.size() - 1).getPrice();
     }
 
-    /**
-     * Changes the quotation price
-     */
-    public void refreshQuotation() {
-        if (getData(TimeScale.HOUR).isEmpty())
-            return;
-
-        Random random = new Random();
-        double rand = random.nextInt(2);
-        double change = rand == 0 ? -1 : 1;
-        // The offset due to the offer and demand of the stock
-        double offset = Stonks.plugin.configManager.offerDemandImpact * Math.atan(previousDemand) * 2 / Math.PI;
-        double currentPrice = getPrice();
-        //The change between the currentPrice and nextPrice
-
-        //We multiply by sqrt(t) so that volatility doesn't depend on refreshTime
-
-        change = (change + offset) * Stonks.plugin.configManager.volatility * currentPrice / 20 * Math.sqrt((double) (Stonks.plugin.configManager.quotationRefreshTime) / 3600);
-
-        //The amount of data wanted for each timescale fo the quotation
-        int datanumber = Stonks.plugin.configManager.quotationDataNumber;
-        //We update all the data List
-        for (TimeScale time : TimeScale.values()) {
-            //We get the list corresponding to the time
-            List<QuotationInfo> workingData = new ArrayList<>();
-            workingData.addAll(this.getData(time));
-            //If the the latest data of workingData is too old we add another one
-            if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / datanumber) {
-
-                workingData.add(new QuotationInfo(System.currentTimeMillis(), currentPrice + change));
-                //If the list contains too much data we remove the older ones
-                if (workingData.size() > datanumber)
-                    workingData.remove(0);
-                //We save the changes we made in the attribute
-                this.setData(time, workingData);
-            }
-
-        }
-
-
-    }
-
-    public void addDemand(double stockBought) {
-        currentDemand += stockBought;
-    }
 
     @Override
     public boolean equals(Object o) {

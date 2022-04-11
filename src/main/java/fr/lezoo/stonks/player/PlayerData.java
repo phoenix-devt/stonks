@@ -11,7 +11,6 @@ import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.message.Message;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -109,7 +108,6 @@ public class PlayerData {
     public void updatePlayer(Player player) {
         this.player = player;
     }
-
 
     /**
      * @return Owned shares from a specific quotation
@@ -214,7 +212,7 @@ public class PlayerData {
     }
 
     /**
-     *Buys a share by using the orderinfo of the player if there is one
+     * Buys a share by using the orderinfo of the player if there is one
      */
     public boolean buyShare(Quotation quotation, ShareType type) {
         if (!hasOrderInfo(quotation.getId())) {
@@ -227,19 +225,18 @@ public class PlayerData {
             Message.NO_AMOUNT.format("quotation-name", quotation.getName()).send(player);
             return false;
         }
-        return buyShare(quotation, type, amount,orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
+        return buyShare(quotation, type, amount, orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
     }
 
     /**
-     *
      * Used to buy a share using order info except the amount (for the fixed amount shares on the quotationShareMenu GUI)
      */
-    public boolean buyShare(Quotation quotation,ShareType type,double amount){
-        if(!hasOrderInfo(quotation.getId())){
-            return  buyShare(quotation,type,amount,1,Double.POSITIVE_INFINITY,0);
-        }
-        OrderInfo orderInfo=getOrderInfo(quotation.getId());
-        return buyShare(quotation, type, amount,orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
+    public boolean buyShare(Quotation quotation, ShareType type, double amount) {
+        if (!hasOrderInfo(quotation.getId()))
+            return buyShare(quotation, type, amount, 1, Double.POSITIVE_INFINITY, 0);
+
+        OrderInfo orderInfo = getOrderInfo(quotation.getId());
+        return buyShare(quotation, type, amount, orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
     }
 
     /**
@@ -251,11 +248,12 @@ public class PlayerData {
      * @param amount    Amount of shares bought
      * @return If the share was successfully bought or not
      */
-    public boolean buyShare(Quotation quotation, ShareType type,double amount,int leverage, double maxPrice, double minPrice) {
+    public boolean buyShare(Quotation quotation, ShareType type, double amount, int leverage, double maxPrice, double minPrice) {
         double price = quotation.getPrice() * amount;
 
-        //If it exchanges money
+        // If it exchanges money
         if (quotation.isVirtual()) {
+
             // Check for balance
             double bal = Stonks.plugin.economy.getBalance(player);
             if (bal < price) {
@@ -275,19 +273,21 @@ public class PlayerData {
             giveShare(share);
             Stonks.plugin.economy.withdrawPlayer(player, price);
         } else {
-            //We make the price an int cause we can't withdraw half items (makes the player lose a bit of money
+
+            // We make the price an int cause we can't withdraw half items (makes the player lose a bit of money
             price = Math.ceil(price);
 
             int bal = 0;
-            //We check the amount of the item the player has in his inventory (hte material is defined by custom model data and material
-            for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData()?itemStack.getItemMeta().getCustomModelData():0).equals(quotation.getExchangeType()))
+            // We check the amount of the item the player has in his inventory (the material is defined by custom model data and material
+            for (ItemStack itemStack : player.getInventory().getContents())
+                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(quotation.getExchangeType()))
                     bal += itemStack.getAmount();
-            }
+
             if (bal < price) {
                 Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", Stonks.plugin.configManager.stockPriceFormat.format(price - bal)).send(player);
                 return false;
             }
+
             // Check for Bukkit event
             Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, minPrice, maxPrice);
 
@@ -296,20 +296,20 @@ public class PlayerData {
             if (called.isCancelled())
                 return false;
 
-            //We give the player the share
+            // We give the player the share
             giveShare(share);
-            //We withdraw the amount of shares he bought
+
+            // We withdraw the amount of shares he bought
             for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData()?itemStack.getItemMeta().getCustomModelData():0).equals(quotation.getExchangeType())) {
+                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(quotation.getExchangeType())) {
                     double withdraw = Math.min(itemStack.getAmount(), price);
                     itemStack.setAmount(itemStack.getAmount() - (int) withdraw);
                     price -= withdraw;
                 }
-
             }
-
         }
 
+        quotation.getHandler().whenBought(amount);
 
         // Send player message
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(

@@ -2,7 +2,6 @@ package fr.lezoo.stonks.display.sign;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.RealStockQuotation;
 import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.util.Utils;
@@ -94,6 +93,6 @@ public class DisplaySign {
                 .replace("{hour-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.HOUR)))
                 .replace("{day-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.DAY)))
                 .replace("{week-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.WEEK)))
-                .replace("{quotation-type}", quotation instanceof RealStockQuotation ? "real stock" : "virtual");
+                .replace("{quotation-type}", quotation instanceof RealQuotation ? "real stock" : "virtual");
     }
 }
