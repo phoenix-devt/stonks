@@ -70,7 +70,7 @@ items:
     item: RED_CONCRETE
     lore:
       - ''
-      - '&Short {amount} share with leverage {leverage}'
+      - '&7Short {amount} share with leverage {leverage}'
       - '&7Min price is {min-price}'
       - '&7Max-price is {max-price}'
       - '&7Price: &f${price}'
