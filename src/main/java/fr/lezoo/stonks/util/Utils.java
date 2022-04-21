@@ -40,6 +40,7 @@ public class Utils {
      * @return The direction to follow to place the item frames
      * on a quotation board
      */
+    @Deprecated
     public static Vector getItemFrameDirection(BlockFace blockFace) {
         switch (blockFace) {
             case NORTH:
