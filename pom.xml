@@ -54,22 +54,22 @@
 
     <repositories>
 
-        <!-- Repository used to fetch all Spigot API builds
+        <!-- Repository used to fetch all Spigot API builds -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>-->
+        </repository>
 
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
 
-        <!-- Allows to use any Github repo as dependency
+        <!-- Allows to use any Github repo as dependency -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
-        </repository>-->
+        </repository>
 
         <!-- Public repo for NMS spigot builds
         <repository>
@@ -93,9 +93,8 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.17-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/spigot-1.17.1.jar</systemPath>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -105,20 +104,20 @@
             <scope>provided</scope>
         </dependency>
 
-
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
-            <artifactId>Vault</artifactId>
-            <version>master-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/Vault.jar</systemPath>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
