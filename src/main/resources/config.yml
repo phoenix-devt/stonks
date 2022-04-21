@@ -11,7 +11,7 @@ update-notify: true
 stock-api:
   enabled: true
   used: 'finnhub'
-  api-key: ''
+  key: ''
 
 # How stock prices display in item lores
 # Check out 'DecimalFormat java' online for more info
