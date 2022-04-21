@@ -103,7 +103,6 @@ public class QuotationManager implements FileManager {
 
     public void register(Quotation quotation) {
         Validate.isTrue(!mapped.containsKey(quotation.getId()), "There is already a quotation with ID " + quotation.getId() + "'");
-        Stonks.plugin.getLogger().log(Level.WARNING, mapped.containsKey(quotation.getId()) + "");
         mapped.put(quotation.getId(), quotation);
     }
 
