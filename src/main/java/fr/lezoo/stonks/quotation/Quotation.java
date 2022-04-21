@@ -86,7 +86,7 @@ public class Quotation {
         // If it doesn't have a field dividends we use the default dividends given in the config.yml
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : new Dividends(this);
 
-        this.handler = config.getString("type").equalsIgnoreCase("real") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
+        this.handler = config.getBoolean("real-stock") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
 
         Material material = config.contains("exchange-type.material") ?
                 Material.valueOf(config.getString("exchange-type.material").toUpperCase().replace("-", "_").replace(" ", "_")) : null;
@@ -288,18 +288,19 @@ public class Quotation {
 
         // If the quotation is empty we destroy it to not overload memory and avoid errors
         if (quotationData.get(TimeScale.HOUR) == null || quotationData.get(TimeScale.HOUR).size() == 0) {
-            config.set(id + ".name", null);
+            config.set(id, null);
             return;
         }
 
         config.set(id + ".name", name);
-        handler.saveInFile(config);
+        handler.saveInFile(config.getConfigurationSection(id));
+        config.set(id + ".real-stock", handler instanceof RealStockHandler);
 
         //If the quotation has dividends we save it
         if (hasDividends()) {
-            config.set("dividends.formula", dividends.getFormula());
-            config.set("dividends.period", dividends.getPeriod());
-            config.set("dividends.last", dividends.getLastApplication());
+            config.set(id + ".dividends.formula", dividends.getFormula());
+            config.set(id + ".dividends.period", dividends.getPeriod());
+            config.set(id + ".dividends.last", dividends.getLastApplication());
         }
 
         config.set(id + ".exchange-type.material", exchangeType == null ? null : exchangeType.getMaterial().name());

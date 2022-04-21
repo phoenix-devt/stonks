@@ -144,9 +144,6 @@ public class ConfigManager {
         // Reload real stock API
         if (Stonks.plugin.getConfig().getBoolean("stock-api.enabled"))
             Stonks.plugin.stockAPI = StockAPI.fromConfig(Stonks.plugin.getConfig().getConfigurationSection("stock-api"));
-
-        // Reload quotations
-        Stonks.plugin.quotationManager.reload();
     }
 
     /**
