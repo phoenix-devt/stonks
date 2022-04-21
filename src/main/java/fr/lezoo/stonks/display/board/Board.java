@@ -3,7 +3,6 @@ package fr.lezoo.stonks.display.board;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.listener.temp.DropItemListener;
-import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
 import fr.lezoo.stonks.listener.temp.TemporaryListener;
 import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.quotation.Quotation;
@@ -28,7 +27,6 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 

@@ -1,9 +1,7 @@
 package fr.lezoo.stonks.command.nodes.display.board;
 
-import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.command.objects.CommandTreeNode;
-import fr.lezoo.stonks.listener.temp.RemoveBoardListener;
-import org.bukkit.Bukkit;
+import fr.lezoo.stonks.display.board.BoardRaycast;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,12 +19,15 @@ public class RemoveTreeNode extends CommandTreeNode {
         }
 
         Player player = (Player) sender;
-        player.sendMessage(ChatColor.YELLOW + "You have 30 seconds to break one of the item frames of a board.");
-        player.sendMessage(ChatColor.YELLOW + "This will have the effect of unregistering the entire board.");
-        RemoveBoardListener removeBoardListener = new RemoveBoardListener(player);
 
-        // After 30s the listener is unregistered with HandlerList.unregisterAll(listener)
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Stonks.plugin, () -> removeBoardListener.close(), 20 * 30);
-        return null;
+        BoardRaycast cast = new BoardRaycast(player);
+        if (cast == null) {
+            player.sendMessage(ChatColor.RED + "You are not looking at any display board");
+            return CommandResult.FAILURE;
+        }
+
+        cast.getHit().destroy();
+        player.sendMessage(ChatColor.RED + "Successfully destroyed display board of quotation '" + cast.getHit().getQuotation().getId() + "'");
+        return CommandResult.SUCCESS;
     }
 }
