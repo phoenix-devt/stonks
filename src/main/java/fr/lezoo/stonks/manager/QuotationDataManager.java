@@ -4,6 +4,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.quotation.handler.RealStockHandler;
 import fr.lezoo.stonks.util.ConfigFile;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -59,7 +60,7 @@ public class QuotationDataManager {
         else {
 
 
-            if (quotation instanceof RealQuotation) {
+            if (quotation.getHandler() instanceof RealStockHandler) {
 
                 Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
                     try {

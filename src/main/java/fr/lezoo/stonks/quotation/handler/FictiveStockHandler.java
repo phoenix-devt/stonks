@@ -16,6 +16,10 @@ public class FictiveStockHandler implements StockHandler {
 
     private double previousDemand, currentDemand;
 
+    public FictiveStockHandler(Quotation quotation) {
+        this.quotation = quotation;
+    }
+
     public FictiveStockHandler(Quotation quotation, ConfigurationSection config) {
         this.quotation = quotation;
 

@@ -6,6 +6,7 @@ import fr.lezoo.stonks.command.objects.parameter.NumericalParameter;
 import fr.lezoo.stonks.command.objects.parameter.SimpleParameter;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
+import fr.lezoo.stonks.quotation.handler.FictiveStockHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -43,7 +44,7 @@ public class CreateTreeNode extends CommandTreeNode {
             return CommandResult.FAILURE;
         }
 
-        Stonks.plugin.quotationManager.register(new Quotation(args[2], args[3], null, null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
+        Stonks.plugin.quotationManager.register(new Quotation(args[2], args[3], FictiveStockHandler::new, null, null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
         return CommandResult.SUCCESS;
     }
 

@@ -6,6 +6,7 @@ import fr.lezoo.stonks.display.map.QuotationMapRenderer;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.quotation.handler.RealStockHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
         //We create a mpa view
         MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
         mapView.getRenderers().clear();
-        mapView.addRenderer(new QuotationMapRenderer(player, item,quotation, time));
+        mapView.addRenderer(new QuotationMapRenderer(player, item, quotation, time));
         mapView.setUnlimitedTracking(false);
         mapView.setTrackingPosition(false);
         meta.setMapView(mapView);
@@ -55,7 +56,7 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
         holders.register("highest-price", format.format(quotation.getHighest(timeDisplay)));
         holders.register("evolution", quotation.getEvolution(timeDisplay));
         holders.register("time-scale", timeDisplay.toString().toLowerCase());
-        holders.register("quotation-type", quotation instanceof RealQuotation ?"real-stock":"virtual");
+        holders.register("quotation-type", quotation.getHandler() instanceof RealStockHandler ? "Real Stock" : "Virtual");
         return holders;
 
     }

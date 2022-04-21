@@ -11,7 +11,6 @@ import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
