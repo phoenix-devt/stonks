@@ -52,7 +52,7 @@ public class CreateTreeNode extends CommandTreeNode {
 
 
         //Finds the block the player is looking at.
-        Block block = player.getTargetBlock(Arrays.stream(Material.values()).collect(Collectors.toSet()), 10);
+        Block block = player.getTargetBlock(null,10);
         if (block == null || block.getType().equals(Material.AIR)) {
             player.sendMessage(ChatColor.RED + "You're not pointing any block!");
             return CommandResult.FAILURE;

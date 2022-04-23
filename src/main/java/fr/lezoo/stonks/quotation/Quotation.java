@@ -300,7 +300,7 @@ public class Quotation {
         }
 
         config.set(id + ".name", name);
-        handler.saveInFile(config);
+        handler.saveInFile(config.getConfigurationSection(id));
 
         //If the quotation has dividends we save it
         if (hasDividends()) {
