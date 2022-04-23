@@ -6,12 +6,18 @@ import fr.lezoo.stonks.command.objects.parameter.NumericalParameter;
 import fr.lezoo.stonks.command.objects.parameter.Parameter;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class CreateTreeNode extends CommandTreeNode {
     public CreateTreeNode(CommandTreeNode parent) {
@@ -39,17 +45,30 @@ public class CreateTreeNode extends CommandTreeNode {
             return CommandResult.FAILURE;
         }
 
+
         // Find the player's direction using max value of scalar product
         Player player = (Player) sender;
-        final Vector direction = player.getEyeLocation().getDirection();
+        final Vector playerDirection = player.getEyeLocation().getDirection();
+
+
+        //Finds the block the player is looking at.
+        Block block = player.getTargetBlock(Arrays.stream(Material.values()).collect(Collectors.toSet()), 10);
+        if (block == null || block.getType().equals(Material.AIR)) {
+            player.sendMessage(ChatColor.RED + "You're not pointing any block!");
+            return CommandResult.FAILURE;
+        }
+
 
         BlockFace face = BlockFace.NORTH;
-        double val = direction.dot(face.getDirection());
+        double val = playerDirection.dot(face.getDirection());
         for (BlockFace checked : new BlockFace[]{BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST})
-            if (direction.dot(checked.getDirection()) > val) {
-                val = direction.dot(checked.getDirection());
+            if (playerDirection.dot(checked.getDirection()) > val) {
+                val = playerDirection.dot(checked.getDirection());
                 face = checked;
             }
+        //We rotate by pi/2 to have the the board face the player
+        face= Utils.rotateAroundY(face);
+
 
         TimeScale time = null;
         try {
@@ -76,9 +95,9 @@ public class CreateTreeNode extends CommandTreeNode {
         }
 
         // Work with integers instead to simplify calculations
-        Location location = new Location(player.getWorld(),Math.round(player.getLocation().getX()), Math.round(player.getLocation().getY()), Math.round(player.getLocation().getZ()));
+        Location location = new Location(player.getWorld(), Math.round(player.getLocation().getX()), Math.round(player.getLocation().getY()), Math.round(player.getLocation().getZ()));
         Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
-        quotation.createQuotationBoard(false, location.add(face.getDirection().multiply(2)), face, time, width, height);
+        quotation.createQuotationBoard(false, block.getType(), block.getLocation(), face, time, width, height);
         return CommandResult.SUCCESS;
     }
 }

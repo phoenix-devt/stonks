@@ -169,7 +169,7 @@ public class Quotation {
      * Creates a 5x5 map of the Quotation to the player
      * gives the player all the maps in his inventory
      */
-    public Board createQuotationBoard(boolean hasBeenCreated, Location initiallocation, BlockFace
+    public Board createQuotationBoard(boolean hasBeenCreated,Material material, Location initiallocation, BlockFace
             blockFace, TimeScale time, int BOARD_WIDTH, int BOARD_HEIGHT) {
 
 
@@ -186,10 +186,10 @@ public class Quotation {
         double z = blockFace.getDirection().getZ() * 0.5;
         // We want the block placed behind the location if we are looking at it
         if (x == 0) {
-            x = -Utils.getItemFrameDirection(blockFace).getX() * 0.5;
+            x = -Utils.rotateAroundY(blockFace).getX() * 0.5;
         }
         if (z == 0) {
-            z = -Utils.getItemFrameDirection(blockFace).getZ() * 0.5;
+            z = -Utils.rotateAroundY(blockFace).getZ() * 0.5;
         }
 
 
@@ -203,7 +203,7 @@ public class Quotation {
         Vector horizontalLineReturn = horizontalBuildDirection.clone();
         horizontalLineReturn.multiply(-BOARD_WIDTH);
 
-        Vector itemFrameDirection = Utils.getItemFrameDirection(blockFace);
+        Vector itemFrameDirection = Utils.rotateAroundY(blockFace);
 
         // We get the board corresponding to the one we are creating or updating
         Board board = !hasBeenCreated ? new Board(this, BOARD_HEIGHT, BOARD_WIDTH, initiallocation, time, blockFace)
@@ -234,7 +234,7 @@ public class Quotation {
             for (int j = 0; j < BOARD_WIDTH; j++) {
 
                 if (!hasBeenCreated)
-                    location.getBlock().setType(Material.DARK_OAK_WOOD);
+                    location.getBlock().setType(material);
 
                 // We check if there is a block to build the frames on
                 if (!location.getBlock().isPassable()) {
