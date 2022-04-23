@@ -58,6 +58,9 @@ public class BoardManager implements FileManager {
     }
 
     public void refreshBoards() {
+        //We refresh the boardMap
+        Stonks.plugin.boardMapManager.refresh();
+        //then we refresh the boards (put back some maps if some were destroyed
         //We use a deep copy to avoid concurrentModification exception
         HashMap<UUID, Board> copy = new HashMap<>();
         copy.putAll(boards);

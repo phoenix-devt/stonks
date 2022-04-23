@@ -37,6 +37,8 @@ public class Stonks extends JavaPlugin {
     public final QuotationManager quotationManager = new QuotationManager();
     public final BoardManager boardManager = new BoardManager();
     public final QuotationDataManager quotationDataManager = new QuotationDataManager();
+    public final BoardMapManager boardMapManager = new BoardMapManager();
+
 
     @NotNull
     public PlaceholderParser placeholderParser = new DefaultPlaceholderParser();
@@ -92,6 +94,7 @@ public class Stonks extends JavaPlugin {
         quotationManager.load();
         shareManager.load();
         boardManager.load();
+        boardMapManager.load();
         signManager.load();
         playerManager.load();
 
@@ -168,7 +171,7 @@ public class Stonks extends JavaPlugin {
 
     /**
      * @return If the stock market is closed and no shares
-     *         can be bought or closed
+     * can be bought or closed
      */
     public boolean isClosed() {
 

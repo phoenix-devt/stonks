@@ -66,6 +66,12 @@ public class CreateTreeNode extends CommandTreeNode {
                 val = playerDirection.dot(checked.getDirection());
                 face = checked;
             }
+        //We check if the block faced can have an itemFrame placed on it.(e.g if the block close to it is passable
+        if(!block.getLocation().add(face.getDirection().multiply(-1)).getBlock().isPassable()) {
+            player.sendMessage(ChatColor.RED+"The block on which you want to place the board is not valid");
+            return CommandResult.FAILURE;
+        }
+
         //We rotate by pi/2 to have the the board face the player
         face= Utils.rotateAroundY(face);
 

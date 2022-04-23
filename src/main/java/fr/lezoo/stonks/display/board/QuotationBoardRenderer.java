@@ -1,5 +1,7 @@
 package fr.lezoo.stonks.display.board;
 
+import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.manager.BoardMapManager;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapPalette;
@@ -10,20 +12,24 @@ import java.awt.image.BufferedImage;
 
 public class QuotationBoardRenderer extends MapRenderer {
 
-    private BufferedImage image;
-    private boolean done=false;
-    public QuotationBoardRenderer(BufferedImage image) {
-        //we resize image to take less RAM
-        this.image = MapPalette.resizeImage(image);
+    private final BoardMapInfo mapInfo;
+    private int counter = 0;
+
+    public QuotationBoardRenderer(BoardMapInfo mapInfo) {
+        this.mapInfo = mapInfo;
     }
 
     @Override
-    public void render(MapView mapView, MapCanvas mapCanvas, Player player){
+    public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
+        counter++;
         //We render the map only if it's hasn't been done
-        if(done)
+        if (counter < Stonks.plugin.configManager.boardRefreshTime * 20)
             return;
-        mapCanvas.drawImage(0,0,image);
-        done=true;
+
+
+        BufferedImage image = MapPalette.resizeImage(Stonks.plugin.boardMapManager.getMapImage(mapInfo));
+        mapCanvas.drawImage(0, 0, image);
+        counter = 0;
     }
 
 

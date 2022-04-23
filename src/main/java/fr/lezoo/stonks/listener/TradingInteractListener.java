@@ -44,7 +44,7 @@ public class TradingInteractListener implements Listener {
         for (Board board : Stonks.plugin.boardManager.getBoards()) {
             //We get the perpendicular straight line
             Location boardLocation = board.getLocation().clone();
-            Vector perpendicular = Utils.getItemFrameDirection(board.getDirection());
+            Vector perpendicular = Utils.rotateAroundY(board.getDirection()).getDirection();
             double scalar = (boardLocation.clone().subtract(player.getLocation()).toVector().dot(perpendicular));
             //if the scalar product is positive we are behind the block and if it is too big we are too far
             if (scalar >= 0 || scalar <= -Stonks.plugin.configManager.maxInteractionDistance)
