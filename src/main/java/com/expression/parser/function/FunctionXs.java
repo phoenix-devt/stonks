@@ -86,7 +86,7 @@ public class FunctionXs {
 				hasNumber = true;
 				number += character;
 				if (i == (f.length() - 1)) {
-					value = new Double(number).doubleValue();
+					value = Double.parseDouble(number);
 					number = "";
 					hasNumber = false;
 				}
@@ -94,7 +94,7 @@ public class FunctionXs {
 			} else if (character == '+') {
 
 				if (hasNumber) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = f.substring(i + 1, f.length());
 					value = numb + eval(new_f, values, variables);
 					i += new_f.length();
@@ -116,7 +116,7 @@ public class FunctionXs {
 			} else if (character == '*') {
 
 				if (hasNumber) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextFunction(f.substring(i + 1, f.length()));
 					value = numb * eval(new_f, values, variables);
 					i += new_f.length();
@@ -137,7 +137,7 @@ public class FunctionXs {
 			} else if (character == '-') {
 
 				if (hasNumber) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextMinusFunction(f.substring(i + 1, f.length()));
 					value = numb - eval(new_f, values, variables);
 					i += new_f.length();
@@ -159,7 +159,7 @@ public class FunctionXs {
 			} else if (character == '/') {
 
 				if (hasNumber) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextFunction(f.substring(i + 1, f.length()));
 					value = numb / eval(new_f, values, variables);
 					i += new_f.length();
@@ -181,7 +181,7 @@ public class FunctionXs {
 			} else if (character == '^') {
 
 				if (hasNumber) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextFunction(f.substring(i + 1, f.length()));
 					value = StrictMath.pow(numb.doubleValue(), eval(new_f, values, variables));
 					i += new_f.length();
