@@ -86,7 +86,7 @@ public class CreateTreeNode extends CommandTreeNode {
 
         // Work with integers instead to simplify calculations
         Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
-        new Board(quotation, width, height, block.getLocation(), time, face);
+        Stonks.plugin.boardManager.register(new Board(quotation, width, height, block.getLocation(), time, face));
         return CommandResult.SUCCESS;
     }
 }

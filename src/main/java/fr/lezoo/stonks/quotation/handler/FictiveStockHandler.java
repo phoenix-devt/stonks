@@ -4,7 +4,6 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import fr.lezoo.stonks.quotation.TimeScale;
-import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class FictiveStockHandler implements StockHandler {
 
     @Override
     public void whenBought(double stocksBought) {
-        throw new NotImplementedException();
+        currentDemand += stocksBought;
     }
 
     @Override
@@ -40,6 +39,7 @@ public class FictiveStockHandler implements StockHandler {
         config.set("current-demand", currentDemand);
     }
 
+    // TODO fix formula + current/previous demand
     @Override
     public void refresh() {
 
@@ -73,9 +73,5 @@ public class FictiveStockHandler implements StockHandler {
                 quotation.setData(time, workingData);
             }
         }
-    }
-
-    public void addDemand(double stockBought) {
-        currentDemand += stockBought;
     }
 }

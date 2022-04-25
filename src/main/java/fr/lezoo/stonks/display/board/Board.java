@@ -61,7 +61,6 @@ public class Board {
         this.pointArray = new BoardPoint[width][height];
 
         initializeBoard(false);
-        Stonks.plugin.boardManager.register(this);
     }
 
     public Board(ConfigurationSection config) {
@@ -102,9 +101,15 @@ public class Board {
             if (!boardId.equals(uuid))
                 continue;
 
+            // Cache reference to the item frame
             int x = checked.getPersistentDataContainer().get(BOARD_X, PersistentDataType.INTEGER);
             int y = checked.getPersistentDataContainer().get(BOARD_Y, PersistentDataType.INTEGER);
-            pointArray[x][y].itemFrame = checked;
+            BoardPoint point = pointArray[x][y];
+            point.itemFrame = checked;
+
+            // Update item in frame
+            checked.setItem(null);
+            point.fillItemFrame();
         }
     }
 
