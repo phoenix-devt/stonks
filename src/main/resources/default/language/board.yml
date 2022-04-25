@@ -1,8 +1,8 @@
 description:
     time-scale: 'Time Scale: {time-scale}'
-    quotation-name: 'name: {name}'
+    quotation-name: 'Name: {quotation-name}'
     quotation-type:  'Type: {quotation-type}'
-    exchange-type: 'ExchangeType: {exchange-type}'
+    exchange-type: 'Exchange Type: {exchange-type}'
     current-price: 'Current price: {current-price}'
     lowest-price:  'Lowest Price: {lowest-price}'
     highest-price:  'Highest Price: {highest-price}'

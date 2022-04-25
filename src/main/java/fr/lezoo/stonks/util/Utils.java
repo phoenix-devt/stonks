@@ -4,7 +4,6 @@ import fr.lezoo.stonks.Stonks;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockFace;
-import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
 
@@ -38,10 +37,9 @@ public class Utils {
 
     /**
      * @return The direction to follow to place the item frames
-     * on a quotation board
+     *         on a quotation board
      */
-    @Deprecated
-    public static Vector getItemFrameDirection(BlockFace blockFace) {
+    public static BlockFace rotateAroundY(BlockFace blockFace) {
         switch (blockFace) {
             case NORTH:
                 return BlockFace.EAST;

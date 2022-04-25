@@ -37,7 +37,6 @@ public class RealStockHandler implements StockHandler {
 
             try {
                 double price = Stonks.plugin.stockAPI.getPrice(quotation.getId());
-                int datanumber = Stonks.plugin.configManager.quotationDataNumber;
                 //We update all the data List
                 for (TimeScale time : TimeScale.values()) {
                     //We get the list corresponding to the time
@@ -45,11 +44,11 @@ public class RealStockHandler implements StockHandler {
                     Validate.notNull(quotation.getData(time), "The data for " + quotation.getId() + " for " + time.toString() + " is null");
                     workingData.addAll(quotation.getData(time));
                     //If the the latest data of workingData is too old we add another one
-                    if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / datanumber) {
+                    if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / Quotation.BOARD_DATA_NUMBER) {
 
                         workingData.add(new QuotationInfo(System.currentTimeMillis(), price));
                         //If the list contains too much data we remove the older ones
-                        if (workingData.size() > datanumber)
+                        if (workingData.size() > Quotation.BOARD_DATA_NUMBER)
                             workingData.remove(0);
                         //We save the changes we made in the attribute
                         quotation.setData(time, workingData);

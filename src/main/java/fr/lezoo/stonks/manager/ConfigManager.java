@@ -8,7 +8,6 @@ import fr.lezoo.stonks.gui.objects.EditableInventory;
 import fr.lezoo.stonks.item.QuotationMap;
 import fr.lezoo.stonks.item.SharePaper;
 import fr.lezoo.stonks.item.TradingBook;
-import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.quotation.api.StockAPI;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.ConfigSchedule;
@@ -49,11 +48,10 @@ public class ConfigManager {
     public List<String> displaySignFormat;
     public int dividendsRedeemHour;
 
-    public long boardRefreshTime, quotationRefreshTime, shareRefreshTime, signRefreshTime, mapRefreshTime;
+    public long boardRefreshTime, shareRefreshTime, signRefreshTime, mapRefreshTime;
     public double offerDemandImpact, volatility, defaultTaxRate;
-    public int quotationDataNumber, maxInteractionDistance;
+    public int maxInteractionDistance, defaultDividendPeriod;
     public String defaultDividendFormula;
-    public int defaultDividendPeriod;
 
     public void reload() {
 
@@ -72,12 +70,10 @@ public class ConfigManager {
         volatility = Stonks.plugin.getConfig().getDouble("volatility");
         displaySignFormat = Stonks.plugin.getConfig().getStringList("custom-sign-format");
         dividendsRedeemHour = Stonks.plugin.getConfig().getInt("dividends-redeem-hour");
-        quotationDataNumber = Stonks.plugin.getConfig().getInt("quotation-data-number");
-        quotationRefreshTime = TimeScale.HOUR.getTime() / quotationDataNumber;
         mapRefreshTime = Stonks.plugin.getConfig().getLong("map-refresh-time");
         shareRefreshTime = Stonks.plugin.getConfig().getLong("share-refresh-time");
         signRefreshTime = Stonks.plugin.getConfig().getLong("sign-refresh-time");
-        maxInteractionDistance = Stonks.plugin.getConfig().getInt("maxinteractiondistance");
+        maxInteractionDistance = Stonks.plugin.getConfig().getInt("max-interaction-distance");
         defaultTaxRate = Stonks.plugin.getConfig().getDouble("default-tax-rate");
         defaultDividendFormula = Stonks.plugin.getConfig().getString("default-dividends.formula");
         defaultDividendPeriod = Stonks.plugin.getConfig().getInt("default-dividends.period");

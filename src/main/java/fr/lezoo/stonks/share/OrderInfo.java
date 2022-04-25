@@ -13,7 +13,6 @@ public class OrderInfo {
         maxPrice = Double.POSITIVE_INFINITY;
     }
 
-
     public boolean hasAmount() {
         return amount != 0;
     }

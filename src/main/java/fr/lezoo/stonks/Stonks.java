@@ -36,9 +36,6 @@ public class Stonks extends JavaPlugin {
     public final PlayerDataManager playerManager = new PlayerDataManager();
     public final QuotationManager quotationManager = new QuotationManager();
     public final BoardManager boardManager = new BoardManager();
-    public final QuotationDataManager quotationDataManager = new QuotationDataManager();
-    public final BoardMapManager boardMapManager = new BoardMapManager();
-
 
     @NotNull
     public PlaceholderParser placeholderParser = new DefaultPlaceholderParser();
@@ -94,10 +91,8 @@ public class Stonks extends JavaPlugin {
         quotationManager.load();
         shareManager.load();
         boardManager.load();
-        boardMapManager.load();
         signManager.load();
         playerManager.load();
-
 
         // PlaceholderAPI compatibility
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -120,7 +115,7 @@ public class Stonks extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new DisplaySignListener(), this);
         Bukkit.getPluginManager().registerEvents(new TradingInteractListener(), this);
 
-        //Refresh the signs
+        // Refresh the signs
         new BukkitRunnable() {
 
             @Override
@@ -129,7 +124,6 @@ public class Stonks extends JavaPlugin {
                     signManager.refreshSigns();
             }
         }.runTaskTimer(this, 0L, configManager.signRefreshTime);
-
 
         // Refresh boards
         new BukkitRunnable() {
@@ -141,15 +135,7 @@ public class Stonks extends JavaPlugin {
             }
         }.runTaskTimer(this, 0, 20L * this.configManager.boardRefreshTime);
 
-        // Refresh quotation prices
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                quotationManager.refreshQuotations();
-            }
-        }.runTaskTimer(this, 0, 20L * configManager.quotationRefreshTime / 1000);
-
-        //We refresh the shares
+        // Refresh the shares
         new BukkitRunnable() {
 
             @Override
@@ -171,7 +157,7 @@ public class Stonks extends JavaPlugin {
 
     /**
      * @return If the stock market is closed and no shares
-     * can be bought or closed
+     *         can be bought or closed
      */
     public boolean isClosed() {
 

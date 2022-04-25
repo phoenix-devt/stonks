@@ -16,6 +16,8 @@ public class FictiveStockHandler implements StockHandler {
 
     private double previousDemand, currentDemand;
 
+    private static final Random RANDOM = new Random();
+
     public FictiveStockHandler(Quotation quotation) {
         this.quotation = quotation;
     }
@@ -44,8 +46,7 @@ public class FictiveStockHandler implements StockHandler {
         if (quotation.getData(TimeScale.HOUR).isEmpty())
             return;
 
-        Random random = new Random();
-        double change = random.nextInt(2) == 0 ? -1 : 1;
+        double change = RANDOM.nextBoolean() ? -1 : 1;
         // The offset due to the offer and demand of the stock
         double offset = Stonks.plugin.configManager.offerDemandImpact * Math.atan(previousDemand) * 2 / Math.PI;
         double currentPrice = quotation.getPrice();
@@ -53,21 +54,20 @@ public class FictiveStockHandler implements StockHandler {
 
         // We multiply by sqrt(t) so that volatility doesn't depend on refreshTime
 
-        change = (change + offset) * Stonks.plugin.configManager.volatility * currentPrice / 20 * Math.sqrt((double) (Stonks.plugin.configManager.quotationRefreshTime) / 3600);
+        change = (change + offset) * Stonks.plugin.configManager.volatility * currentPrice / 20 * Math.sqrt(quotation.getRefreshPeriod());
 
         // The amount of data wanted for each timescale fo the quotation
-        int datanumber = Stonks.plugin.configManager.quotationDataNumber;
         // We update all the data List
         for (TimeScale time : TimeScale.values()) {
             // We get the list corresponding to the time
             List<QuotationInfo> workingData = new ArrayList<>();
             workingData.addAll(quotation.getData(time));
             // If the the latest data of workingData is too old we add another one
-            if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / datanumber) {
+            if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / Quotation.BOARD_DATA_NUMBER) {
 
                 workingData.add(new QuotationInfo(System.currentTimeMillis(), currentPrice + change));
                 // If the list contains too much data we remove the older ones
-                if (workingData.size() > datanumber)
+                if (workingData.size() > Quotation.BOARD_DATA_NUMBER)
                     workingData.remove(0);
                 // We save the changes we made in the attribute
                 quotation.setData(time, workingData);

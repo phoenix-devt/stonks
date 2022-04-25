@@ -1,6 +1,8 @@
 package fr.lezoo.stonks.quotation;
 
 public enum TimeScale {
+  //  MINUTE(1000L * 60L),
+  //  QUARTER_HOUR(1000L * 60L * 15L),
     HOUR(1000L * 60L * 60L),
     DAY(1000L * 24L * 60L * 60L),
     WEEK(1000L * 7L * 24L * 60L * 60L),

@@ -15,7 +15,6 @@ public class QuotationInfo {
         this.price = price;
     }
 
-
     public QuotationInfo(ConfigurationSection section) {
         this.timeStamp = section.getLong("timestamp");
         this.price = section.getDouble("price");

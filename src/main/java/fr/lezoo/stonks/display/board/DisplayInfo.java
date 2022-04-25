@@ -4,7 +4,7 @@ import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.TimeScale;
 
 /**
- * All the information needed to create a display
+ * All the information needed to create a display board
  */
 public class DisplayInfo {
     private final Quotation quotation;

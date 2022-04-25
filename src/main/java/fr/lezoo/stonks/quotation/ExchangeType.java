@@ -17,12 +17,12 @@ public class ExchangeType {
         this.modelData = modelData;
     }
 
-    public ExchangeType(Material material) {
-        this(material, 0);
-    }
-
     public Material getMaterial() {
         return material;
+    }
+
+    public boolean hasModelData() {
+        return modelData > 0;
     }
 
     public int getModelData() {

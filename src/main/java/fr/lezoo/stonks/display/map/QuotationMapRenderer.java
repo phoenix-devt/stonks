@@ -46,7 +46,7 @@ public class QuotationMapRenderer extends MapRenderer {
         quotationData = quotation.getData(time);
         this.time = time;
         // We take the min of the theoric DATA_NUMBER that we want and the real length size of quotationData to avoid IndexOutOfBounds
-        this.datataken = Math.min(quotationData.size(), Stonks.plugin.configManager.quotationDataNumber);
+        this.datataken = Math.min(quotationData.size(), Quotation.BOARD_DATA_NUMBER);
     }
 
     public BufferedImage getQuotationImage() {
@@ -57,7 +57,7 @@ public class QuotationMapRenderer extends MapRenderer {
         // If the quotation is Empty we print an error
         Validate.isTrue(quotationData.size() != 0, "The quotation : " + quotation.getId() + " has no values!!");
 
-        int data_taken = Math.min(Stonks.plugin.configManager.quotationDataNumber, quotationData.size());
+        int data_taken = Math.min(Quotation.BOARD_DATA_NUMBER, quotationData.size());
         int index = quotationData.size() - data_taken;
 
         // We look at the lowest val in the time we look backward to set the scale
@@ -81,7 +81,7 @@ public class QuotationMapRenderer extends MapRenderer {
         curve.moveTo(x, y);
         for (int i = 1; i < data_taken; i++) {
             // if data_taken < NUMBER_DATA,the graphics will be on the left of the screen mainly
-            x = 5 + i * 128 / 0.95 / Stonks.plugin.configManager.quotationDataNumber;
+            x = 5 + i * 128 / 0.95 / Quotation.BOARD_DATA_NUMBER;
             y = 0.95 * 128 - (0.9 * 128 * (quotationData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
             curve.lineTo(x, y);
         }

@@ -21,12 +21,12 @@ public class RemoveTreeNode extends CommandTreeNode {
         Player player = (Player) sender;
 
         BoardRaycast cast = new BoardRaycast(player);
-        if (cast == null) {
+        if (!cast.hasHit()) {
             player.sendMessage(ChatColor.RED + "You are not looking at any display board");
             return CommandResult.FAILURE;
         }
 
-        cast.getHit().destroy();
+        cast.getHit().remove();
         player.sendMessage(ChatColor.RED + "Successfully destroyed display board of quotation '" + cast.getHit().getQuotation().getId() + "'");
         return CommandResult.SUCCESS;
     }

@@ -15,7 +15,6 @@ import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryAction;
@@ -173,26 +172,31 @@ public class SpecificPortfolio extends EditableInventory {
                             "gain", Utils.formatGain(gain)).send(player);
 
                     // Virtual quotation
-                    if (share.getQuotation().isVirtual()) {
+                    if (share.getQuotation().isVirtual())
                         Stonks.plugin.economy.depositPlayer(player, earned);
-                        playerData.unregisterShare(share);
 
                         // Physical quotation
-                    } else {
+                    else {
                         ExchangeType exchangeType = share.getQuotation().getExchangeType();
                         int realGain = (int) Math.floor(earned);
                         ItemStack giveItem = new ItemStack(exchangeType.getMaterial());
-                        ItemMeta meta=giveItem.getItemMeta();
-                        meta.setCustomModelData(exchangeType.getModelData());
-                        giveItem.setItemMeta(meta);
+                        if (exchangeType.hasModelData()) {
+                            ItemMeta meta = giveItem.getItemMeta();
+                            meta.setCustomModelData(exchangeType.getModelData());
+                            giveItem.setItemMeta(meta);
+                        }
                         while (realGain >= 0) {
                             int withdraw = Math.min(realGain, 64);
-                            player.getInventory().addItem();
                             realGain -= withdraw;
-                            playerData.unregisterShare(share);
+
+                            // Give item
+                            ItemStack clone = giveItem.clone();
+                            clone.setAmount(withdraw);
+                            player.getInventory().addItem(clone);
                         }
                     }
 
+                    playerData.unregisterShare(share);
                     updateInventoryData();
                     open();
                 }
@@ -298,8 +302,8 @@ public class SpecificPortfolio extends EditableInventory {
             holders.register("name", inv.quotation.getName());
             holders.register("leverage", Utils.fourDigits.format(share.getOrderInfo().getLeverage()));
             holders.register("amount", format.format(share.getOrderInfo().getAmount()));
-            holders.register("min-price",share.getStringMinPrice());
-            holders.register("max-price",share.getStringMaxPrice());
+            holders.register("min-price", share.getStringMinPrice());
+            holders.register("max-price", share.getStringMaxPrice());
             holders.register("current-stock", format.format(inv.quotation.getPrice()));
             holders.register("initial-stock", format.format(share.getInitialPrice()));
 

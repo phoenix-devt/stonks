@@ -17,9 +17,8 @@ public class Parameter {
             (explorer, list) -> Bukkit.getOnlinePlayers().forEach(online -> list.add(online.getName())));
     public static final Parameter PLAYER_OPTIONAL = new Parameter("(player)",
             (explorer, list) -> Bukkit.getOnlinePlayers().forEach(online -> list.add(online.getName())));
-    public static final Parameter QUOTATION_ID = new Parameter("<quotationId>", (explorer, list) -> {
-        Stonks.plugin.quotationManager.getQuotations().forEach(quot -> list.add(quot.getId()));
-    });
+    public static final Parameter QUOTATION_ID = new Parameter("<quotationId>", (explorer, list) ->
+        Stonks.plugin.quotationManager.forEachQuotation(quot -> list.add(quot.getId())));
     public static final Parameter TIME_SCALE = new Parameter("<timeScale>", (explorer, list) -> {
         for (TimeScale display : TimeScale.values())
             list.add(display.name());

@@ -23,7 +23,7 @@ public class BoardRaycast {
         for (Board board : Stonks.plugin.boardManager.getBoards()) {
             // We get the perpendicular straight line
             Location boardLocation = board.getLocation().clone();
-            Vector perpendicular = Utils.getItemFrameDirection(board.getDirection());
+            Vector perpendicular = Utils.rotateAroundY(board.getBoardFace()).getDirection();
             double scalar = (boardLocation.clone().subtract(player.getLocation()).toVector().dot(perpendicular));
 
             // If the scalar product is positive we are behind the block and if it is too big we are too far
@@ -34,7 +34,7 @@ public class BoardRaycast {
                 double verticalOffset = (boardLocation.getY() + board.getHeight() - location.getY()) / board.getHeight();
 
                 // The same, we use a scalar product
-                double horizontalOffset = location.subtract(boardLocation).toVector().dot(board.getDirection().getDirection()) / board.getWidth();
+                double horizontalOffset = location.subtract(boardLocation).toVector().dot(board.getBoardFace().getDirection()) / board.getWidth();
 
                 // If we are really clicking on a board we check where it has been clicked and stop the method
                 if (horizontalOffset >= 0 && horizontalOffset <= 1 && verticalOffset >= 0 && verticalOffset <= 1) {

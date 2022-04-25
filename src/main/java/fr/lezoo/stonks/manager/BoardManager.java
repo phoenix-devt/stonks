@@ -3,17 +3,19 @@ package fr.lezoo.stonks.manager;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.Board;
 import fr.lezoo.stonks.util.ConfigFile;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class BoardManager implements FileManager {
     private final Map<UUID, Board> boards = new HashMap<>();
 
+    @Nullable
     public Board getBoard(UUID uuid) {
         return boards.get(uuid);
     }
@@ -22,29 +24,9 @@ public class BoardManager implements FileManager {
         boards.remove(uuid);
     }
 
-    public void removeBoard(Iterator<Board> it) {
-        it.remove();
+    public Collection<Board> getBoards() {
+        return boards.values();
     }
-
-    /**
-     * The location and direction of the board is a key for the boards that we can use
-     *
-     * @return Board at target location
-     */
-
-    public HashSet<Board> getBoards() {
-        return new HashSet(boards.values());
-    }
-
-
-    public Board getBoard(Location location, BlockFace direction) {
-        for (Board board : boards.values())
-            if (board.getLocation().equals(location) && board.getDirection().equals(direction))
-                return board;
-
-        return null;
-    }
-
 
     @Override
     public void load() {
@@ -58,15 +40,10 @@ public class BoardManager implements FileManager {
     }
 
     public void refreshBoards() {
-        //We refresh the boardMap
-        Stonks.plugin.boardMapManager.refresh();
-        //then we refresh the boards (put back some maps if some were destroyed
-        //We use a deep copy to avoid concurrentModification exception
-        HashMap<UUID, Board> copy = new HashMap<>();
-        copy.putAll(boards);
-        for (Board board : copy.values())
-            board.refreshBoard();
-
+        for (Board board : boards.values()) {
+            board.refreshImage();
+            board.checkItemFrames();
+        }
     }
 
     @Override

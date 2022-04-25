@@ -2,33 +2,17 @@ package fr.lezoo.stonks.quotation;
 
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.display.board.Board;
-import fr.lezoo.stonks.display.board.BoardMapInfo;
-import fr.lezoo.stonks.display.board.QuotationBoardRenderer;
 import fr.lezoo.stonks.quotation.handler.FictiveStockHandler;
 import fr.lezoo.stonks.quotation.handler.RealStockHandler;
 import fr.lezoo.stonks.quotation.handler.StockHandler;
 import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.map.MapView;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -59,11 +43,24 @@ public class Quotation {
     protected final Map<TimeScale, List<QuotationInfo>> quotationData = new HashMap<>();
 
     /**
+     * How frequently this quotation refreshes in seconds
+     */
+    private final long refreshPeriod;
+
+    /**
+     * Amount of points of historical stock data
+     * kept in cache on one specific time scale.
+     */
+    public static final int BOARD_DATA_NUMBER = 100;
+
+    private static final long DEFAULT_REFRESH_PERIOD = TimeScale.HOUR.getTime() / BOARD_DATA_NUMBER / 1000;
+
+    /**
      * Public constructor to create a new Quotation from scratch
      *
      * @param id                 Internal quotation id
      * @param name               Name of the stock
-     * @param dividends          Whether or not this quotations gives dividends to investers
+     * @param dividends          Whether or not this quotations gives dividends to investors
      * @param exchangeType       The material being exchanged, or null if the quotation is virtual
      * @param firstQuotationData The only QuotationInfo that exists
      */
@@ -75,6 +72,8 @@ public class Quotation {
         this.exchangeType = exchangeType;
         for (TimeScale disp : TimeScale.values())
             quotationData.put(disp, Arrays.asList(firstQuotationData));
+        this.refreshPeriod = DEFAULT_REFRESH_PERIOD;
+        Stonks.plugin.quotationManager.initializeQuotationData(this);
     }
 
     /**
@@ -86,6 +85,7 @@ public class Quotation {
 
         // If it doesn't have a field dividends we use the default dividends given in the config.yml
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : new Dividends(this);
+        this.refreshPeriod = config.getLong("refresh-period", DEFAULT_REFRESH_PERIOD);
 
         this.handler = config.getBoolean("real-stock") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
 
@@ -94,8 +94,8 @@ public class Quotation {
         int modelData = config.contains("exchange-type.model-data") ? config.getInt("exchange-type.model-data") : 0;
         Validate.isTrue(material != Material.AIR, "Cannot use AIR as exchange type");
         exchangeType = material == null ? null : new ExchangeType(material, modelData);
-        //We set the data of the quotation
-        Stonks.plugin.quotationDataManager.setQuotationData(this);
+        // Set the data of the quotation
+        Stonks.plugin.quotationManager.initializeQuotationData(this);
     }
 
     public String getId() {
@@ -134,6 +134,10 @@ public class Quotation {
         return handler;
     }
 
+    public long getRefreshPeriod() {
+        return refreshPeriod;
+    }
+
     /**
      * Updates the attributes of Quotation regarding on the time given
      *
@@ -166,131 +170,6 @@ public class Quotation {
         return Utils.truncate(100 * (latest - oldest) / oldest, 1);
     }
 
-    /**
-     * Creates a 5x5 map of the Quotation to the player
-     * gives the player all the maps in his inventory
-     */
-    public Board createQuotationBoard(boolean hasBeenCreated, Material material, Location initiallocation, BlockFace
-            blockFace, TimeScale time, int BOARD_WIDTH, int BOARD_HEIGHT) {
-
-
-        //If there is no blocks in the board it destroys itself
-        boolean isEmpty = true;
-
-
-        // We make sure to not change the location given in argument
-        Location location = initiallocation.clone();
-        // We create the wall to have the board with ItemFrames on it
-        //offset otherwise the location where the block is ambiguous
-        //We make sure the offset put the location at the top right corner of the board
-        double x = blockFace.getDirection().getX() * 0.5;
-        double z = blockFace.getDirection().getZ() * 0.5;
-        // We want the block placed behind the location if we are looking at it
-        if (x == 0) {
-            x = -Utils.rotateAroundY(blockFace).getDirection().getX() * 0.5;
-        }
-        if (z == 0) {
-            z = -Utils.rotateAroundY(blockFace).getDirection().getZ() * 0.5;
-        }
-
-
-        location.add(x, 0.5, z);
-
-        // We get the direction to build horizontally and vertically
-        Vector verticalBuildDirection = new Vector(0, 1, 0);
-        Vector horizontalBuildDirection = blockFace.getDirection();
-
-        // We need to clone to have deepmemory of it
-        Vector horizontalLineReturn = horizontalBuildDirection.clone();
-        horizontalLineReturn.multiply(-BOARD_WIDTH);
-
-        Vector itemFrameDirection = Utils.rotateAroundY(blockFace).getDirection();
-
-        // We get the board corresponding to the one we are creating or updating
-        Board board = !hasBeenCreated ? new Board(this, BOARD_HEIGHT, BOARD_WIDTH, initiallocation, time, blockFace)
-                : Stonks.plugin.boardManager.getBoard(initiallocation, blockFace);
-
-        //Because of offset bugs about where the block spawns etc relative to the location
-
-        //TODO : FIX LE BUG (Problème: offset quand on clique sur les boutons avec le trading book (parfois il y a un offset d'un bloc parfois pas ...bizarre)
-        //Idée : On store dans chaque itemframe la loc de celle ci et on regarde juste la position relative au sein de l'itemframe.
-
-
-        // we fix it by taking the loc in the middle and then getting the loc at the top left corner of it
-        Location saveLocation = location.clone();
-        saveLocation.setY(Math.ceil(saveLocation.getY()));
-        saveLocation.setX(itemFrameDirection.getX() == 1 ? Math.floor(saveLocation.getX()) : Math.ceil(saveLocation.getX()));
-        saveLocation.setZ(itemFrameDirection.getZ() == 1 ? Math.floor(saveLocation.getZ()) : Math.ceil(saveLocation.getZ()));
-        // If the board has never been created we register it
-        if (!hasBeenCreated)
-            Stonks.plugin.boardManager.register(board);
-
-
-        //get the img for the board
-        BufferedImage image = board.getImage();
-
-        for (int i = 0; i < BOARD_HEIGHT; i++) {
-            // i stands for the line of the board and j the column
-
-            for (int j = 0; j < BOARD_WIDTH; j++) {
-
-                //If it the first time we create the board and there is no block at the location we put one
-                if (!hasBeenCreated && !(location.getBlock().isPassable()))
-                    location.getBlock().setType(material);
-
-
-                // We check if there is a block to build the frames on
-                if (!location.getBlock().isPassable()) {
-                    isEmpty = false;
-                    location.add(itemFrameDirection);
-                    ItemFrame itemFrame = null;
-                    //The getEntities method will in all the case loop through all the entities of the world
-                    for (Entity entity : location.getWorld().getEntities()) {
-                        if (entity.getLocation().distance(location) <= 1 && entity instanceof ItemFrame)
-                            itemFrame = (ItemFrame) entity;
-
-
-                    }
-                    //If no item frames have been found we create one
-                    if (itemFrame == null)
-                        itemFrame = (ItemFrame) location.getWorld().spawnEntity(location, EntityType.ITEM_FRAME);
-                    //We register the uuid of the board in each itemFrame
-                    itemFrame.getPersistentDataContainer().set(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING, board.getUuid().toString());
-
-                    //If the itemFrame doesn't contains any map then we create the map for it
-                    if(!(itemFrame.getItem()!=null&&itemFrame.getItem().getType().equals(Material.MAP))) {
-                        // We create the map that will go in the itemframe
-                        ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
-                        MapMeta meta = (MapMeta) mapItem.getItemMeta();
-                        MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
-                        mapView.getRenderers().clear();
-
-                        // j=0 ->x=0 but i=0 ->i =BOARD_HEIGHT because of how graphics 2D works
-                        mapView.addRenderer(new QuotationBoardRenderer(new BoardMapInfo(board, j, BOARD_HEIGHT - i - 1)));
-
-                        mapView.setTrackingPosition(false);
-                        mapView.setUnlimitedTracking(false);
-                        meta.setMapView(mapView);
-                        mapItem.setItemMeta(meta);
-
-                        itemFrame.setItem(mapItem);
-                    }
-                    location.subtract(itemFrameDirection);
-
-                }
-
-                location.add(horizontalBuildDirection);
-            }
-
-            location.add(verticalBuildDirection);
-            location.add(horizontalLineReturn);
-        }
-        if (isEmpty)
-            board.destroy();
-
-        return board;
-    }
-
     public void save(FileConfiguration config) {
 
         // If the quotation is empty we destroy it to not overload memory and avoid errors
@@ -302,20 +181,24 @@ public class Quotation {
         config.set(id + ".name", name);
         handler.saveInFile(config.getConfigurationSection(id));
         config.set(id + ".real-stock", handler instanceof RealStockHandler);
+        config.set(id + ".refresh-period", refreshPeriod);
 
-        //If the quotation has dividends we save it
+        // If the quotation has dividends we save it
         if (hasDividends()) {
             config.set(id + ".dividends.formula", dividends.getFormula());
             config.set(id + ".dividends.period", dividends.getPeriod());
             config.set(id + ".dividends.last", dividends.getLastApplication());
         }
 
-        config.set(id + ".exchange-type.material", exchangeType == null ? null : exchangeType.getMaterial().name());
-        config.set(id + ".exchange-type.model-data", exchangeType == null ? 0 : exchangeType.getModelData());
+        // Save exchange type
+        if (isVirtual())
+            config.set(id + ".exchange-type", null);
+        else {
+            config.set(id + ".exchange-type.material", exchangeType.getMaterial().name());
+            config.set(id + ".exchange-type.model-data", exchangeType.getModelData());
+        }
 
-        //If t
-
-        Stonks.plugin.quotationDataManager.save(this);
+        Stonks.plugin.quotationManager.save(this);
 
     }
 

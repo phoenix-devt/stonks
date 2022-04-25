@@ -47,10 +47,4 @@ public class CreateTreeNode extends CommandTreeNode {
         Stonks.plugin.quotationManager.register(new Quotation(args[2], args[3], FictiveStockHandler::new, null, null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
         return CommandResult.SUCCESS;
     }
-
-
-
-
-
-
 }
