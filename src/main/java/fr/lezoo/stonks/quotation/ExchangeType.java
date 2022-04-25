@@ -1,6 +1,9 @@
 package fr.lezoo.stonks.quotation;
 
+import fr.lezoo.stonks.util.Utils;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
 
@@ -15,6 +18,12 @@ public class ExchangeType {
     public ExchangeType(Material material, int modelData) {
         this.material = material;
         this.modelData = modelData;
+    }
+
+    public ExchangeType(ConfigurationSection config) {
+        material = Material.valueOf(Utils.enumName(config.getString("material")));
+        Validate.isTrue(material != Material.AIR, "Cannot use AIR as exchange type");
+        modelData = config.getInt("model-data");
     }
 
     public Material getMaterial() {

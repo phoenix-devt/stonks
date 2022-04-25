@@ -8,8 +8,6 @@
 TODO
 - Systeme pour close et open la share a un peu ameliorer au niveau des messages
 - Ameliorer le rendu pour : Board image et dialog box
-- Ne pas close la share quand elle est transmise vers un paper
-- Enlever le son pour refresh les board
 
 A RAJOUTER / RENFORCER
 - Support MySQL pour les données (avec BungeeCord)
@@ -18,17 +16,14 @@ A RAJOUTER / RENFORCER
 - Quotation creation GUI
 
 PROBLEMES AVEC L'ANCIEN PLUGIN
-- Afficher les stocks sur DES PANNEAUX pour voir en temps réel !!
 - option de stocks max par personne
 - deux types d'actions : virtuelles, où avec des objets réels (itemStacks)
 - placeholder pour le top des portfolios
 https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-other-stocks-on
 
-
-
-
-
 OK
+- Enlever le son pour refresh les board
+- Afficher les stocks sur DES PANNEAUX pour voir en temps réel !!
 -Custom model data etc pour un stock mieux faire
 - option pour acheter automatiquement ou vendre auto en fonction de certaines conditions des stocks OK
 - TRANSFORMER UN STOCK EN UN OBJET CLIQUABLE que l'on peut redeem au NPC

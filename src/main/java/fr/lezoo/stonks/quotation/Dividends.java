@@ -22,7 +22,7 @@ public class Dividends {
      */
     private long lastApplication;
 
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
 
     /**
      * Default dividends
@@ -87,7 +87,7 @@ public class Dividends {
     }
 
     public double applyFormula(Share share) {
-        double random = 2 * this.random.nextDouble() - 1;
+        double random = 2 * this.RANDOM.nextDouble() - 1;
 
         String parsed = formula.replace("{amount}", String.valueOf(share.getOrderInfo().getAmount()))
                 .replace("{random}", String.valueOf(random))

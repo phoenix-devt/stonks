@@ -6,6 +6,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockFace;
 
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 public class Utils {
     public static DecimalFormat singleDigit = new DecimalFormat("0.#");
@@ -18,7 +19,7 @@ public class Utils {
      * @return String formatted for enum fields
      */
     public static String enumName(String str) {
-        return str == null ? "" : str.toUpperCase().replace(" ", "_").replace("-", "_");
+        return Objects.requireNonNull(str, "String cannot be null").toUpperCase().replace(" ", "_").replace("-", "_");
     }
 
     public static NamespacedKey namespacedKey(String str) {

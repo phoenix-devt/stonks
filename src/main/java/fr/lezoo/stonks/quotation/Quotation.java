@@ -6,8 +6,6 @@ import fr.lezoo.stonks.quotation.handler.FictiveStockHandler;
 import fr.lezoo.stonks.quotation.handler.RealStockHandler;
 import fr.lezoo.stonks.quotation.handler.StockHandler;
 import fr.lezoo.stonks.util.Utils;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -89,11 +87,7 @@ public class Quotation {
 
         this.handler = config.getBoolean("real-stock") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
 
-        Material material = config.contains("exchange-type.material") ?
-                Material.valueOf(config.getString("exchange-type.material").toUpperCase().replace("-", "_").replace(" ", "_")) : null;
-        int modelData = config.contains("exchange-type.model-data") ? config.getInt("exchange-type.model-data") : 0;
-        Validate.isTrue(material != Material.AIR, "Cannot use AIR as exchange type");
-        exchangeType = material == null ? null : new ExchangeType(material, modelData);
+        exchangeType = config.contains("exchange-type") ? new ExchangeType(config.getConfigurationSection("exchange-type")) : null;
         // Set the data of the quotation
         Stonks.plugin.quotationManager.initializeQuotationData(this);
     }
