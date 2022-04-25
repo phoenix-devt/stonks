@@ -1,7 +1,6 @@
 package fr.lezoo.stonks.display.board;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -11,38 +10,38 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Allows to cast a ray and look for the display board
- * the player is looking at
+ * Allows to cast a ray and look for the
+ * display board the player is looking at
+ * <p>
+ * Source: https://stackoverflow.com/questions/5666222/3d-line-plane-intersection
  */
 public class BoardRaycast {
     private final Board found;
     private final double verticalOffset, horizontalOffset;
 
     public BoardRaycast(Player player) {
-        Location location = player.getEyeLocation();
+        Location source = player.getEyeLocation();
         for (Board board : Stonks.plugin.boardManager.getBoards()) {
-            // We get the perpendicular straight line
-            Location boardLocation = board.getLocation().clone();
-            Vector perpendicular = Utils.rotateAroundY(board.getBoardFace()).getDirection();
-            double scalar = (boardLocation.clone().subtract(player.getLocation()).toVector().dot(perpendicular));
+            Vector planePoint = board.getLocation().toVector(); // TODO
+            Vector planeNormal = board.getBoardFace().getDirection();
+            if (planeNormal.dot(source.getDirection()) == 0)
+                continue;
 
-            // If the scalar product is positive we are behind the block and if it is too big we are too far
-            if (scalar < 0 && scalar > -Stonks.plugin.configManager.maxInteractionDistance) {
+            double t = (planeNormal.dot(planePoint) - planeNormal.dot(source.toVector())) / planeNormal.dot(source.getDirection());
+            if (t < 0 || t > Stonks.plugin.configManager.maxInteractionDistance)
+                continue;
 
-                // Origine de l'offset arrondi a la valeur pour le board
-                // Between  and 0 and 1, represents where the board is
-                double verticalOffset = (boardLocation.getY() + board.getHeight() - location.getY()) / board.getHeight();
+            // Coordinates of intersection point relative to the board
+            Vector relative = source.toVector().add(source.getDirection().multiply(t)).subtract(planePoint);
+            double verticalOffset = 1 - relative.getY() / board.getHeight();
+            double horizontalOffset = (relative.getX() + relative.getZ()) / board.getWidth();
 
-                // The same, we use a scalar product
-                double horizontalOffset = location.subtract(boardLocation).toVector().dot(board.getBoardFace().getDirection()) / board.getWidth();
-
-                // If we are really clicking on a board we check where it has been clicked and stop the method
-                if (horizontalOffset >= 0 && horizontalOffset <= 1 && verticalOffset >= 0 && verticalOffset <= 1) {
-                    found = board;
-                    this.verticalOffset = verticalOffset;
-                    this.horizontalOffset = horizontalOffset;
-                    return;
-                }
+            // If we are really clicking on a board we check where it has been clicked and stop the method
+            if (horizontalOffset >= 0 && horizontalOffset <= 1 && verticalOffset >= 0 && verticalOffset <= 1) {
+                found = board;
+                this.verticalOffset = verticalOffset;
+                this.horizontalOffset = horizontalOffset;
+                return;
             }
         }
 
