@@ -44,13 +44,13 @@ public class Utils {
     public static Vector getItemFrameDirection(BlockFace blockFace) {
         switch (blockFace) {
             case NORTH:
-                return BlockFace.EAST.getDirection();
+                return BlockFace.EAST;
             case EAST:
-                return BlockFace.SOUTH.getDirection();
+                return BlockFace.SOUTH;
             case SOUTH:
-                return BlockFace.WEST.getDirection();
+                return BlockFace.WEST;
             case WEST:
-                return BlockFace.NORTH.getDirection();
+                return BlockFace.NORTH;
             default:
                 throw new IllegalArgumentException("Could not match any direction");
         }

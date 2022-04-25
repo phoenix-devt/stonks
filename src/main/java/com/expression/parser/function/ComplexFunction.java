@@ -88,7 +88,7 @@ public class ComplexFunction {
 				hasNumber = true;
 				number += character;
 				if (i == (f.length() - 1)) {
-					value = new Complex(new Double(number), 0);
+					value = new Complex(Double.parseDouble(number), 0);
 					number = "";
 					hasNumber = false;
 				}
@@ -96,14 +96,14 @@ public class ComplexFunction {
 			} else if (character == '+') {
 
 				if (hasNumber && !isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = f.substring(i + 1, f.length());
 					value = Complex.add(new Complex(numb, 0), eval(new_f, values, variables));
 					i += new_f.length();
 					hasNumber = false;
 					number = "";
 				} else if (hasNumber && isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = f.substring(i + 1, f.length());
 					value = Complex.add(new Complex(0, numb), eval(new_f, values, variables));
 					i += new_f.length();
@@ -126,7 +126,7 @@ public class ComplexFunction {
 			} else if (character == '*') {
 
 				if (hasNumber && !isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextFunction(f.substring(i + 1, f.length()));
 					value = Complex.mul(new Complex(numb, 0), eval(new_f, values, variables));
 					i += new_f.length();
@@ -134,7 +134,7 @@ public class ComplexFunction {
 					number = "";
 
 				} else if (hasNumber && isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextFunction(f.substring(i + 1, f.length()));
 					value = Complex.mul(new Complex(0, numb), eval(new_f, values, variables));
 					i += new_f.length();
@@ -156,14 +156,14 @@ public class ComplexFunction {
 			} else if (character == '-') {
 
 				if (hasNumber && !isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextMinusFunction(f.substring(i + 1, f.length()));
 					value = Complex.sub(new Complex(numb, 0), eval(new_f, values, variables));
 					i += new_f.length();
 					hasNumber = false;
 					number = "";
 				} else if (hasNumber && isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextMinusFunction(f.substring(i + 1, f.length()));
 					value = Complex.sub(new Complex(0, numb), eval(new_f, values, variables));
 					i += new_f.length();
@@ -187,14 +187,14 @@ public class ComplexFunction {
 			} else if (character == '/') {
 
 				if (hasNumber && !isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextFunction(f.substring(i + 1, f.length()));
 					value = Complex.div(new Complex(numb, 0), eval(new_f, values, variables));
 					i += new_f.length();
 					hasNumber = false;
 					number = "";
 				} else if (hasNumber && isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextFunction(f.substring(i + 1, f.length()));
 					value = Complex.div(new Complex(0, numb), eval(new_f, values, variables));
 					i += new_f.length();
@@ -218,14 +218,14 @@ public class ComplexFunction {
 			} else if (character == '^') {
 
 				if (hasNumber && !isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextFunction(f.substring(i + 1, f.length()));
 					value = Complex.pow(eval(new_f, values, variables), numb);
 					i += new_f.length();
 					hasNumber = false;
 					number = "";
 				} else if (hasNumber && isImaginary) {
-					final Double numb = new Double(number);
+					final Double numb = Double.parseDouble(number);
 					final String new_f = nextFunction(f.substring(i + 1, f.length()));
 					value = Complex.pow(eval(new_f, values, variables), new Complex(0, numb));
 					i += new_f.length();
@@ -316,7 +316,7 @@ public class ComplexFunction {
 				if (!hasFunction) {
 					if (hasNumber) {
 
-						value = new Complex(0, new Double(number));
+						value = new Complex(0, Double.parseDouble(number));
 						number = "";
 						isImaginary = true;
 					} else {
@@ -353,7 +353,7 @@ public class ComplexFunction {
 			} else if (character == 'j') {
 				if (!hasFunction) {
 					if (hasNumber) {
-						value = new Complex(0, new Double(number));
+						value = new Complex(0, Double.parseDouble(number));
 						isImaginary = true;
 					} else {
 						value = new Complex(0, 1);

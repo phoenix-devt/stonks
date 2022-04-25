@@ -3,6 +3,7 @@ package fr.lezoo.stonks.quotation;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.Board;
+import fr.lezoo.stonks.display.board.BoardMapInfo;
 import fr.lezoo.stonks.display.board.QuotationBoardRenderer;
 import fr.lezoo.stonks.quotation.handler.FictiveStockHandler;
 import fr.lezoo.stonks.quotation.handler.RealStockHandler;
@@ -169,7 +170,7 @@ public class Quotation {
      * Creates a 5x5 map of the Quotation to the player
      * gives the player all the maps in his inventory
      */
-    public Board createQuotationBoard(boolean hasBeenCreated, Location initiallocation, BlockFace
+    public Board createQuotationBoard(boolean hasBeenCreated, Material material, Location initiallocation, BlockFace
             blockFace, TimeScale time, int BOARD_WIDTH, int BOARD_HEIGHT) {
 
 
@@ -186,10 +187,10 @@ public class Quotation {
         double z = blockFace.getDirection().getZ() * 0.5;
         // We want the block placed behind the location if we are looking at it
         if (x == 0) {
-            x = -Utils.getItemFrameDirection(blockFace).getX() * 0.5;
+            x = -Utils.rotateAroundY(blockFace).getDirection().getX() * 0.5;
         }
         if (z == 0) {
-            z = -Utils.getItemFrameDirection(blockFace).getZ() * 0.5;
+            z = -Utils.rotateAroundY(blockFace).getDirection().getZ() * 0.5;
         }
 
 
@@ -203,7 +204,7 @@ public class Quotation {
         Vector horizontalLineReturn = horizontalBuildDirection.clone();
         horizontalLineReturn.multiply(-BOARD_WIDTH);
 
-        Vector itemFrameDirection = Utils.getItemFrameDirection(blockFace);
+        Vector itemFrameDirection = Utils.rotateAroundY(blockFace).getDirection();
 
         // We get the board corresponding to the one we are creating or updating
         Board board = !hasBeenCreated ? new Board(this, BOARD_HEIGHT, BOARD_WIDTH, initiallocation, time, blockFace)
@@ -226,15 +227,17 @@ public class Quotation {
 
 
         //get the img for the board
-        BufferedImage image = board.getImage(time, BOARD_WIDTH, BOARD_HEIGHT);
+        BufferedImage image = board.getImage();
 
         for (int i = 0; i < BOARD_HEIGHT; i++) {
             // i stands for the line of the board and j the column
 
             for (int j = 0; j < BOARD_WIDTH; j++) {
 
-                if (!hasBeenCreated)
-                    location.getBlock().setType(Material.DARK_OAK_WOOD);
+                //If it the first time we create the board and there is no block at the location we put one
+                if (!hasBeenCreated && !(location.getBlock().isPassable()))
+                    location.getBlock().setType(material);
+
 
                 // We check if there is a block to build the frames on
                 if (!location.getBlock().isPassable()) {
@@ -254,20 +257,24 @@ public class Quotation {
                     //We register the uuid of the board in each itemFrame
                     itemFrame.getPersistentDataContainer().set(new NamespacedKey(Stonks.plugin, "boarduuid"), PersistentDataType.STRING, board.getUuid().toString());
 
-                    // We create the map that will go in the itemframe
-                    ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
-                    MapMeta meta = (MapMeta) mapItem.getItemMeta();
-                    MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
-                    mapView.getRenderers().clear();
+                    //If the itemFrame doesn't contains any map then we create the map for it
+                    if(!(itemFrame.getItem()!=null&&itemFrame.getItem().getType().equals(Material.MAP))) {
+                        // We create the map that will go in the itemframe
+                        ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
+                        MapMeta meta = (MapMeta) mapItem.getItemMeta();
+                        MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
+                        mapView.getRenderers().clear();
 
-                    // j=0 ->x=0 but i=0 ->i =BOARD_HEIGHT because of how graphics 2D works
-                    mapView.addRenderer(new QuotationBoardRenderer(image.getSubimage(128 * j, 128 * (BOARD_HEIGHT - i - 1), 128, 128)));
-                    mapView.setTrackingPosition(false);
-                    mapView.setUnlimitedTracking(false);
-                    meta.setMapView(mapView);
-                    mapItem.setItemMeta(meta);
+                        // j=0 ->x=0 but i=0 ->i =BOARD_HEIGHT because of how graphics 2D works
+                        mapView.addRenderer(new QuotationBoardRenderer(new BoardMapInfo(board, j, BOARD_HEIGHT - i - 1)));
 
-                    itemFrame.setItem(mapItem);
+                        mapView.setTrackingPosition(false);
+                        mapView.setUnlimitedTracking(false);
+                        meta.setMapView(mapView);
+                        mapItem.setItemMeta(meta);
+
+                        itemFrame.setItem(mapItem);
+                    }
                     location.subtract(itemFrameDirection);
 
                 }

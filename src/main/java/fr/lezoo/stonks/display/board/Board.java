@@ -117,10 +117,10 @@ public class Board {
         double z = blockFace.getDirection().getZ() * 0.5;
         // We want the block placed behind the location if we are looking at it
         if (x == 0) {
-            x = -Utils.getItemFrameDirection(blockFace).getX() * 0.5;
+            x = -Utils.rotateAroundY(blockFace).getDirection().getX() * 0.5;
         }
         if (z == 0) {
-            z = -Utils.getItemFrameDirection(blockFace).getZ() * 0.5;
+            z = -Utils.rotateAroundY(blockFace).getDirection().getZ() * 0.5;
         }
 
 
@@ -133,7 +133,7 @@ public class Board {
         // We need to clone to have deepmemory of it
         Vector horizontalLineReturn = horizontalBuildDirection.clone();
         horizontalLineReturn.multiply(-width);
-        Vector itemFrameDirection = Utils.getItemFrameDirection(direction);
+        Vector itemFrameDirection = Utils.rotateAroundY(direction).getDirection();
 
         //We register a new Listener to cancel all the DropItemEvent
         TemporaryListener listener = new DropItemListener();
@@ -163,9 +163,10 @@ public class Board {
     /**
      * Refreshes the board
      */
+
     public void refreshBoard() {
         // We use the createQuotationBoard method and say that it has already been created so we dont register it
-        quotation.createQuotationBoard(true, location, direction, time, width, height);
+        quotation.createQuotationBoard(true, null,location, direction, time, width, height);
     }
 
 
@@ -184,15 +185,15 @@ public class Board {
         return holders;
     }
 
-    public BufferedImage getImage(TimeScale time, int BOARD_WIDTH, int BOARD_HEIGHT) {
+    public BufferedImage getImage() {
 
         ConfigurationSection config = YamlConfiguration.loadConfiguration(ConfigManager.DefaultFile.BOARD.getFile()).getConfigurationSection("description");
         Placeholders holders = getPlaceholders();
 
 
         // There is 128 pixel for each map
-        BOARD_HEIGHT = 128 * BOARD_HEIGHT;
-        BOARD_WIDTH = 128 * BOARD_WIDTH;
+        int BOARD_HEIGHT = 128 * height;
+        int BOARD_WIDTH = 128 * width;
 
         // If not enough data on quotation data we take care of avoiding IndexOutOfBounds
         BufferedImage image = new BufferedImage(BOARD_WIDTH, BOARD_HEIGHT, BufferedImage.TYPE_INT_RGB);
