@@ -16,7 +16,7 @@ public class UpdateSignsTreeNode extends CommandTreeNode {
         Stonks.plugin.configManager.reload();
         for (DisplaySign sign : Stonks.plugin.signManager.getActive())
             sign.update();
-        sender.sendMessage(ChatColor.BLUE + "Updated all display signs");
+        sender.sendMessage(ChatColor.BLUE + "Updated all display signs (" + Stonks.plugin.signManager.getActive().size() + ")");
         return CommandResult.SUCCESS;
     }
 }

@@ -5,13 +5,16 @@ import fr.lezoo.stonks.display.sign.DisplaySign;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.util.Position;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.Nullable;
 
 public class SignDisplayEditionListener extends TemporaryListener {
+    @Nullable
     private final Quotation quotation;
     private final Player player;
     private final boolean removing;
@@ -52,8 +55,9 @@ public class SignDisplayEditionListener extends TemporaryListener {
             }
 
             Stonks.plugin.signManager.unregister(pos);
+            block.setType(Material.AIR);
             close();
-            player.sendMessage(ChatColor.YELLOW + "You successfully registered a display sign at the target location for " + quotation.getName());
+            player.sendMessage(ChatColor.YELLOW + "You successfully removed a display sign");
             return;
         }
 
