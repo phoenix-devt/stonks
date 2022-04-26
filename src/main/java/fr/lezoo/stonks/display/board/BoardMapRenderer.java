@@ -7,12 +7,17 @@ import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
-import java.awt.image.BufferedImage;
-
 public class BoardMapRenderer extends MapRenderer {
     private final Board.BoardPoint point;
 
-    private int counter = Integer.MAX_VALUE - 1;
+    /**
+     * The render method is NOT called every tick since
+     * it is placed inside of an item frame. It does update
+     * more frequently when placed in the player's inventory
+     * <p>
+     * https://www.spigotmc.org/threads/maps-in-item-frames-wont-update-every-tick-struggling-to-make-video-player.514621/
+     */
+    private long lastUpdate;
 
     public BoardMapRenderer(Board.BoardPoint point) {
         this.point = point;
@@ -20,13 +25,10 @@ public class BoardMapRenderer extends MapRenderer {
 
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
-        counter++;
-        // We render the map only if it's hasn't been done in a while
-        if (counter < Stonks.plugin.configManager.boardRefreshTime * 20)
+        if (System.currentTimeMillis() - lastUpdate < Stonks.plugin.configManager.boardRefreshTime * 1000)
             return;
 
-        BufferedImage image = MapPalette.resizeImage(point.imageSegment);
-        mapCanvas.drawImage(0, 0, image);
-        counter = 0;
+        lastUpdate = System.currentTimeMillis();
+        mapCanvas.drawImage(0, 0, MapPalette.resizeImage(point.imageSegment));
     }
 }

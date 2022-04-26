@@ -59,11 +59,16 @@ public class FictiveStockHandler implements StockHandler {
         // The amount of data wanted for each timescale fo the quotation
         // We update all the data List
         for (TimeScale time : TimeScale.values()) {
+
             // We get the list corresponding to the time
             List<QuotationInfo> workingData = new ArrayList<>();
             workingData.addAll(quotation.getData(time));
+
+            // This fixes an issue with empty working data
+            long lastTimeStamp = workingData.isEmpty() ? 0 : workingData.get(workingData.size() - 1).getTimeStamp();
+
             // If the the latest data of workingData is too old we add another one
-            if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / Quotation.BOARD_DATA_NUMBER) {
+            if (System.currentTimeMillis() - lastTimeStamp > time.getTime() / Quotation.BOARD_DATA_NUMBER) {
 
                 workingData.add(new QuotationInfo(System.currentTimeMillis(), currentPrice + change));
                 // If the list contains too much data we remove the older ones
