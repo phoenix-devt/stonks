@@ -200,7 +200,7 @@ public class PlayerData {
     }
 
     /**
-     * @return Counts the shares the player owns
+     * @return Counts the shares the player o"wns
      */
     public double countShares() {
         double total = 0;

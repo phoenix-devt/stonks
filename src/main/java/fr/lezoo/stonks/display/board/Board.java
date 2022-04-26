@@ -257,8 +257,8 @@ public class Board {
         g2d.draw(new Line2D.Double(0.8 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT, 0.8 * BOARD_WIDTH, 0));
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 3 / 128));
-        // We want only 2 numbers after the comma
-        g2d.drawString(holders.apply(config.getString("time-scale")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
+        // We want only 2 numbers after the command
+        g2d.drawString(holders.apply(config.getString("time-visualized")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("quotation-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("quotation-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("exchange-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
