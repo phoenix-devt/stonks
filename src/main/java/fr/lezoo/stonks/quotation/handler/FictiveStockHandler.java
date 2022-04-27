@@ -44,7 +44,7 @@ public class FictiveStockHandler implements StockHandler {
 
     @Override
     public void whenBought(double stocksBought) {
-        Bukkit.broadcastMessage("Bought");
+
         totalSupply += (int)stocksBought;
     }
 
