@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class TradingInteractListener implements Listener {
-    private HashSet<Player> hasChatInput = new HashSet<>();
+
 
 
     @EventHandler
@@ -50,16 +50,16 @@ public class TradingInteractListener implements Listener {
             playerData.setCurrentQuotation(board.getQuotation());
             OrderInfo orderInfo = playerData.getOrderInfo(board.getQuotation().getId());
 
-            Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
-                    "amount", orderInfo.hasAmount() ? "\n" + orderInfo.getAmount() : "\n",
-                    "min-price", orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : "\n",
-                    "max-price", orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "\n").send(player);
-            if (!hasChatInput.contains(player)) {
+                Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
+                        "amount","\n"+ (orderInfo.hasAmount() ? orderInfo.getAmount() : ""),
+                        "min-price","\n"+( orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : ""),
+                        "max-price", "\n"+(orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "")).send(player);
+
 
                 //We listen to the player
-                new SimpleChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
-                hasChatInput.add(player);
-            }
+                SimpleChatInput.getChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
+
+
 
         }
     }

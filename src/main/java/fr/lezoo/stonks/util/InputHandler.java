@@ -17,8 +17,8 @@ public class InputHandler {
     //The boolean describes if the temporary listener should be closed(e.g the ChatInput or SimpleChatInput)
 
     public static final BiFunction<PlayerData, String, Boolean> SET_PARAMETER_HANDLER = (playerData, input) -> {
-        Quotation quotation=playerData.getCurrentQuotation();
-        OrderInfo orderInfo=playerData.getOrderInfo(quotation.getId());
+        Quotation quotation = playerData.getCurrentQuotation();
+        OrderInfo orderInfo = playerData.getOrderInfo(quotation.getId());
         int number;
         try {
             number = Integer.parseInt(input);
@@ -31,42 +31,42 @@ public class InputHandler {
                 Message.SET_LEVERAGE_ASK.format().send(playerData.getPlayer());
                 //We create the ChatInput to listen for the leverage and this chat input will call back
                 // the SET_PARAMETER_HANDLER method later giving the message before
-                new SimpleChatInput(playerData, InputHandler.SET_LEVERAGE_HANDLER,
+                SimpleChatInput.getChatInput(playerData, InputHandler.SET_LEVERAGE_HANDLER,
                         //What is done when then Chat Input Handler is closed
                         () -> {
-                    Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
-                            "amount", orderInfo.hasAmount() ? "\n" + orderInfo.getAmount() : "",
-                            "min-price", orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : "",
-                            "max-price", orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "").send(playerData.getPlayer());
+                            Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
+                                    "amount", orderInfo.hasAmount() ? "\n" + orderInfo.getAmount() : "",
+                                    "min-price", orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : "",
+                                    "max-price", orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "").send(playerData.getPlayer());
 
-                    new SimpleChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
-                });
+                            SimpleChatInput.getChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
+                        });
                 return true;
 
             }
             case 2: {
                 Message.SET_AMOUNT_ASK.format().send(playerData.getPlayer());
-                new SimpleChatInput(playerData, InputHandler.SET_AMOUNT_HANDLER,
+                SimpleChatInput.getChatInput(playerData, InputHandler.SET_AMOUNT_HANDLER,
                         () -> {
-                    Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
-                            "amount", orderInfo.hasAmount() ? "\n" + orderInfo.getAmount() : "",
-                            "min-price", orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : "",
-                            "max-price", orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "").send(playerData.getPlayer());
+                            Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
+                                    "amount", orderInfo.hasAmount() ? "\n" + orderInfo.getAmount() : "",
+                                    "min-price", orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : "",
+                                    "max-price", orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "").send(playerData.getPlayer());
 
-                    new SimpleChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
-                });
+                            SimpleChatInput.getChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
+                        });
                 return true;
 
             }
             case 3: {
                 Message.SET_MIN_PRICE_ASK.format().send(playerData.getPlayer());
-                new SimpleChatInput(playerData, InputHandler.SET_MIN_PRICE_HANDLER, () -> {
+                SimpleChatInput.getChatInput(playerData, InputHandler.SET_MIN_PRICE_HANDLER, () -> {
                     Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
                             "amount", orderInfo.hasAmount() ? "\n" + orderInfo.getAmount() : "",
                             "min-price", orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : "",
                             "max-price", orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "").send(playerData.getPlayer());
 
-                    new SimpleChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
+                    SimpleChatInput.getChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
                 });
 
                 return true;
@@ -74,13 +74,13 @@ public class InputHandler {
             }
             case 4: {
                 Message.SET_MAX_PRICE_ASK.format().send(playerData.getPlayer());
-                new SimpleChatInput(playerData, InputHandler.SET_MAX_PRICE_HANDLER, () -> {
+                SimpleChatInput.getChatInput(playerData, InputHandler.SET_MAX_PRICE_HANDLER, () -> {
                     Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
                             "amount", orderInfo.hasAmount() ? "\n" + orderInfo.getAmount() : "",
                             "min-price", orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : "",
                             "max-price", orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "").send(playerData.getPlayer());
 
-                    new SimpleChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
+                    SimpleChatInput.getChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
                 });
                 return true;
 
@@ -117,7 +117,7 @@ public class InputHandler {
     };
 
 
-    public static final BiFunction<PlayerData,String,Boolean> BUY_CUSTOM_AMOUNT_HANDLER=(playerData,input)->{
+    public static final BiFunction<PlayerData, String, Boolean> BUY_CUSTOM_AMOUNT_HANDLER = (playerData, input) -> {
         Quotation quotation = playerData.getCurrentQuotation();
         Validate.notNull(quotation, "The current quotation of " + playerData.getPlayer().getName() + "is null");
         double amount;
@@ -133,10 +133,10 @@ public class InputHandler {
             Message.NOT_VALID_AMOUNT.format("input", input).send(player);
             return false;
         }
-        playerData.buyShare(quotation, ShareType.SHORT,amount);
+        playerData.buyShare(quotation, ShareType.SHORT, amount);
         return true;
     };
-    public static final BiFunction<PlayerData,String,Boolean> SHORT_CUSTOM_AMOUNT_HANDLER=(playerData,input)->{
+    public static final BiFunction<PlayerData, String, Boolean> SHORT_CUSTOM_AMOUNT_HANDLER = (playerData, input) -> {
         Quotation quotation = playerData.getCurrentQuotation();
         Validate.notNull(quotation, "The current quotation of " + playerData.getPlayer().getName() + "is null");
         double amount;
@@ -152,7 +152,7 @@ public class InputHandler {
             Message.NOT_VALID_AMOUNT.format("input", input).send(player);
             return false;
         }
-        playerData.buyShare(quotation, ShareType.SHORT,amount);
+        playerData.buyShare(quotation, ShareType.SHORT, amount);
         return true;
     };
 

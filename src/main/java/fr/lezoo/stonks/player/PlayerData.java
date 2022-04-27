@@ -29,6 +29,16 @@ public class PlayerData {
     private final HashMap<String, OrderInfo> orderInfos = new HashMap<>();
     //the quotation the player is currently interacting with
     private Quotation currentQuotation = null;
+    private boolean isOnChatInput=false;
+
+    public void setOnChatInput(boolean onChatInput) {
+        isOnChatInput = onChatInput;
+    }
+
+    public boolean isOnChatInput() {
+        return isOnChatInput;
+    }
+
     /**
      * Mapped shares the player bought from a particular quotation
      */
