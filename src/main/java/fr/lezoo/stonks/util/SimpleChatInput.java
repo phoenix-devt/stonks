@@ -28,28 +28,28 @@ public class SimpleChatInput extends TemporaryListener {
         this.inputHandler = inputHandler;
     }
 
-    public SimpleChatInput(PlayerData playerData, BiFunction<PlayerData, String, Boolean> inputHandler,Runnable runnable) {
+    public SimpleChatInput(PlayerData playerData, BiFunction<PlayerData, String, Boolean> inputHandler, Runnable runnable) {
         super(AsyncPlayerChatEvent.getHandlerList());
         this.playerData = playerData;
         this.inputHandler = inputHandler;
-        this.runnable=runnable;
+        this.runnable = runnable;
     }
 
     /**
      * This method retruns null if the player is already ona chatInput
      */
     public static SimpleChatInput getChatInput(PlayerData playerData, BiFunction<PlayerData, String, Boolean> inputHandler) {
-        if(playerData.isOnChatInput())
+        if (playerData.isOnChatInput())
             return null;
         //We set the playerData to on chat input
         playerData.setOnChatInput(true);
-        return new SimpleChatInput(playerData,inputHandler);
+        return new SimpleChatInput(playerData, inputHandler);
     }
 
-    public static SimpleChatInput getChatInput(PlayerData playerData, BiFunction<PlayerData, String, Boolean> inputHandler,Runnable runnable) {
-        if(playerData.isOnChatInput())
+    public static SimpleChatInput getChatInput(PlayerData playerData, BiFunction<PlayerData, String, Boolean> inputHandler, Runnable runnable) {
+        if (playerData.isOnChatInput())
             return null;
-        return new SimpleChatInput(playerData,inputHandler,runnable);
+        return new SimpleChatInput(playerData, inputHandler, runnable);
     }
 
     /**
@@ -62,8 +62,10 @@ public class SimpleChatInput extends TemporaryListener {
             return;
         e.setCancelled(true);
         //Make it Sync
-        Bukkit.getScheduler().runTask(Stonks.plugin,()->{ if (inputHandler.apply(playerData, e.getMessage()))
-            close();});
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Stonks.plugin, () -> {
+            if (inputHandler.apply(playerData, e.getMessage()))
+                close();
+        });
 
     }
 

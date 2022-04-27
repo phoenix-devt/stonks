@@ -133,7 +133,7 @@ public class InputHandler {
             Message.NOT_VALID_AMOUNT.format("input", input).send(player);
             return false;
         }
-        playerData.buyShare(quotation, ShareType.SHORT, amount);
+        playerData.buyShare(quotation, ShareType.NORMAL, amount);
         return true;
     };
     public static final BiFunction<PlayerData, String, Boolean> SHORT_CUSTOM_AMOUNT_HANDLER = (playerData, input) -> {

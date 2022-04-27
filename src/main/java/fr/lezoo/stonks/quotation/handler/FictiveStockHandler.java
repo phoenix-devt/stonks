@@ -4,60 +4,93 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import fr.lezoo.stonks.quotation.TimeScale;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static fr.lezoo.stonks.quotation.Quotation.BOARD_DATA_NUMBER;
+
 public class FictiveStockHandler implements StockHandler {
     private final Quotation quotation;
 
-    private double previousDemand, currentDemand;
+    private double priceMultiplier;
+    private final double initialSupply;
+    //Initial supply + supply by people
+    private double totalSupply;
 
     private static final Random RANDOM = new Random();
 
-    public FictiveStockHandler(Quotation quotation) {
+    public FictiveStockHandler(Quotation quotation, double initialSupply) {
         this.quotation = quotation;
+        this.initialSupply = initialSupply;
+        //We setup the price multiplier
+        this.priceMultiplier=quotation.getPrice()/initialSupply;
+        this.totalSupply = initialSupply;
+        //p=calculatePrice()*priceMultiplier();
+
     }
+
 
     public FictiveStockHandler(Quotation quotation, ConfigurationSection config) {
         this.quotation = quotation;
 
-        previousDemand = config.getDouble("previous-demand");
-        currentDemand = config.getDouble("current-demand");
+        initialSupply = config.getDouble("initial-supply");
+        totalSupply = config.contains("total-supply") ? config.getDouble("total-supply") : initialSupply;
+        priceMultiplier=config.contains("price-multiplier")? quotation.getPrice()/initialSupply :config.getDouble("price-multiplier") ;
     }
 
     @Override
     public void whenBought(double stocksBought) {
-        currentDemand += stocksBought;
+        Bukkit.broadcastMessage("Bought");
+        totalSupply += (int)stocksBought;
     }
 
     @Override
     public void saveInFile(ConfigurationSection config) {
-        config.set("previous-demand", previousDemand);
-        config.set("current-demand", currentDemand);
+        config.set("initial-supply", initialSupply);
+        config.set("total-supply", totalSupply);
+        config.set("price-multiplier",priceMultiplier);
     }
 
-    // TODO fix formula + current/previous demand
+    /**
+     *Calculates the price the quotation should have at any moment
+     */
+    //Calculate the price the course will have if you buy shares
+    public double calculatePrice(double totalSup) {
+       return priceMultiplier * (totalSup < initialSupply / 10 ?calculateExponential(totalSup):totalSup);
+    }
+
+
+
+
+    public double calculateExponential(double totalSup) {
+        return initialSupply/10*(Math.exp(totalSup-(initialSupply/10)));
+    }
+
+    public double getPriceMultiplier() {
+        return priceMultiplier;
+    }
+
+    public double getInitialSupply() {
+        return initialSupply;
+    }
+
+    public double getTotalSupply() {
+        return totalSupply;
+    }
+
     @Override
+    //Volatility of 1 -> can change by 5% in 1 hour
     public void refresh() {
+        //We just refresh the priceMultiplier
+        priceMultiplier *= (1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(quotation.getRefreshPeriod()) /
+                (10 * Math.sqrt(TimeScale.HOUR.getTime())));
 
-        if (quotation.getData(TimeScale.HOUR).isEmpty())
-            return;
-
-        double change = RANDOM.nextBoolean() ? -1 : 1;
-        // The offset due to the offer and demand of the stock
-        double offset = Stonks.plugin.configManager.offerDemandImpact * Math.atan(previousDemand) * 2 / Math.PI;
-        double currentPrice = quotation.getPrice();
-        // The change between the currentPrice and nextPrice
-
-        // We multiply by sqrt(t) so that volatility doesn't depend on refreshTime
-
-        change = (change + offset) * Stonks.plugin.configManager.volatility * currentPrice / 20 * Math.sqrt(quotation.getRefreshPeriod());
-
-        // The amount of data wanted for each timescale fo the quotation
-        // We update all the data List
+        double price=calculatePrice(totalSupply);
+        //We setup the price in the quotation
         for (TimeScale time : TimeScale.values()) {
             // We get the list corresponding to the time
             List<QuotationInfo> workingData = new ArrayList<>();
@@ -65,7 +98,7 @@ public class FictiveStockHandler implements StockHandler {
             // If the the latest data of workingData is too old we add another one
             if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / Quotation.BOARD_DATA_NUMBER) {
 
-                workingData.add(new QuotationInfo(System.currentTimeMillis(), currentPrice + change));
+                workingData.add(new QuotationInfo(System.currentTimeMillis(), price));
                 // If the list contains too much data we remove the older ones
                 if (workingData.size() > Quotation.BOARD_DATA_NUMBER)
                     workingData.remove(0);
@@ -74,4 +107,5 @@ public class FictiveStockHandler implements StockHandler {
             }
         }
     }
+
 }

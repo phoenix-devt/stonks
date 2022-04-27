@@ -32,7 +32,7 @@ items:
       - '&7Leverage: &fx{leverage}'
       - '&7Min-price: &f{min-price}'
       - '&7Max-price: &f{max-price}'
-      - ''
+      - '&7Share-type: &f{share-type}'
       - '&7Current Stock Price: &f${current-stock}'
       - '&7Initial Stock Price: &f${initial-stock}'
       - ''

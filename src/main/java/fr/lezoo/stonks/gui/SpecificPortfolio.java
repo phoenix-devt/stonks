@@ -12,6 +12,7 @@ import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.quotation.ExchangeType;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.Bukkit;
@@ -171,11 +172,15 @@ public class SpecificPortfolio extends EditableInventory {
                             "name", quotation.getName(),
                             "gain", Utils.formatGain(gain)).send(player);
 
-                    // Virtual quotation
-                    if (share.getQuotation().isVirtual())
-                        Stonks.plugin.economy.depositPlayer(player, earned);
 
-                        // Physical quotation
+                    // Virtual quotation
+                    if (share.getQuotation().isVirtual()) {
+                        Stonks.plugin.economy.depositPlayer(player, earned);
+                    //Register in the StockHandler
+                        quotation.getHandler().whenBought(share.getType().equals(ShareType.NORMAL)?-share.getShares():share.getShares());
+
+                    }
+                    // Physical quotation
                     else {
                         ExchangeType exchangeType = share.getQuotation().getExchangeType();
                         int realGain = (int) Math.floor(earned);
@@ -306,6 +311,7 @@ public class SpecificPortfolio extends EditableInventory {
             holders.register("max-price", share.getStringMaxPrice());
             holders.register("current-stock", format.format(inv.quotation.getPrice()));
             holders.register("initial-stock", format.format(share.getInitialPrice()));
+            holders.register("share-type", share.getType().toString().toLowerCase());
 
             double taxRate = inv.getPlayerData().getTaxRate();
             holders.register("initial-share", format.format(share.getInitialPrice() * share.getOrderInfo().getAmount()));

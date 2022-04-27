@@ -31,6 +31,7 @@ public class Quotation {
     @Nullable
     private final ExchangeType exchangeType;
 
+
     @NotNull
     private final StockHandler handler;
 
@@ -65,13 +66,15 @@ public class Quotation {
     public Quotation(String id, String name, Function<Quotation, StockHandler> handlerProvider, Dividends dividends, @Nullable ExchangeType exchangeType, QuotationInfo firstQuotationData) {
         this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.name = name;
-        this.handler = handlerProvider.apply(this);
         this.dividends = dividends;
         this.exchangeType = exchangeType;
         for (TimeScale disp : TimeScale.values())
             quotationData.put(disp, Arrays.asList(firstQuotationData));
         this.refreshPeriod = DEFAULT_REFRESH_PERIOD;
         Stonks.plugin.quotationManager.initializeQuotationData(this);
+        //Handler provider needs to be set up in last
+        this.handler = handlerProvider.apply(this);
+
     }
 
     /**
@@ -85,11 +88,13 @@ public class Quotation {
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : new Dividends(this);
         this.refreshPeriod = config.getLong("refresh-period", DEFAULT_REFRESH_PERIOD);
 
-        this.handler = config.getBoolean("real-stock") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
 
         exchangeType = config.contains("exchange-type") ? new ExchangeType(config.getConfigurationSection("exchange-type")) : null;
         // Set the data of the quotation
         Stonks.plugin.quotationManager.initializeQuotationData(this);
+        //Handler provider needs to be set up in last
+        this.handler = config.getBoolean("real-stock") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
+
     }
 
     public String getId() {
@@ -122,6 +127,10 @@ public class Quotation {
 
     public List<QuotationInfo> getData(TimeScale disp) {
         return quotationData.get(disp);
+    }
+
+    public boolean isRealStock() {
+        return handler instanceof RealStockHandler;
     }
 
     public StockHandler getHandler() {

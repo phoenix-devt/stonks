@@ -235,6 +235,8 @@ public class Share {
         Validate.isTrue(isOpen(), "Share is already closed");
         this.closeReason = Objects.requireNonNull(closeReason, "Reason cannot be null");
         this.sellPrice = quotation.getPrice();
+        //You make it as if you bought the counter order
+        quotation.getHandler().whenBought(type.equals(ShareType.NORMAL)?-getShares():getShares());
     }
 
     public void setWallet(double wallet) {
