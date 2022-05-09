@@ -7,6 +7,7 @@
 
 TODO
 1)
+2)
 - Systeme pour close et open la share a un peu ameliorer au niveau des messages
 - Ameliorer le rendu pour : Board image et dialog box
 
