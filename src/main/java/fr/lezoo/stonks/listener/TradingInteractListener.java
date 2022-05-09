@@ -62,7 +62,6 @@ public class TradingInteractListener implements Listener {
 
     public void checkMiddleUpSquare(Player player, Board board, double verticalOffset, double horizontalOffset) {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.45) && (verticalOffset > 0.25)) {
-
             PlayerData playerData = Stonks.plugin.playerManager.get(player);
             playerData.buyShare(board.getQuotation(), ShareType.NORMAL);
         }
@@ -78,7 +77,7 @@ public class TradingInteractListener implements Listener {
 
     public void checkDownSquare(Player player, Board board, double verticalOffset, double horizontalOffset) {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.95) && (verticalOffset > 0.75)) {
-            Stonks.plugin.configManager.QUOTATION_LIST.generate(Stonks.plugin.playerManager.get(player)).open();
+            Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(Stonks.plugin.playerManager.get(player), board.getQuotation()).open();
         }
     }
 }
