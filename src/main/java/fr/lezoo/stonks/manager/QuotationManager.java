@@ -41,13 +41,20 @@ public class QuotationManager implements FileManager {
         removed.refreshRunnable.cancel();
     }
 
+    /**
+     * Set the data correponding to the quotations. But it doesn't refresh the price or try to get it.
+     * The refreshPrice method is here to get an updated version of the price
+     */
+    public void refresh() {
+        for(LoadedQuotation quotation:mapped.values()) {
+            quotation.quotation.getHandler().refresh();
+        }
+    }
+
     @Override
     public void save() {
         ConfigFile config = new ConfigFile("quotations");
 
-        // Remove old quotations
-        for (String key : config.getConfig().getKeys(true))
-            config.getConfig().set(key, null);
         //Remove the data of the quotations in quotations-data.yml
         ConfigFile quotationDataConfig = new ConfigFile("quotations-data");
         for (String key : quotationDataConfig.getConfig().getKeys(true))
@@ -106,7 +113,7 @@ public class QuotationManager implements FileManager {
             this.refreshRunnable = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    quotation.getHandler().refresh();
+                    quotation.getHandler().refreshPrice();
                 }
             };
             refreshRunnable.runTaskTimer(Stonks.plugin, 20, 20 * quotation.getRefreshPeriod());

@@ -52,7 +52,8 @@ public class Quotation {
      */
     public static final int BOARD_DATA_NUMBER = 100;
 
-    private static final long DEFAULT_REFRESH_PERIOD = TimeScale.HOUR.getTime() / BOARD_DATA_NUMBER / 1000;
+    private static final long DEFAULT_REFRESH_PERIOD = TimeScale.MINUTE.getTime() / BOARD_DATA_NUMBER / 1000;
+
 
     /**
      * Public constructor to create a new Quotation from scratch
@@ -180,16 +181,20 @@ public class Quotation {
             config.set(id, null);
             return;
         }
-
-        config.set(id + ".name", name);
+        if (!config.contains(id + ".name"))
+            config.set(id + ".name", name);
         handler.saveInFile(config.getConfigurationSection(id));
         config.set(id + ".real-stock", handler instanceof RealStockHandler);
-        config.set(id + ".refresh-period", refreshPeriod);
+
+        if (!config.contains(id + ".refresh-period"))
+            config.set(id + ".refresh-period", refreshPeriod);
 
         // If the quotation has dividends we save it
         if (hasDividends()) {
-            config.set(id + ".dividends.formula", dividends.getFormula());
-            config.set(id + ".dividends.period", dividends.getPeriod());
+            if (!config.contains(id + ".dividends.formula"))
+                config.set(id + ".dividends.formula", dividends.getFormula());
+            if (!config.contains(id + ".dividends.period"))
+                config.set(id + ".dividends.period", dividends.getPeriod());
             config.set(id + ".dividends.last", dividends.getLastApplication());
         }
 

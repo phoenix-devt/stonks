@@ -13,6 +13,8 @@ import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.listener.SharePaperListener;
 import fr.lezoo.stonks.listener.TradingInteractListener;
 import fr.lezoo.stonks.manager.*;
+import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.quotation.api.StockAPI;
 import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.version.ServerVersion;
@@ -125,6 +127,17 @@ public class Stonks extends JavaPlugin {
             }
         }.runTaskTimer(this, 0L, configManager.signRefreshTime);
 
+
+        // Refresh boards
+        new BukkitRunnable() {
+            //We refresh the quotation by putting the good values
+            @Override
+            public void run() {
+
+                quotationManager.refresh();
+            }
+        }.runTaskTimer(this, 0, TimeScale.MINUTE.getTime() / (1000 * Quotation.BOARD_DATA_NUMBER));
+
         // Refresh boards
         new BukkitRunnable() {
             //We refresh the board only if people are online.
@@ -157,7 +170,7 @@ public class Stonks extends JavaPlugin {
 
     /**
      * @return If the stock market is closed and no shares
-     *         can be bought or closed
+     * can be bought or closed
      */
     public boolean isClosed() {
 

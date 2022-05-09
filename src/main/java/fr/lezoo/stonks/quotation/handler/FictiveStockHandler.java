@@ -4,6 +4,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.quotation.Quotation;
 import fr.lezoo.stonks.quotation.QuotationInfo;
 import fr.lezoo.stonks.quotation.TimeScale;
+import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -33,18 +34,45 @@ public class FictiveStockHandler implements StockHandler {
 
     }
 
-
     public FictiveStockHandler(Quotation quotation, ConfigurationSection config) {
         this.quotation = quotation;
 
         initialSupply = config.getDouble("initial-supply");
         totalSupply = config.contains("total-supply") ? config.getDouble("total-supply") : initialSupply;
-        priceMultiplier = config.contains("price-multiplier") ? quotation.getPrice() / initialSupply : config.getDouble("price-multiplier");
+        priceMultiplier = config.contains("price-multiplier") ? config.getDouble("price-multiplier"):quotation.getPrice() / initialSupply  ;
     }
+
+
+    @Override
+    public void refresh() {
+        double price = calculatePrice(totalSupply);
+        //We setup the price in the quotation
+        for (TimeScale time : TimeScale.values()) {
+
+            // We get the list corresponding to the time
+            List<QuotationInfo> workingData = new ArrayList<>();
+            workingData.addAll(quotation.getData(time));
+
+            // This fixes an issue with empty working data
+            long lastTimeStamp = workingData.isEmpty() ? 0 : workingData.get(workingData.size() - 1).getTimeStamp();
+
+            // If the the latest data of workingData is too old we add another one
+            if (System.currentTimeMillis() - lastTimeStamp > time.getTime() / Quotation.BOARD_DATA_NUMBER) {
+
+                workingData.add(new QuotationInfo(System.currentTimeMillis(), price));
+                // If the list contains too much data we remove the older ones
+                if (workingData.size() > Quotation.BOARD_DATA_NUMBER)
+                    workingData.remove(0);
+                // We save the changes we made in the attribute
+                quotation.setData(time, workingData);
+            }
+        }
+    }
+
+
 
     @Override
     public void whenBought(double stocksBought) {
-        Bukkit.broadcastMessage("Bought");
         totalSupply += (int) stocksBought;
     }
 
@@ -80,35 +108,13 @@ public class FictiveStockHandler implements StockHandler {
         return totalSupply;
     }
 
+
     @Override
-    //Volatility of 1 -> can change by 5% in 1 hour
-    public void refresh() {
+    //Formula for the change in price over time
+    public void refreshPrice() {
         //We just refresh the priceMultiplier
         priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(quotation.getRefreshPeriod()) /
-                (10 * Math.sqrt(TimeScale.HOUR.getTime()));
-        Bukkit.broadcastMessage("" + priceMultiplier*totalSupply);
-        double price = calculatePrice(totalSupply);
-        //We setup the price in the quotation
-        for (TimeScale time : TimeScale.values()) {
-
-            // We get the list corresponding to the time
-            List<QuotationInfo> workingData = new ArrayList<>();
-            workingData.addAll(quotation.getData(time));
-
-            // This fixes an issue with empty working data
-            long lastTimeStamp = workingData.isEmpty() ? 0 : workingData.get(workingData.size() - 1).getTimeStamp();
-
-            // If the the latest data of workingData is too old we add another one
-            if (System.currentTimeMillis() - lastTimeStamp > time.getTime() / Quotation.BOARD_DATA_NUMBER) {
-
-                workingData.add(new QuotationInfo(System.currentTimeMillis(), price));
-                // If the list contains too much data we remove the older ones
-                if (workingData.size() > Quotation.BOARD_DATA_NUMBER)
-                    workingData.remove(0);
-                // We save the changes we made in the attribute
-                quotation.setData(time, workingData);
-            }
-        }
+                10*(Math.sqrt(TimeScale.HOUR.getTime()));
     }
 
 }

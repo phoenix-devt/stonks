@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.display.board;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -34,7 +35,7 @@ public class BoardRaycast {
             // Coordinates of intersection point relative to the board
             Vector relative = source.toVector().add(source.getDirection().multiply(t)).subtract(planePoint);
             double verticalOffset = 1 - relative.getY() / board.getHeight();
-            double horizontalOffset = (relative.getX() + relative.getZ()) / board.getWidth();
+            double horizontalOffset = (relative.dot(board.getBoardFace().getDirection().rotateAroundY(Math.PI / 2))) / board.getWidth();
 
             // If we are really clicking on a board we check where it has been clicked and stop the method
             if (horizontalOffset >= 0 && horizontalOffset <= 1 && verticalOffset >= 0 && verticalOffset <= 1) {
