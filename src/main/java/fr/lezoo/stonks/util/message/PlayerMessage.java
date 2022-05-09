@@ -32,6 +32,18 @@ public class PlayerMessage {
         return ChatColor.translateAlternateColorCodes('&', str);
     }
 
+    public String getAsString() {
+        StringBuilder builder = new StringBuilder();
+        boolean notEmpty = false;
+        for (String str : format) {
+            if (notEmpty)
+                builder.append("\n");
+            builder.append(str);
+            notEmpty = true;
+        }
+        return builder.toString();
+    }
+
     public void send(Collection<? extends Player> senders) {
         senders.forEach(sender -> send(sender));
     }

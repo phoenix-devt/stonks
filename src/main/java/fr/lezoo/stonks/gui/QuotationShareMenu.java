@@ -12,14 +12,13 @@ import fr.lezoo.stonks.quotation.TimeScale;
 import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.ChatInput;
-import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.InputHandler;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
-import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 
@@ -62,16 +61,17 @@ public class QuotationShareMenu extends EditableInventory {
         return new GeneratedShareMenu(player, this, quotation);
     }
 
-    public class GeneratedShareMenu extends GeneratedInventory {
+    public class GeneratedShareMenu extends GeneratedInventory implements QuotationInventory {
         private final Quotation quotation;
 
         public GeneratedShareMenu(PlayerData playerData, EditableInventory editable, Quotation quotation) {
             super(playerData, editable);
+
             this.quotation = quotation;
-            //We change the current quotation of the player to the actual one
-            playerData.setCurrentQuotation(quotation);
         }
 
+        @NotNull
+        @Override
         public Quotation getQuotation() {
             return quotation;
         }
@@ -111,14 +111,11 @@ public class QuotationShareMenu extends EditableInventory {
 
             //We buy the shares using the leverage,minPrice,maxPrice provided
             if (item instanceof AmountActionItem)
-                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.NORMAL : ShareType.SHORT,((AmountActionItem) item).getAmount());
+                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.NORMAL : ShareType.SHORT, ((AmountActionItem) item).getAmount());
 
             if (item instanceof CustomActionItem) {
                 ShareType type = item.getFunction().equalsIgnoreCase("buy-custom") ? ShareType.NORMAL : ShareType.SHORT;
                 (type == ShareType.NORMAL ? Message.BUY_CUSTOM_ASK : Message.SELL_CUSTOM_ASK).format().send(player);
-
-                //We set the currentQuotation to be the current one to set properly the amount
-                playerData.setCurrentQuotation(quotation);
 
                 if (type == ShareType.NORMAL) {
                     new ChatInput(this, InputHandler.BUY_CUSTOM_AMOUNT_HANDLER);

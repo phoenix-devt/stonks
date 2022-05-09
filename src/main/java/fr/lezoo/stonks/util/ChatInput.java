@@ -1,20 +1,18 @@
 package fr.lezoo.stonks.util;
 
-import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.gui.QuotationInventory;
 import fr.lezoo.stonks.gui.objects.PluginInventory;
 import fr.lezoo.stonks.listener.temp.TemporaryListener;
 import fr.lezoo.stonks.player.PlayerData;
-import org.bukkit.Bukkit;
+import fr.lezoo.stonks.quotation.Quotation;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.util.function.BiFunction;
-
 public class ChatInput extends TemporaryListener {
     private final PluginInventory inv;
-    private final BiFunction<PlayerData, String, Boolean> inputHandler;
+    private final TriFunction<PlayerData, String, Quotation, Boolean> inputHandler;
 
     /**
      * @param inv          Custom inventory opened atm
@@ -22,7 +20,7 @@ public class ChatInput extends TemporaryListener {
      *                     something in the chat. Should return true if the chat
      *                     input mecanism should close
      */
-    public ChatInput(PluginInventory inv, BiFunction<PlayerData, String, Boolean> inputHandler) {
+    public ChatInput(PluginInventory inv, TriFunction<PlayerData, String, Quotation, Boolean> inputHandler) {
         super(AsyncPlayerChatEvent.getHandlerList(), InventoryOpenEvent.getHandlerList());
 
         this.inv = inv;
@@ -47,11 +45,11 @@ public class ChatInput extends TemporaryListener {
             return;
 
         event.setCancelled(true);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Stonks.plugin,()->{if (inputHandler.apply(inv.getPlayerData(), event.getMessage())) {
+
+        if (inputHandler.apply(inv.getPlayerData(), event.getMessage(), inv instanceof QuotationInventory ? ((QuotationInventory) inv).getQuotation() : null)) {
             close();
             inv.open();
-        }});
-
+        }
     }
 
     @EventHandler

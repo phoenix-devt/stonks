@@ -6,22 +6,17 @@ import fr.lezoo.stonks.display.board.BoardRaycast;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.ShareType;
-import fr.lezoo.stonks.util.InputHandler;
-import fr.lezoo.stonks.util.SimpleChatInput;
 import fr.lezoo.stonks.util.message.Message;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
 
 public class TradingInteractListener implements Listener {
-
-
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
@@ -41,26 +36,27 @@ public class TradingInteractListener implements Listener {
         checkUpSquare(player, cast.getHit(), cast.getVerticalCoordinate(), cast.getHorizontalCoordinate());
     }
 
-
-    //Does what need to be done when the top square is touched
+    //Does what needs to be done when the top square is touched
     public void checkUpSquare(Player player, Board board, double verticalOffset, double horizontalOffset) {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.21) && (verticalOffset > 0.02)) {
             PlayerData playerData = Stonks.plugin.playerManager.get(player);
-            //We set the player current quotation to the actual one
-            playerData.setCurrentQuotation(board.getQuotation());
             OrderInfo orderInfo = playerData.getOrderInfo(board.getQuotation().getId());
 
-                Message.SET_PARAMETER_ASK.format("leverage", "\n" + orderInfo.getLeverage(),
-                        "amount","\n"+ (orderInfo.hasAmount() ? orderInfo.getAmount() : ""),
-                        "min-price","\n"+( orderInfo.hasMinPrice() ? "\n" + orderInfo.getMinPrice() : ""),
-                        "max-price", "\n"+(orderInfo.hasMaxPrice() ? "\n" + orderInfo.getMaxPrice() : "")).send(player);
+            TextComponent amountComponent = new TextComponent(Message.SET_AMOUNT_INFO.format("amount", String.valueOf(orderInfo.getAmount())).getAsString());
+            amountComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quotations amountinput " + board.getQuotation().getId()));
+            player.spigot().sendMessage(amountComponent);
 
+            TextComponent leverageComponent = new TextComponent(Message.SET_LEVERAGE_INFO.format("leverage", String.valueOf(orderInfo.getLeverage())).getAsString());
+            leverageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quotations leverageinput " + board.getQuotation().getId()));
+            player.spigot().sendMessage(leverageComponent);
 
-                //We listen to the player
-                SimpleChatInput.getChatInput(playerData, InputHandler.SET_PARAMETER_HANDLER);
+            TextComponent minPriceComponent = new TextComponent(Message.SET_MIN_PRICE_INFO.format("min-price", String.valueOf(orderInfo.getMinPrice())).getAsString());
+            minPriceComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quotations minpriceinput " + board.getQuotation().getId()));
+            player.spigot().sendMessage(minPriceComponent);
 
-
-
+            TextComponent maxPriceComponent = new TextComponent(Message.SET_MAX_PRICE_INFO.format("max-price", String.valueOf(orderInfo.getMaxPrice())).getAsString());
+            maxPriceComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quotations maxpriceinput " + board.getQuotation().getId()));
+            player.spigot().sendMessage(maxPriceComponent);
         }
     }
 

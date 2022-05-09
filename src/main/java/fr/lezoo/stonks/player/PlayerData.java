@@ -24,13 +24,12 @@ public class PlayerData {
     private Player player;
     private double taxRate;
 
-    // Data not saved when logging off
+    /**
+     * Links quotation IDs to order infos
+     */
+    private final Map<String, OrderInfo> orderInfos = new HashMap<>();
 
-    //links quotation Id to an order info
-    private final HashMap<String, OrderInfo> orderInfos = new HashMap<>();
-    //the quotation the player is currently interacting with
-    private Quotation currentQuotation = null;
-    private boolean isOnChatInput=false;
+    private boolean isOnChatInput;
 
     public void setOnChatInput(boolean onChatInput) {
         isOnChatInput = onChatInput;
@@ -98,14 +97,6 @@ public class PlayerData {
         if (!this.hasOrderInfo(quotationId))
             this.addOrderInfo(quotationId);
         return orderInfos.get(quotationId);
-    }
-
-    public Quotation getCurrentQuotation() {
-        return currentQuotation;
-    }
-
-    public void setCurrentQuotation(Quotation quotation) {
-        this.currentQuotation = quotation;
     }
 
     public UUID getUniqueId() {
@@ -259,14 +250,15 @@ public class PlayerData {
      * @param amount    Amount of shares bought
      * @return If the share was successfully bought or not
      */
+    // TODO check
     public boolean buyShare(Quotation quotation, ShareType type, double amount, int leverage, double maxPrice, double minPrice) {
         double price = quotation.getPrice() * amount;
 
         if (!quotation.isRealStock()) {
             //Want the price at which the player will buy his shares to be affected by the amount he bought to avoid abuses
             //e.g if the player buy 10% of the shares the price will go 10% but we don't want hium to instantly gain 10% fo the price
-            FictiveStockHandler handler= (FictiveStockHandler) quotation.getHandler();
-            price=handler.calculatePrice(handler.getTotalSupply()-(type.equals(ShareType.NORMAL)?amount:-amount));
+            FictiveStockHandler handler = (FictiveStockHandler) quotation.getHandler();
+            price = handler.calculatePrice(handler.getTotalSupply() - (type.equals(ShareType.NORMAL) ? amount : -amount));
         }
 
         // If it exchanges money
@@ -328,7 +320,7 @@ public class PlayerData {
             }
         }
 
-        quotation.getHandler().whenBought(type.equals(ShareType.NORMAL)?amount:-amount);
+        quotation.getHandler().whenBought(type.equals(ShareType.NORMAL) ? amount : -amount);
 
         // Send player message
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(

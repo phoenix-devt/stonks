@@ -25,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class SpecificPortfolio extends EditableInventory {
         return new GeneratedSpecificPortfolio(player, quotation, this);
     }
 
-    public class GeneratedSpecificPortfolio extends GeneratedInventory {
+    public class GeneratedSpecificPortfolio extends GeneratedInventory implements QuotationInventory {
         private final Quotation quotation;
         private final int perPage;
 
@@ -82,6 +83,12 @@ public class SpecificPortfolio extends EditableInventory {
             this.quotation = quotation;
 
             updateInventoryData();
+        }
+
+        @NotNull
+        @Override
+        public Quotation getQuotation() {
+            return quotation;
         }
 
         private void updateInventoryData() {
