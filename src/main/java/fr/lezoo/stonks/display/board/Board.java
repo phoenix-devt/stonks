@@ -89,6 +89,7 @@ public class Board {
 
         // Refresh image and item frames
         refreshImage();
+        checkBackground();
         checkItemFrames();
     }
 
@@ -156,20 +157,34 @@ public class Board {
         boarddata.set(uuid + ".direction", boardFace.name());
     }
 
+    public void checkBackground() {
+        for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++) {
+                BoardPoint point = pointArray[x][y];
+                Location location=point.getLocation().clone().subtract(boardFace.getDirection());
+                if (location.getBlock().getType().equals(Material.AIR))
+                    location.getBlock().setType(BACKGROUND_MATERIAL);
+            }
+    }
+
+
     public void checkItemFrames() {
 
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++) {
                 BoardPoint point = pointArray[x][y];
                 ItemFrame itemFrame = point.itemFrame;
-                if (itemFrame != null && !itemFrame.isDead()) {
-                    if (isAir(itemFrame.getItem()))
-                        point.fillItemFrame();
-                    continue;
-                }
+                if (!point.getLocation().subtract(boardFace.getDirection()).getBlock().getType().equals(Material.AIR)) {
+                    if (itemFrame != null && !itemFrame.isDead()) {
+                        if (isAir(itemFrame.getItem()))
+                            point.fillItemFrame();
+                        continue;
+                    }
 
-                // Create a new one
-                point.createItemFrame();
+                    // Create a new one
+                    point.createItemFrame();
+
+                }
             }
     }
 

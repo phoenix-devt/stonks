@@ -27,7 +27,7 @@ public class FictiveStockHandler implements StockHandler {
         this.quotation = quotation;
         this.initialSupply = initialSupply;
         //We setup the price multiplier
-        this.priceMultiplier=quotation.getPrice()/initialSupply;
+        this.priceMultiplier = quotation.getPrice() / initialSupply;
         this.totalSupply = initialSupply;
         //p=calculatePrice()*priceMultiplier();
 
@@ -39,35 +39,33 @@ public class FictiveStockHandler implements StockHandler {
 
         initialSupply = config.getDouble("initial-supply");
         totalSupply = config.contains("total-supply") ? config.getDouble("total-supply") : initialSupply;
-        priceMultiplier=config.contains("price-multiplier")? quotation.getPrice()/initialSupply :config.getDouble("price-multiplier") ;
+        priceMultiplier = config.contains("price-multiplier") ? quotation.getPrice() / initialSupply : config.getDouble("price-multiplier");
     }
 
     @Override
     public void whenBought(double stocksBought) {
-
-        totalSupply += (int)stocksBought;
+        Bukkit.broadcastMessage("Bought");
+        totalSupply += (int) stocksBought;
     }
 
     @Override
     public void saveInFile(ConfigurationSection config) {
         config.set("initial-supply", initialSupply);
         config.set("total-supply", totalSupply);
-        config.set("price-multiplier",priceMultiplier);
+        config.set("price-multiplier", priceMultiplier);
     }
 
     /**
-     *Calculates the price the quotation should have at any moment
+     * Calculates the price the quotation should have at any moment
      */
     //Calculate the price the course will have if you buy shares
     public double calculatePrice(double totalSup) {
-       return priceMultiplier * (totalSup < initialSupply / 10 ?calculateExponential(totalSup):totalSup);
+        return priceMultiplier * (totalSup < initialSupply / 10 ? calculateExponential(totalSup) : totalSup);
     }
 
 
-
-
     public double calculateExponential(double totalSup) {
-        return initialSupply/10*(Math.exp(totalSup-(initialSupply/10)));
+        return initialSupply / 10 * (Math.exp(totalSup - (initialSupply / 10)));
     }
 
     public double getPriceMultiplier() {
@@ -86,10 +84,10 @@ public class FictiveStockHandler implements StockHandler {
     //Volatility of 1 -> can change by 5% in 1 hour
     public void refresh() {
         //We just refresh the priceMultiplier
-        priceMultiplier *= (1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(quotation.getRefreshPeriod()) /
-                (10 * Math.sqrt(TimeScale.HOUR.getTime())));
-
-        double price=calculatePrice(totalSupply);
+        priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(quotation.getRefreshPeriod()) /
+                (10 * Math.sqrt(TimeScale.HOUR.getTime()));
+        Bukkit.broadcastMessage("" + priceMultiplier*totalSupply);
+        double price = calculatePrice(totalSupply);
         //We setup the price in the quotation
         for (TimeScale time : TimeScale.values()) {
 
