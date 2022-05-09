@@ -1,8 +1,10 @@
 package fr.lezoo.stonks.util;
 
+import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.gui.objects.PluginInventory;
 import fr.lezoo.stonks.listener.temp.TemporaryListener;
 import fr.lezoo.stonks.player.PlayerData;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -45,11 +47,11 @@ public class ChatInput extends TemporaryListener {
             return;
 
         event.setCancelled(true);
-
-        if (inputHandler.apply(inv.getPlayerData(), event.getMessage())) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Stonks.plugin,()->{if (inputHandler.apply(inv.getPlayerData(), event.getMessage())) {
             close();
             inv.open();
-        }
+        }});
+
     }
 
     @EventHandler

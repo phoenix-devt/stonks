@@ -21,11 +21,12 @@ public class CreateTreeNode extends CommandTreeNode {
         addParameter(new SimpleParameter("quotation_id"));
         addParameter(new SimpleParameter("Quotation_Name"));
         addParameter(new NumericalParameter("<initialPrice>", 10, 1000, 1000000));
+        addParameter(new NumericalParameter("<initialSupply>", 1000, 10000, 100000));
     }
 
     @Override
     public CommandResult execute(CommandSender sender, String[] args) {
-        if (args.length < 5)
+        if (args.length < 6)
             return CommandResult.THROW_USAGE;
 
         args[2] = args[2].toLowerCase();
@@ -36,15 +37,16 @@ public class CreateTreeNode extends CommandTreeNode {
             return CommandResult.FAILURE;
         }
 
-        double initialPrice;
+        double initialPrice,initialSupply;
         try {
             initialPrice = Double.parseDouble(args[4]);
+            initialSupply=Double.parseDouble(args[5]);
         } catch (IllegalArgumentException exception) {
             sender.sendMessage(ChatColor.RED + "Please enter a valid number");
             return CommandResult.FAILURE;
         }
 
-        Stonks.plugin.quotationManager.register(new Quotation(args[2], args[3], FictiveStockHandler::new, null, null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
+        Stonks.plugin.quotationManager.register(new Quotation(args[2], args[3], (quotation)->new FictiveStockHandler(quotation,initialSupply), null, null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
         return CommandResult.SUCCESS;
     }
 }

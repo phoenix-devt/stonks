@@ -165,10 +165,11 @@ public class QuotationManager implements FileManager {
                 });
 
             }
-            //If it a virtual Quotation we set the initial price at 10
+            //If it a virtual Quotation we set the initial price at 10 if there is no data for the quotation
             else {
                 for (TimeScale disp : TimeScale.values())
-                    quotation.setData(disp, Arrays.asList(new QuotationInfo(System.currentTimeMillis(), 10)));
+                    if (quotation.getData(disp).size() == 0)
+                        quotation.setData(disp, Arrays.asList(new QuotationInfo(System.currentTimeMillis(), 10)));
 
             }
         }

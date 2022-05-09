@@ -4,6 +4,7 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
 import fr.lezoo.stonks.quotation.ExchangeType;
 import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.quotation.handler.FictiveStockHandler;
 import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
@@ -29,6 +30,16 @@ public class PlayerData {
     private final HashMap<String, OrderInfo> orderInfos = new HashMap<>();
     //the quotation the player is currently interacting with
     private Quotation currentQuotation = null;
+    private boolean isOnChatInput=false;
+
+    public void setOnChatInput(boolean onChatInput) {
+        isOnChatInput = onChatInput;
+    }
+
+    public boolean isOnChatInput() {
+        return isOnChatInput;
+    }
+
     /**
      * Mapped shares the player bought from a particular quotation
      */
@@ -200,7 +211,7 @@ public class PlayerData {
     }
 
     /**
-     * @return Counts the shares the player owns
+     * @return Counts the shares the player o"wns
      */
     public double countShares() {
         double total = 0;
@@ -251,6 +262,13 @@ public class PlayerData {
     public boolean buyShare(Quotation quotation, ShareType type, double amount, int leverage, double maxPrice, double minPrice) {
         double price = quotation.getPrice() * amount;
 
+        if (!quotation.isRealStock()) {
+            //Want the price at which the player will buy his shares to be affected by the amount he bought to avoid abuses
+            //e.g if the player buy 10% of the shares the price will go 10% but we don't want hium to instantly gain 10% fo the price
+            FictiveStockHandler handler= (FictiveStockHandler) quotation.getHandler();
+            price=handler.calculatePrice(handler.getTotalSupply()-(type.equals(ShareType.NORMAL)?amount:-amount));
+        }
+
         // If it exchanges money
         if (quotation.isVirtual()) {
 
@@ -272,6 +290,7 @@ public class PlayerData {
             // Remove from balance and buy shares
             giveShare(share);
             Stonks.plugin.economy.withdrawPlayer(player, price);
+
         } else {
 
             // We make the price an int cause we can't withdraw half items (makes the player lose a bit of money
@@ -309,7 +328,7 @@ public class PlayerData {
             }
         }
 
-        quotation.getHandler().whenBought(amount);
+        quotation.getHandler().whenBought(type.equals(ShareType.NORMAL)?amount:-amount);
 
         // Send player message
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(
