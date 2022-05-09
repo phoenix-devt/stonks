@@ -16,7 +16,7 @@ public class SimpleChatInput extends TemporaryListener {
     private final TriFunction<PlayerData, String, Quotation, Boolean> inputHandler;
 
     public SimpleChatInput(PlayerData playerData, Quotation quotation, TriFunction<PlayerData, String, Quotation, Boolean> inputHandler) {
-        super(AsyncPlayerChatEvent.getHandlerList());
+        super(AsyncPlayerChatEvent.getHandlerList(), PlayerMoveEvent.getHandlerList());
 
         this.playerData = playerData;
         this.quotation = quotation;
