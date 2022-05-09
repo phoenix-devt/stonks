@@ -42,7 +42,7 @@ public class Quotation {
     protected final Map<TimeScale, List<QuotationInfo>> quotationData = new HashMap<>();
 
     /**
-     * How frequently this quotation refreshes in seconds
+     * How frequently this quotation refreshes in ticks!!
      */
     private final long refreshPeriod;
 
@@ -52,7 +52,7 @@ public class Quotation {
      */
     public static final int BOARD_DATA_NUMBER = 100;
 
-    private static final long DEFAULT_REFRESH_PERIOD = TimeScale.MINUTE.getTime() / BOARD_DATA_NUMBER / 1000;
+    private static final long DEFAULT_REFRESH_PERIOD = TimeScale.MINUTE.getTime() / (BOARD_DATA_NUMBER / 50);
 
 
     /**

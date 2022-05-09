@@ -114,7 +114,7 @@ public class FictiveStockHandler implements StockHandler {
     public void refreshPrice() {
         //We just refresh the priceMultiplier
         priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(quotation.getRefreshPeriod()) /
-                10*(Math.sqrt(TimeScale.HOUR.getTime()));
+                (Math.sqrt(10*TimeScale.HOUR.getTime()));
     }
 
 }

@@ -116,7 +116,7 @@ public class QuotationManager implements FileManager {
                     quotation.getHandler().refreshPrice();
                 }
             };
-            refreshRunnable.runTaskTimer(Stonks.plugin, 20, 20 * quotation.getRefreshPeriod());
+            refreshRunnable.runTaskTimer(Stonks.plugin, 20, quotation.getRefreshPeriod());
         }
     }
 
