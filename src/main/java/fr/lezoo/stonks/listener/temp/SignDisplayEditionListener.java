@@ -2,7 +2,7 @@ package fr.lezoo.stonks.listener.temp;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.sign.DisplaySign;
-import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.util.Position;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SignDisplayEditionListener extends TemporaryListener {
     @Nullable
-    private final Quotation quotation;
+    private final Stock stock;
     private final Player player;
     private final boolean removing;
 
@@ -23,10 +23,10 @@ public class SignDisplayEditionListener extends TemporaryListener {
      * @param player   Player editing a display sign
      * @param removing True: sign being removing; false: sign being created
      */
-    public SignDisplayEditionListener(Quotation quotation, Player player, boolean removing) {
+    public SignDisplayEditionListener(Stock stock, Player player, boolean removing) {
         super(PlayerQuitEvent.getHandlerList(), PlayerInteractEvent.getHandlerList());
 
-        this.quotation = quotation;
+        this.stock = stock;
         this.player = player;
         this.removing = removing;
     }
@@ -67,9 +67,9 @@ public class SignDisplayEditionListener extends TemporaryListener {
             return;
         }
 
-        DisplaySign sign = new DisplaySign(quotation, pos);
+        DisplaySign sign = new DisplaySign(stock, pos);
         Stonks.plugin.signManager.register(sign);
-        player.sendMessage(ChatColor.YELLOW + "You successfully registered a display sign at the target location for " + quotation.getName());
+        player.sendMessage(ChatColor.YELLOW + "You successfully registered a display sign at the target location for " + stock.getName());
         close();
     }
 

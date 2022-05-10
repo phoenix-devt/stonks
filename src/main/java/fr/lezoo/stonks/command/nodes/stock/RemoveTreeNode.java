@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.command.nodes.quotation;
+package fr.lezoo.stonks.command.nodes.stock;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.command.objects.CommandTreeNode;
@@ -10,7 +10,7 @@ public class RemoveTreeNode extends CommandTreeNode {
     public RemoveTreeNode(CommandTreeNode parent) {
         super(parent, "remove");
 
-        addParameter(Parameter.QUOTATION_ID);
+        addParameter(Parameter.STOCK_ID);
     }
 
     @Override
@@ -20,12 +20,12 @@ public class RemoveTreeNode extends CommandTreeNode {
 
         String format = args[2].toLowerCase();
 
-        if (!Stonks.plugin.quotationManager.has(format)) {
-            sender.sendMessage(ChatColor.RED + "There is no quotation with this ID");
+        if (!Stonks.plugin.stockManager.has(format)) {
+            sender.sendMessage(ChatColor.RED + "There is no stock with this ID");
             return CommandResult.FAILURE;
         }
 
-        Stonks.plugin.quotationManager.remove(format);
+        Stonks.plugin.stockManager.remove(format);
         return CommandResult.SUCCESS;
     }
 }

@@ -5,8 +5,8 @@ import fr.lezoo.stonks.command.objects.CommandTreeNode;
 import fr.lezoo.stonks.command.objects.parameter.NumericalParameter;
 import fr.lezoo.stonks.command.objects.parameter.Parameter;
 import fr.lezoo.stonks.display.board.Board;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.TimeScale;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,7 +19,7 @@ public class CreateTreeNode extends CommandTreeNode {
     public CreateTreeNode(CommandTreeNode parent) {
         super(parent, "create");
 
-        addParameter(Parameter.QUOTATION_ID);
+        addParameter(Parameter.STOCK_ID);
         addParameter(Parameter.TIME_SCALE);
         addParameter(new NumericalParameter("<width>", 4, 5, 6, 7, 8, 9, 10));
         addParameter(new NumericalParameter("<height>", 4, 5, 6, 7, 8, 9, 10));
@@ -35,9 +35,9 @@ public class CreateTreeNode extends CommandTreeNode {
         if (args.length < 7)
             return CommandResult.THROW_USAGE;
 
-        String quotationId = args[3].toLowerCase();
-        if (!Stonks.plugin.quotationManager.has(quotationId)) {
-            sender.sendMessage(ChatColor.RED + "Could not find a quotation with ID '" + quotationId + "'");
+        String stockId = args[3].toLowerCase();
+        if (!Stonks.plugin.stockManager.has(stockId)) {
+            sender.sendMessage(ChatColor.RED + "Could not find a stock with ID '" + stockId + "'");
             return CommandResult.FAILURE;
         }
 
@@ -85,8 +85,8 @@ public class CreateTreeNode extends CommandTreeNode {
         }
 
         // Work with integers instead to simplify calculations
-        Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
-        Stonks.plugin.boardManager.register(new Board(quotation, width, height, block.getLocation(), time, face));
+        Stock stock = Stonks.plugin.stockManager.get(stockId);
+        Stonks.plugin.boardManager.register(new Board(stock, width, height, block.getLocation(), time, face));
         return CommandResult.SUCCESS;
     }
 }

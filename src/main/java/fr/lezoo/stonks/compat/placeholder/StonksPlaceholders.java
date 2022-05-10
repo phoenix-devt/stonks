@@ -2,7 +2,7 @@ package fr.lezoo.stonks.compat.placeholder;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.share.Share;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -45,27 +45,27 @@ public class StonksPlaceholders extends PlaceholderExpansion {
 
         if (params.startsWith("shares_")) {
             String id = params.substring(7);
-            if (!Stonks.plugin.quotationManager.has(id))
+            if (!Stonks.plugin.stockManager.has(id))
                 return "?";
 
-            return Double.toString(playerData.countShares(Stonks.plugin.quotationManager.get(id)));
+            return Double.toString(playerData.countShares(Stonks.plugin.stockManager.get(id)));
         }
 
         if (params.startsWith("share_money_")) {
             String id = params.substring(7);
-            if (!Stonks.plugin.quotationManager.has(id))
+            if (!Stonks.plugin.stockManager.has(id))
                 return "?";
 
             double sum = 0;
-            for (Share share : playerData.getShares(Stonks.plugin.quotationManager.get(id)))
+            for (Share share : playerData.getShares(Stonks.plugin.stockManager.get(id)))
                 sum += share.getCloseEarning(0);
             return String.valueOf(sum);
         }
 
         if (params.startsWith("portfolio_money")) {
             double sum = 0;
-            for (Quotation quotation : Stonks.plugin.quotationManager.getQuotations())
-                for (Share share : playerData.getShares(quotation))
+            for (Stock stock : Stonks.plugin.stockManager.getStocks())
+                for (Share share : playerData.getShares(stock))
                     sum += share.getCloseEarning(0);
             return String.valueOf(sum);
         }

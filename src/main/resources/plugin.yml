@@ -13,12 +13,12 @@ commands:
     description: 'All you shares are available here.'
   redeemdividends:
     description: 'Claims dividends from owned shares.'
-  quotations:
-    description: 'Displays the list of quotations'
+  stocks:
+    description: 'Displays the list of stocks'
 
 permissions:
   stonks.admin:
     default: op
-  stonks.quotation-list:
-    description: 'Ability to use /quotations'
+  stonks.stock-list:
+    description: 'Ability to use /stocks'
     default: op

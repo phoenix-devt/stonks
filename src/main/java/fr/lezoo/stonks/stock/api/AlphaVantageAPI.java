@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation.api;
+package fr.lezoo.stonks.stock.api;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
@@ -12,17 +12,17 @@ public class AlphaVantageAPI extends StockAPI {
     }
 
     @Override
-    public String getURL(String quotationId) {
-        return "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + quotationId + "&apikey=" + getStockKey();
+    public String getURL(String stockId) {
+        return "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + stockId + "&apikey=" + getStockKey();
     }
 
     @Override
-    public double parseResponse(String response, String quotationId) throws ParseException {
+    public double parseResponse(String response, String stockId) throws ParseException {
         //Check if the amount of API call has been surpassed
         Validate.isTrue(!response.contains("Our standard API call frequency is 5 calls"), "Max amount of 5 API calls/min (for free version of alphavantage) has been surpassed");
         JSONObject jsonObject = (JSONObject) new JSONParser().parse(response);
         JSONObject globalQuotes = (JSONObject) jsonObject.get("Global Quote");
-        Validate.notNull(globalQuotes.get("05. price"), "AlphaVantage API Problem with" + quotationId + "\n" + response);
+        Validate.notNull(globalQuotes.get("05. price"), "AlphaVantage API Problem with" + stockId + "\n" + response);
         return Double.parseDouble(globalQuotes.get("05. price").toString());
     }
 }

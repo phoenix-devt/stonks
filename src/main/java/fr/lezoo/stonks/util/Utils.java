@@ -38,7 +38,7 @@ public class Utils {
 
     /**
      * @return The direction to follow to place the item frames
-     *         on a quotation board
+     *         on a stock board
      */
     public static BlockFace rotateAroundY(BlockFace blockFace) {
         switch (blockFace) {

@@ -10,7 +10,7 @@ public class PlayerClaimShareEvent extends PlayerDataEvent {
     private static final HandlerList handlers = new HandlerList();
 
     /**
-     * Called when a player claims a share from a certain quotation.
+     * Called when a player claims a share from a certain stock.
      * It is called for both closed and open shares.
      * <p>
      * Not to be mistaken for the {@link ShareClosedEvent}

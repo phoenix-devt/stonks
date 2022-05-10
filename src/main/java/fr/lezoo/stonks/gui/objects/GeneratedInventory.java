@@ -119,7 +119,7 @@ public abstract class GeneratedInventory extends PluginInventory {
     /**
      * The name of the inventory depends on the state of the inventory.
      * If the current page is 4 and if the max amount of pages is 6,
-     * the inventory name should return 'Quotations (4/6)'
+     * the inventory name should return 'Stocks (4/6)'
      *
      * @return String with GUI name placeholders parsed
      */

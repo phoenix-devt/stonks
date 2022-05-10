@@ -1,7 +1,7 @@
 package fr.lezoo.stonks;
 
 import fr.lezoo.stonks.command.PortfolioCommand;
-import fr.lezoo.stonks.command.QuotationsCommand;
+import fr.lezoo.stonks.command.StocksCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
 import fr.lezoo.stonks.command.StonksCommandRoot;
 import fr.lezoo.stonks.compat.placeholder.DefaultPlaceholderParser;
@@ -13,9 +13,9 @@ import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.listener.SharePaperListener;
 import fr.lezoo.stonks.listener.TradingInteractListener;
 import fr.lezoo.stonks.manager.*;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.TimeScale;
-import fr.lezoo.stonks.quotation.api.StockAPI;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.TimeScale;
+import fr.lezoo.stonks.stock.api.StockAPI;
 import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.version.ServerVersion;
 import net.milkbowl.vault.economy.Economy;
@@ -36,7 +36,7 @@ public class Stonks extends JavaPlugin {
     public final ShareManager shareManager = new ShareManager();
     public final SignManager signManager = new SignManager();
     public final PlayerDataManager playerManager = new PlayerDataManager();
-    public final QuotationManager quotationManager = new QuotationManager();
+    public final StockManager stockManager = new StockManager();
     public final BoardManager boardManager = new BoardManager();
 
     @NotNull
@@ -90,7 +90,7 @@ public class Stonks extends JavaPlugin {
         // Initialize managers
         configManager.reload();
         //load stockAPIManager
-        quotationManager.load();
+        stockManager.load();
         shareManager.load();
         boardManager.load();
         signManager.load();
@@ -108,7 +108,7 @@ public class Stonks extends JavaPlugin {
         getCommand("stonks").setExecutor(commandRoot);
         getCommand("stonks").setTabCompleter(commandRoot);
         getCommand("redeemdividends").setExecutor(new RedeemDividendsCommand());
-        getCommand("quotations").setExecutor(new QuotationsCommand());
+        getCommand("stocks").setExecutor(new StocksCommand());
         getCommand("portfolio").setExecutor(new PortfolioCommand());
 
         // Register listeners
@@ -130,13 +130,13 @@ public class Stonks extends JavaPlugin {
 
         // Refresh boards
         new BukkitRunnable() {
-            //We refresh the quotation by putting the good values
+            //We refresh the stock by putting the good values
             @Override
             public void run() {
 
-                quotationManager.refresh();
+                stockManager.refresh();
             }
-        }.runTaskTimer(this, 0, TimeScale.MINUTE.getTime() / (1000 * Quotation.BOARD_DATA_NUMBER));
+        }.runTaskTimer(this, 0, TimeScale.MINUTE.getTime() / (1000 * Stock.BOARD_DATA_NUMBER));
 
         // Refresh boards
         new BukkitRunnable() {
@@ -161,7 +161,7 @@ public class Stonks extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        quotationManager.save();
+        stockManager.save();
         boardManager.save();
         playerManager.save();
         shareManager.save();

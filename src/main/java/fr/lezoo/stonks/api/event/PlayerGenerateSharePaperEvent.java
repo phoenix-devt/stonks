@@ -10,7 +10,7 @@ public class PlayerGenerateSharePaperEvent extends PlayerDataEvent {
     private static final HandlerList handlers = new HandlerList();
 
     /**
-     * Called when a player closes a share from a certain quotation
+     * Called when a player closes a share from a certain stock
      *
      * @param playerData Player closing the share
      * @param share      Share closed

@@ -1,0 +1,10 @@
+aapl:
+  name: 'Apple'
+  type: 'real-stock'
+  exchange-type:
+    material: COBBLESTONE
+    model-data: 0
+
+
+
+

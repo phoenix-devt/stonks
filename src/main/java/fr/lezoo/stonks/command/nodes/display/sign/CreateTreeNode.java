@@ -12,7 +12,7 @@ public class CreateTreeNode extends CommandTreeNode {
     public CreateTreeNode(CommandTreeNode parent) {
         super(parent, "create");
 
-        addParameter(Parameter.QUOTATION_ID);
+        addParameter(Parameter.STOCK_ID);
     }
 
     @Override
@@ -25,13 +25,13 @@ public class CreateTreeNode extends CommandTreeNode {
         if (args.length < 4)
             return CommandResult.THROW_USAGE;
 
-        String quotationId = args[3].toLowerCase();
-        if (!Stonks.plugin.quotationManager.has(quotationId)) {
-            sender.sendMessage(ChatColor.RED + "Could not find a quotation with ID '" + quotationId + "'");
+        String stockId = args[3].toLowerCase();
+        if (!Stonks.plugin.stockManager.has(stockId)) {
+            sender.sendMessage(ChatColor.RED + "Could not find a stock with ID '" + stockId + "'");
             return CommandResult.FAILURE;
         }
 
-        new SignDisplayEditionListener(Stonks.plugin.quotationManager.get(quotationId), (Player) sender, false);
+        new SignDisplayEditionListener(Stonks.plugin.stockManager.get(stockId), (Player) sender, false);
         sender.sendMessage(ChatColor.YELLOW + "Please click on a sign to register a new display sign");
         sender.sendMessage(ChatColor.YELLOW + "You can relog to cancel display sign creation");
         return CommandResult.SUCCESS;

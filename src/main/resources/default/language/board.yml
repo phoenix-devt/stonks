@@ -1,7 +1,7 @@
 description:
     time-scale: 'Time Scale: {time-scale}'
-    quotation-name: 'Name: {quotation-name}'
-    quotation-type:  'Type: {quotation-type}'
+    stock-name: 'Name: {stock-name}'
+    stock-type:  'Type: {stock-type}'
     exchange-type: 'Exchange Type: {exchange-type}'
     current-price: 'Current price: {current-price}'
     lowest-price:  'Lowest Price: {lowest-price}'

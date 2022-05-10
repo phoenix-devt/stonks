@@ -15,7 +15,7 @@ A RAJOUTER / RENFORCER
 - Support MySQL pour les données (avec BungeeCord)
 - Afficher les STONKS sur une MAP
 - Option pour changer le taux de comission d'une personne
-- Quotation creation GUI
+- Stock creation GUI
 
 PROBLEMES AVEC L'ANCIEN PLUGIN
 - option de stocks max par personne

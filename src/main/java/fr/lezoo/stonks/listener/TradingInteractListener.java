@@ -40,22 +40,22 @@ public class TradingInteractListener implements Listener {
     public void checkUpSquare(Player player, Board board, double verticalOffset, double horizontalOffset) {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.21) && (verticalOffset > 0.02)) {
             PlayerData playerData = Stonks.plugin.playerManager.get(player);
-            OrderInfo orderInfo = playerData.getOrderInfo(board.getQuotation().getId());
+            OrderInfo orderInfo = playerData.getOrderInfo(board.getStock().getId());
 
             TextComponent amountComponent = new TextComponent(Message.SET_AMOUNT_INFO.format("amount", String.valueOf(orderInfo.getAmount())).getAsString());
-            amountComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quotations amountinput " + board.getQuotation().getId()));
+            amountComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/stocks amountinput " + board.getStock().getId()));
             player.spigot().sendMessage(amountComponent);
 
             TextComponent leverageComponent = new TextComponent(Message.SET_LEVERAGE_INFO.format("leverage", String.valueOf(orderInfo.getLeverage())).getAsString());
-            leverageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quotations leverageinput " + board.getQuotation().getId()));
+            leverageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/stocks leverageinput " + board.getStock().getId()));
             player.spigot().sendMessage(leverageComponent);
 
             TextComponent minPriceComponent = new TextComponent(Message.SET_MIN_PRICE_INFO.format("min-price", String.valueOf(orderInfo.getMinPrice())).getAsString());
-            minPriceComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quotations minpriceinput " + board.getQuotation().getId()));
+            minPriceComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/stocks minpriceinput " + board.getStock().getId()));
             player.spigot().sendMessage(minPriceComponent);
 
             TextComponent maxPriceComponent = new TextComponent(Message.SET_MAX_PRICE_INFO.format("max-price", String.valueOf(orderInfo.getMaxPrice())).getAsString());
-            maxPriceComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/quotations maxpriceinput " + board.getQuotation().getId()));
+            maxPriceComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/stocks maxpriceinput " + board.getStock().getId()));
             player.spigot().sendMessage(maxPriceComponent);
         }
     }
@@ -63,7 +63,7 @@ public class TradingInteractListener implements Listener {
     public void checkMiddleUpSquare(Player player, Board board, double verticalOffset, double horizontalOffset) {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.45) && (verticalOffset > 0.25)) {
             PlayerData playerData = Stonks.plugin.playerManager.get(player);
-            playerData.buyShare(board.getQuotation(), ShareType.NORMAL);
+            playerData.buyShare(board.getStock(), ShareType.NORMAL);
         }
     }
 
@@ -71,13 +71,13 @@ public class TradingInteractListener implements Listener {
     public void checkMiddleDownSquare(Player player, Board board, double verticalOffset, double horizontalOffset) {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.7) && (verticalOffset > 0.5)) {
             PlayerData playerData = Stonks.plugin.playerManager.get(player);
-            playerData.buyShare(board.getQuotation(), ShareType.SHORT);
+            playerData.buyShare(board.getStock(), ShareType.SHORT);
         }
     }
 
     public void checkDownSquare(Player player, Board board, double verticalOffset, double horizontalOffset) {
         if ((horizontalOffset > 0.82) && (horizontalOffset < 0.98) && (verticalOffset < 0.95) && (verticalOffset > 0.75)) {
-            Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(Stonks.plugin.playerManager.get(player), board.getQuotation()).open();
+            Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(Stonks.plugin.playerManager.get(player), board.getStock()).open();
         }
     }
 }

@@ -7,8 +7,8 @@ import fr.lezoo.stonks.gui.objects.item.InventoryItem;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.TimeScale;
 import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -25,20 +25,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Displays the list of all quotations, when clicking one
+ * Displays the list of all stocks, when clicking one
  * you get the menu where you can buy or sell shares
- * using the custom {@link QuotationShareMenu} GUI
+ * using the custom {@link ShareMenu} GUI
  */
-public class QuotationList extends EditableInventory {
-    public QuotationList() {
-        super("quotation-list");
+public class StockList extends EditableInventory {
+    public StockList() {
+        super("stock-list");
     }
 
     @Override
     public InventoryItem loadItem(String function, ConfigurationSection config) {
 
-        if (function.equalsIgnoreCase("quotation"))
-            return new QuotationItem(config);
+        if (function.equalsIgnoreCase("stock"))
+            return new StockItem(config);
 
         if (function.equalsIgnoreCase("next-page"))
             return new NextPageItem(config);
@@ -50,23 +50,23 @@ public class QuotationList extends EditableInventory {
     }
 
     public GeneratedInventory generate(PlayerData player) {
-        return new GeneratedQuotationList(player, this);
+        return new GeneratedStockList(player, this);
     }
 
-    public class GeneratedQuotationList extends GeneratedInventory {
-        private final List<Quotation> quotations = new ArrayList<>();
+    public class GeneratedStockList extends GeneratedInventory {
+        private final List<Stock> stocks = new ArrayList<>();
         private final int maxPage;
 
         // Page indexing arbitrarily starts at 0
         private int page = 0;
 
-        public GeneratedQuotationList(PlayerData playerData, EditableInventory editable) {
+        public GeneratedStockList(PlayerData playerData, EditableInventory editable) {
             super(playerData, editable);
 
-            int perPage = editable.getByFunction("quotation").getSlots().size();
+            int perPage = editable.getByFunction("stock").getSlots().size();
 
-            quotations.addAll(Stonks.plugin.quotationManager.getQuotations());
-            maxPage = Math.max(((int) Math.ceil((double) quotations.size() / perPage)) - 1, 0);
+            stocks.addAll(Stonks.plugin.stockManager.getStocks());
+            maxPage = Math.max(((int) Math.ceil((double) stocks.size() / perPage)) - 1, 0);
         }
 
         @Override
@@ -98,18 +98,18 @@ public class QuotationList extends EditableInventory {
                 return;
             }
 
-            if (item instanceof QuotationItem) {
+            if (item instanceof StockItem) {
                 ItemStack itemStack = event.getCurrentItem();
                 PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
-                String quotationId = container.get(new NamespacedKey(Stonks.plugin, "quotation_id"), PersistentDataType.STRING);
-                if (quotationId == null || quotationId.isEmpty())
+                String stockId = container.get(new NamespacedKey(Stonks.plugin, "stock_id"), PersistentDataType.STRING);
+                if (stockId == null || stockId.isEmpty())
                     return;
 
-                Quotation quotation = Stonks.plugin.quotationManager.get(quotationId);
+                Stock stock = Stonks.plugin.stockManager.get(stockId);
                 if (event.getAction() == InventoryAction.PICKUP_ALL)
-                    Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, quotation).open();
+                    Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, stock).open();
                 if (event.getAction() == InventoryAction.PICKUP_HALF)
-                    Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(playerData, quotation).open();
+                    Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(playerData, stock).open();
             }
         }
 
@@ -119,53 +119,53 @@ public class QuotationList extends EditableInventory {
         }
     }
 
-    public class NextPageItem extends SimpleItem<GeneratedQuotationList> {
+    public class NextPageItem extends SimpleItem<GeneratedStockList> {
         public NextPageItem(ConfigurationSection config) {
             super(config);
         }
 
         @Override
-        public boolean isDisplayed(GeneratedQuotationList inv) {
+        public boolean isDisplayed(GeneratedStockList inv) {
             return inv.page < inv.maxPage;
         }
     }
 
-    public class PreviousPageItem extends SimpleItem<GeneratedQuotationList> {
+    public class PreviousPageItem extends SimpleItem<GeneratedStockList> {
         public PreviousPageItem(ConfigurationSection config) {
             super(config);
         }
 
         @Override
-        public boolean isDisplayed(GeneratedQuotationList inv) {
+        public boolean isDisplayed(GeneratedStockList inv) {
             return inv.page > 0;
         }
     }
 
-    public class QuotationItem extends InventoryItem<GeneratedQuotationList> {
-        private final InventoryItem none, physicalQuotation;
+    public class StockItem extends InventoryItem<GeneratedStockList> {
+        private final InventoryItem none, physicalStock;
 
-        public QuotationItem(ConfigurationSection config) {
+        public StockItem(ConfigurationSection config) {
             super(config);
 
             none = new SimpleItem(config.getConfigurationSection("none"));
-            physicalQuotation = new SubQuotationItem(config.getConfigurationSection("physical"), this);
+            physicalStock = new SubStockItem(config.getConfigurationSection("physical"), this);
         }
 
         @Override
-        public ItemStack getDisplayedItem(GeneratedQuotationList inv, int n) {
+        public ItemStack getDisplayedItem(GeneratedStockList inv, int n) {
             int index = getSlots().size() * inv.page + n;
 
-            // If above quotation number, display 'No quotation'
-            if (index >= inv.quotations.size())
+            // If above stock number, display 'No stock'
+            if (index >= inv.stocks.size())
                 return none.getDisplayedItem(inv, n);
 
-            Quotation quotation = inv.quotations.get(index);
+            Stock stock = inv.stocks.get(index);
 
-            // Displayed required quotation
-            ItemStack displayed = quotation.isVirtual() ? super.getDisplayedItem(inv, n) : physicalQuotation.getDisplayedItem(inv, n);
+            // Displayed required stock
+            ItemStack displayed = stock.isVirtual() ? super.getDisplayedItem(inv, n) : physicalStock.getDisplayedItem(inv, n);
             ItemMeta meta = displayed.getItemMeta();
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            container.set(new NamespacedKey(Stonks.plugin, "quotation_id"), PersistentDataType.STRING, quotation.getId());
+            container.set(new NamespacedKey(Stonks.plugin, "stock_id"), PersistentDataType.STRING, stock.getId());
             displayed.setItemMeta(meta);
 
             return displayed;
@@ -177,38 +177,38 @@ public class QuotationList extends EditableInventory {
         }
 
         @Override
-        public Placeholders getPlaceholders(GeneratedQuotationList inv, int n) {
+        public Placeholders getPlaceholders(GeneratedStockList inv, int n) {
             int index = getSlots().size() * inv.page + n;
-            Quotation quotation = inv.quotations.get(index);
+            Stock stock = inv.stocks.get(index);
 
             Placeholders holders = new Placeholders();
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("name", quotation.getName());
-            holders.register("price", format.format(quotation.getPrice()));
-            holders.register("day-low", format.format(quotation.getLowest(TimeScale.DAY)));
-            holders.register("day-high", format.format(quotation.getHighest(TimeScale.DAY)));
-            holders.register("week-low", format.format(quotation.getLowest(TimeScale.WEEK)));
-            holders.register("week-high", format.format(quotation.getHighest(TimeScale.WEEK)));
-            holders.register("month-low", format.format(quotation.getLowest(TimeScale.MONTH)));
-            holders.register("month-high", format.format(quotation.getHighest(TimeScale.MONTH)));
-            holders.register("exchange-type", quotation.isVirtual() ? "money" : quotation.getExchangeType().toString().toLowerCase());
-            holders.register("quotation-type", quotation.getClass().getSimpleName());
+            holders.register("name", stock.getName());
+            holders.register("price", format.format(stock.getPrice()));
+            holders.register("day-low", format.format(stock.getLowest(TimeScale.DAY)));
+            holders.register("day-high", format.format(stock.getHighest(TimeScale.DAY)));
+            holders.register("week-low", format.format(stock.getLowest(TimeScale.WEEK)));
+            holders.register("week-high", format.format(stock.getHighest(TimeScale.WEEK)));
+            holders.register("month-low", format.format(stock.getLowest(TimeScale.MONTH)));
+            holders.register("month-high", format.format(stock.getHighest(TimeScale.MONTH)));
+            holders.register("exchange-type", stock.isVirtual() ? "money" : stock.getExchangeType().toString().toLowerCase());
+            holders.register("stock-type", stock.getClass().getSimpleName());
             return holders;
         }
 
-        public class SubQuotationItem extends InventoryItem<GeneratedQuotationList> {
+        public class SubStockItem extends InventoryItem<GeneratedStockList> {
             private final InventoryItem parent;
 
-            public SubQuotationItem(ConfigurationSection config, InventoryItem parent) {
+            public SubStockItem(ConfigurationSection config, InventoryItem parent) {
                 super(config);
 
                 this.parent = parent;
             }
 
             @Override
-            public Placeholders getPlaceholders(GeneratedQuotationList inv, int n) {
+            public Placeholders getPlaceholders(GeneratedStockList inv, int n) {
                 return parent.getPlaceholders(inv, n);
             }
         }

@@ -27,7 +27,7 @@ public class RemoveTreeNode extends CommandTreeNode {
         }
 
         cast.getHit().remove();
-        player.sendMessage(ChatColor.RED + "Successfully destroyed display board of quotation '" + cast.getHit().getQuotation().getId() + "'");
+        player.sendMessage(ChatColor.RED + "Successfully destroyed display board of stock '" + cast.getHit().getStock().getId() + "'");
         return CommandResult.SUCCESS;
     }
 }

@@ -5,8 +5,8 @@ import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,10 +17,9 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class SharePaperListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     public void a(PlayerInteractEvent event) {
-
-        if (!event.getAction().name().contains("RIGHT_CLICK") || !event.hasItem())
+        if (!event.getAction().name().contains("RIGHT_CLICK") || !event.hasItem() || event.useItemInHand() == Event.Result.DENY)
             return;
 
         ItemStack item = event.getItem();
@@ -42,7 +41,7 @@ public class SharePaperListener implements Listener {
 
         playerData.giveShare(share);
         Message.CLAIM_SHARE_PAPER.format("shares", Utils.fourDigits.format(share.getOrderInfo().getAmount()),
-                "name", share.getQuotation().getName(),
+                "name", share.getStock().getName(),
                 "value", Stonks.plugin.configManager.stockPriceFormat.format(share.getCloseEarning(playerData.getTaxRate()))).send(player);
     }
 }

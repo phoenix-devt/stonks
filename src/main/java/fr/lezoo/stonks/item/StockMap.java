@@ -2,11 +2,11 @@ package fr.lezoo.stonks.item;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.DisplayInfo;
-import fr.lezoo.stonks.display.map.QuotationMapRenderer;
+import fr.lezoo.stonks.display.map.StockMapRenderer;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.TimeScale;
-import fr.lezoo.stonks.quotation.handler.RealStockHandler;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.TimeScale;
+import fr.lezoo.stonks.stock.handler.RealStockHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -17,16 +17,16 @@ import org.bukkit.map.MapView;
 
 import java.text.DecimalFormat;
 
-public class QuotationMap extends CustomItem<DisplayInfo> {
+public class StockMap extends CustomItem<DisplayInfo> {
 
-    public QuotationMap(ConfigurationSection config) {
+    public StockMap(ConfigurationSection config) {
         super(config);
     }
 
     //We add the mapRenderer
     @Override
     public ItemStack build(Player player, DisplayInfo info) {
-        Quotation quotation = info.getQuotation();
+        Stock stock = info.getStock();
         TimeScale time = info.getTimeDisplay();
 
         ItemStack item = super.build(player, info);
@@ -34,7 +34,7 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
         //We create a mpa view
         MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
         mapView.getRenderers().clear();
-        mapView.addRenderer(new QuotationMapRenderer(player, item, quotation, time));
+        mapView.addRenderer(new StockMapRenderer(player, item, stock, time));
         mapView.setUnlimitedTracking(false);
         mapView.setTrackingPosition(false);
         meta.setMapView(mapView);
@@ -45,18 +45,18 @@ public class QuotationMap extends CustomItem<DisplayInfo> {
 
     @Override
     public Placeholders getPlaceholders(Player player, DisplayInfo info) {
-        Quotation quotation = info.getQuotation();
+        Stock stock = info.getStock();
         TimeScale timeDisplay = info.getTimeDisplay();
         DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
         Placeholders holders = new Placeholders();
-        holders.register("quotation-id", quotation.getId());
-        holders.register("quotation-name", quotation.getName());
-        holders.register("current-price", format.format(quotation.getPrice()));
-        holders.register("lowest-price", format.format(quotation.getLowest(timeDisplay)));
-        holders.register("highest-price", format.format(quotation.getHighest(timeDisplay)));
-        holders.register("evolution", quotation.getEvolution(timeDisplay));
+        holders.register("stock-id", stock.getId());
+        holders.register("stock-name", stock.getName());
+        holders.register("current-price", format.format(stock.getPrice()));
+        holders.register("lowest-price", format.format(stock.getLowest(timeDisplay)));
+        holders.register("highest-price", format.format(stock.getHighest(timeDisplay)));
+        holders.register("evolution", stock.getEvolution(timeDisplay));
         holders.register("time-scale", timeDisplay.toString().toLowerCase());
-        holders.register("quotation-type", quotation.getHandler() instanceof RealStockHandler ? "Real Stock" : "Virtual");
+        holders.register("stock-type", stock.getHandler() instanceof RealStockHandler ? "Real Stock" : "Virtual");
         return holders;
 
     }

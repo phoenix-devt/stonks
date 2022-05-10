@@ -107,8 +107,8 @@ public abstract class InventoryItem<T extends GeneratedInventory> {
 
     /**
      * @param inv Generated inventory being opened by a player
-     * @param n   Some items are grouped, like the item 'quotation' in the quotation list
-     *            as they are multiple quotations to display yet only ONE inventory item
+     * @param n   Some items are grouped, like the item 'stock' in the stock list
+     *            as they are multiple stocks to display yet only ONE inventory item
      *            gives the template. This is the index of the item being displayed.
      * @return Item that will be displayed in the generated inventory
      */

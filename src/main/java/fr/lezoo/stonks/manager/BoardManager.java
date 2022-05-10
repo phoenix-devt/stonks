@@ -30,7 +30,7 @@ public class BoardManager implements FileManager {
 
     @Override
     public void load() {
-        FileConfiguration config = new ConfigFile("boarddata").getConfig();
+        FileConfiguration config = new ConfigFile("board-data").getConfig();
         for (String key : config.getKeys(false))
             try {
                 register(new Board(config.getConfigurationSection(key)));
@@ -48,7 +48,7 @@ public class BoardManager implements FileManager {
 
     @Override
     public void save() {
-        ConfigFile configfile = new ConfigFile("boarddata");
+        ConfigFile configfile = new ConfigFile("board-data");
 
         // Remove older (!!)
         configfile.getConfig().getKeys(false).forEach(key -> configfile.getConfig().set(key, null));

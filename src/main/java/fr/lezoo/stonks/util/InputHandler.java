@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.util;
 
 import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.entity.Player;
@@ -13,7 +13,7 @@ public class InputHandler {
     //The boolean describes if the temporary listener should be closed(e.g the ChatInput or SimpleChatInput)
 
 
-    public static final TriFunction<PlayerData, String, Quotation, Boolean> BUY_CUSTOM_AMOUNT_HANDLER = (playerData, input, quotation) -> {
+    public static final TriFunction<PlayerData, String, Stock, Boolean> BUY_CUSTOM_AMOUNT_HANDLER = (playerData, input, stock) -> {
         double amount;
         Player player = playerData.getPlayer();
         try {
@@ -27,10 +27,10 @@ public class InputHandler {
             Message.NOT_VALID_AMOUNT.format("input", input).send(player);
             return false;
         }
-        playerData.buyShare(quotation, ShareType.SHORT, amount);
+        playerData.buyShare(stock, ShareType.SHORT, amount);
         return true;
     };
-    public static final TriFunction<PlayerData, String, Quotation, Boolean> SHORT_CUSTOM_AMOUNT_HANDLER = (playerData, input, quotation) -> {
+    public static final TriFunction<PlayerData, String, Stock, Boolean> SHORT_CUSTOM_AMOUNT_HANDLER = (playerData, input, stock) -> {
         double amount;
         Player player = playerData.getPlayer();
         try {
@@ -44,11 +44,11 @@ public class InputHandler {
             Message.NOT_VALID_AMOUNT.format("input", input).send(player);
             return false;
         }
-        playerData.buyShare(quotation, ShareType.SHORT, amount);
+        playerData.buyShare(stock, ShareType.SHORT, amount);
         return true;
     };
 
-    public static final TriFunction<PlayerData, String, Quotation, Boolean> SET_AMOUNT_HANDLER = (playerData, input, quotation) -> {
+    public static final TriFunction<PlayerData, String, Stock, Boolean> SET_AMOUNT_HANDLER = (playerData, input, stock) -> {
         double amount;
         Player player = playerData.getPlayer();
         try {
@@ -63,11 +63,11 @@ public class InputHandler {
             return false;
         }
 
-        playerData.getOrderInfo(quotation.getId()).setAmount(amount);
+        playerData.getOrderInfo(stock.getId()).setAmount(amount);
         return true;
     };
 
-    public static final TriFunction<PlayerData, String, Quotation, Boolean> SET_LEVERAGE_HANDLER = (playerData, input, quotation) -> {
+    public static final TriFunction<PlayerData, String, Stock, Boolean> SET_LEVERAGE_HANDLER = (playerData, input, stock) -> {
         int amount;
 
         Player player = playerData.getPlayer();
@@ -83,12 +83,12 @@ public class InputHandler {
             return false;
         }
 
-        playerData.getOrderInfo(quotation.getId()).setLeverage(amount);
+        playerData.getOrderInfo(stock.getId()).setLeverage(amount);
 
         return true;
     };
 
-    public static final TriFunction<PlayerData, String, Quotation, Boolean> SET_MIN_PRICE_HANDLER = (playerData, input, quotation) -> {
+    public static final TriFunction<PlayerData, String, Stock, Boolean> SET_MIN_PRICE_HANDLER = (playerData, input, stock) -> {
         double amount;
         Player player = playerData.getPlayer();
         try {
@@ -103,11 +103,11 @@ public class InputHandler {
             return false;
         }
 
-        playerData.getOrderInfo(quotation.getId()).setMinPrice(amount);
+        playerData.getOrderInfo(stock.getId()).setMinPrice(amount);
         return true;
     };
 
-    public static final TriFunction<PlayerData, String, Quotation, Boolean> SET_MAX_PRICE_HANDLER = (playerData, input, quotation) -> {
+    public static final TriFunction<PlayerData, String, Stock, Boolean> SET_MAX_PRICE_HANDLER = (playerData, input, stock) -> {
         double amount;
         Player player = playerData.getPlayer();
         try {
@@ -122,7 +122,7 @@ public class InputHandler {
             return false;
         }
 
-        playerData.getOrderInfo(quotation.getId()).setMaxPrice(amount);
+        playerData.getOrderInfo(stock.getId()).setMaxPrice(amount);
         return true;
     };
 

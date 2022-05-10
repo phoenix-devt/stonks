@@ -24,7 +24,7 @@ public class SharePaper extends CustomItem<Share> {
         placeholders.register("leverage", Utils.fourDigits.format(share.getOrderInfo().getLeverage()));
         placeholders.register("initial-price", Stonks.plugin.configManager.stockPriceFormat.format(share.getInitialPrice()));
         placeholders.register("date", Stonks.plugin.configManager.dateFormat.format(share.getCreationTime()));
-        placeholders.register("quotation-name", share.getQuotation().getName());
+        placeholders.register("stock-name", share.getStock().getName());
         placeholders.register("type", share.getType().getTranslation());
 
         return placeholders;
@@ -33,7 +33,7 @@ public class SharePaper extends CustomItem<Share> {
     @Override
     public void whenBuilt(ItemStack item, ItemMeta meta, Share share) {
         PersistentDataContainer nbt = meta.getPersistentDataContainer();
-        nbt.set(Utils.namespacedKey("StockId"), PersistentDataType.STRING, share.getQuotation().getId());
+        nbt.set(Utils.namespacedKey("StockId"), PersistentDataType.STRING, share.getStock().getId());
         nbt.set(Utils.namespacedKey("ShareTimeStamp"), PersistentDataType.LONG, share.getCreationTime());
         nbt.set(Utils.namespacedKey("ShareAmount"), PersistentDataType.DOUBLE, share.getOrderInfo().getAmount());
         nbt.set(Utils.namespacedKey("ShareLeverage"), PersistentDataType.INTEGER, share.getOrderInfo().getLeverage());

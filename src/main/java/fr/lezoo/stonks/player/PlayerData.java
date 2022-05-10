@@ -2,9 +2,9 @@ package fr.lezoo.stonks.player;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
-import fr.lezoo.stonks.quotation.ExchangeType;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.handler.FictiveStockHandler;
+import fr.lezoo.stonks.stock.ExchangeType;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.handler.FictiveStockHandler;
 import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
@@ -25,7 +25,7 @@ public class PlayerData {
     private double taxRate;
 
     /**
-     * Links quotation IDs to order infos
+     * Links stock IDs to order infos
      */
     private final Map<String, OrderInfo> orderInfos = new HashMap<>();
 
@@ -40,7 +40,7 @@ public class PlayerData {
     }
 
     /**
-     * Mapped shares the player bought from a particular quotation
+     * Mapped shares the player bought from a particular stock
      */
     private final Map<String, Set<Share>> shares = new HashMap<>();
 
@@ -54,17 +54,17 @@ public class PlayerData {
         // playerStatus=PlayerStatus.valueOf(config.getString("player-status").toUpperCase());
         // Load shares from config file
         if (config.contains("shares"))
-            for (String quotationKey : config.getConfigurationSection("shares").getKeys(false)) {
+            for (String stockKey : config.getConfigurationSection("shares").getKeys(false)) {
                 Set<Share> shares = new HashSet<>();
 
-                for (String shareKey : config.getStringList("shares." + quotationKey)) {
+                for (String shareKey : config.getStringList("shares." + stockKey)) {
                     Share share = Stonks.plugin.shareManager.get(UUID.fromString(shareKey));
                     if (share != null)
                         shares.add(share);
                 }
 
                 if (!shares.isEmpty())
-                    this.shares.put(quotationKey, shares);
+                    this.shares.put(stockKey, shares);
             }
 
         taxRate = config.contains("tax-rate") ? config.getDouble("tax-rate") : -1;
@@ -76,27 +76,27 @@ public class PlayerData {
         config.set("shares", null);
 
         // Save newest shares
-        for (String quotationId : shares.keySet()) {
+        for (String stockId : shares.keySet()) {
             List<String> toList = new ArrayList<>();
-            shares.get(quotationId).forEach(share -> toList.add(share.getUniqueId().toString()));
+            shares.get(stockId).forEach(share -> toList.add(share.getUniqueId().toString()));
             if (!toList.isEmpty())
-                config.set("shares." + quotationId, toList);
+                config.set("shares." + stockId, toList);
         }
     }
 
-    public boolean hasOrderInfo(String quotationId) {
-        return orderInfos.containsKey(quotationId);
+    public boolean hasOrderInfo(String stockId) {
+        return orderInfos.containsKey(stockId);
     }
 
-    public void addOrderInfo(String quotationId) {
-        if (!hasOrderInfo(quotationId))
-            orderInfos.put(quotationId, new OrderInfo());
+    public void addOrderInfo(String stockId) {
+        if (!hasOrderInfo(stockId))
+            orderInfos.put(stockId, new OrderInfo());
     }
 
-    public OrderInfo getOrderInfo(String quotationId) {
-        if (!this.hasOrderInfo(quotationId))
-            this.addOrderInfo(quotationId);
-        return orderInfos.get(quotationId);
+    public OrderInfo getOrderInfo(String stockId) {
+        if (!this.hasOrderInfo(stockId))
+            this.addOrderInfo(stockId);
+        return orderInfos.get(stockId);
     }
 
     public UUID getUniqueId() {
@@ -112,18 +112,18 @@ public class PlayerData {
     }
 
     /**
-     * @return Owned shares from a specific quotation
+     * @return Owned shares from a specific stock
      */
-    public Set<Share> getShares(Quotation quotation) {
-        return shares.getOrDefault(quotation.getId(), new HashSet<>());
+    public Set<Share> getShares(Stock stock) {
+        return shares.getOrDefault(stock.getId(), new HashSet<>());
     }
 
     /**
-     * @return Owned shares from a specific quotation with a specific ShareStatus
+     * @return Owned shares from a specific stock with a specific ShareStatus
      */
-    public Set<Share> getShares(Quotation quotation, boolean open) {
+    public Set<Share> getShares(Stock stock, boolean open) {
         // We filter to only have the ones of the specified share Status
-        return shares.getOrDefault(quotation.getId(), new HashSet<>())
+        return shares.getOrDefault(stock.getId(), new HashSet<>())
                 .stream()
                 .filter((share) -> share.isOpen() == open)
                 .collect(Collectors.toSet());
@@ -146,7 +146,7 @@ public class PlayerData {
     }
 
     /**
-     * @return Owned shares from all quotations
+     * @return Owned shares from all stocks
      */
     public Set<Share> getAllShares() {
         Set<Share> total = new HashSet<>();
@@ -158,18 +158,18 @@ public class PlayerData {
     }
 
     public void giveShare(Share share) {
-        if (!shares.containsKey(share.getQuotation().getId()))
-            shares.put(share.getQuotation().getId(), new HashSet<>());
+        if (!shares.containsKey(share.getStock().getId()))
+            shares.put(share.getStock().getId(), new HashSet<>());
 
         // Register share (throws IAE and cancel if any error)
         Stonks.plugin.shareManager.register(share);
 
         // Add to shares list
-        this.shares.get(share.getQuotation().getId()).add(share);
+        this.shares.get(share.getStock().getId()).add(share);
     }
 
     public void unregisterShare(Share share) {
-        Set<Share> shares = this.shares.get(share.getQuotation().getId());
+        Set<Share> shares = this.shares.get(share.getStock().getId());
         if (shares == null)
             return;
 
@@ -180,9 +180,9 @@ public class PlayerData {
         shares.remove(share);
     }
 
-    public Share getShareById(Quotation quotation, UUID uuid) {
+    public Share getShareById(Stock stock, UUID uuid) {
 
-        for (Share share : getShares(quotation))
+        for (Share share : getShares(stock))
             if (share.getUniqueId().equals(uuid))
                 return share;
 
@@ -190,12 +190,12 @@ public class PlayerData {
     }
 
     /**
-     * @return Counts the shares the player owns in a certain quotation
+     * @return Counts the shares the player owns in a certain stock
      */
-    public double countShares(Quotation quotation) {
+    public double countShares(Stock stock) {
         double total = 0;
 
-        for (Share share : getShares(quotation))
+        for (Share share : getShares(stock))
             total += share.getOrderInfo().getAmount();
 
         return total;
@@ -216,53 +216,53 @@ public class PlayerData {
     /**
      * Buys a share by using the orderinfo of the player if there is one
      */
-    public boolean buyShare(Quotation quotation, ShareType type) {
-        if (!hasOrderInfo(quotation.getId())) {
-            Message.NO_ORDER.format("quotation-name", quotation.getName()).send(player);
+    public boolean buyShare(Stock stock, ShareType type) {
+        if (!hasOrderInfo(stock.getId())) {
+            Message.NO_ORDER.format("stock-name", stock.getName()).send(player);
             return false;
         }
-        OrderInfo orderInfo = getOrderInfo(quotation.getId());
+        OrderInfo orderInfo = getOrderInfo(stock.getId());
         double amount = orderInfo.getAmount();
         if (amount == 0) {
-            Message.NO_AMOUNT.format("quotation-name", quotation.getName()).send(player);
+            Message.NO_AMOUNT.format("stock-name", stock.getName()).send(player);
             return false;
         }
-        return buyShare(quotation, type, amount, orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
+        return buyShare(stock, type, amount, orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
     }
 
     /**
-     * Used to buy a share using order info except the amount (for the fixed amount shares on the quotationShareMenu GUI)
+     * Used to buy a share using order info except the amount (for the fixed amount shares on the stockShareMenu GUI)
      */
-    public boolean buyShare(Quotation quotation, ShareType type, double amount) {
-        if (!hasOrderInfo(quotation.getId()))
-            return buyShare(quotation, type, amount, 1, Double.POSITIVE_INFINITY, 0);
+    public boolean buyShare(Stock stock, ShareType type, double amount) {
+        if (!hasOrderInfo(stock.getId()))
+            return buyShare(stock, type, amount, 1, Double.POSITIVE_INFINITY, 0);
 
-        OrderInfo orderInfo = getOrderInfo(quotation.getId());
-        return buyShare(quotation, type, amount, orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
+        OrderInfo orderInfo = getOrderInfo(stock.getId());
+        return buyShare(stock, type, amount, orderInfo.getLeverage(), orderInfo.hasMaxPrice() ? orderInfo.getMaxPrice() : Double.POSITIVE_INFINITY, orderInfo.hasMinPrice() ? orderInfo.getMinPrice() : 0);
     }
 
     /**
      * Called when a player tries to buy a share. This checks for the
      * player's balance and calls a bukkit cancelable event.
      *
-     * @param quotation Quotation to buy share from
+     * @param stock Stock to buy share from
      * @param type      Type of share
      * @param amount    Amount of shares bought
      * @return If the share was successfully bought or not
      */
     // TODO check
-    public boolean buyShare(Quotation quotation, ShareType type, double amount, int leverage, double maxPrice, double minPrice) {
-        double price = quotation.getPrice() * amount;
+    public boolean buyShare(Stock stock, ShareType type, double amount, int leverage, double maxPrice, double minPrice) {
+        double price = stock.getPrice() * amount;
 
-        if (!quotation.isRealStock()) {
+        if (!stock.isRealStock()) {
             //Want the price at which the player will buy his shares to be affected by the amount he bought to avoid abuses
             //e.g if the player buy 10% of the shares the price will go 10% but we don't want hium to instantly gain 10% fo the price
-            FictiveStockHandler handler = (FictiveStockHandler) quotation.getHandler();
+            FictiveStockHandler handler = (FictiveStockHandler) stock.getHandler();
             price = handler.calculatePrice(handler.getTotalSupply() - (type.equals(ShareType.NORMAL) ? amount : -amount));
         }
 
         // If it exchanges money
-        if (quotation.isVirtual()) {
+        if (stock.isVirtual()) {
 
             // Check for balance
             double bal = Stonks.plugin.economy.getBalance(player);
@@ -272,7 +272,7 @@ public class PlayerData {
             }
 
             // Check for Bukkit event
-            Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, maxPrice, minPrice);
+            Share share = new Share(type, player.getUniqueId(), stock, leverage, amount, maxPrice, minPrice);
 
             PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, share);
             Bukkit.getPluginManager().callEvent(called);
@@ -291,7 +291,7 @@ public class PlayerData {
             int bal = 0;
             // We check the amount of the item the player has in his inventory (the material is defined by custom model data and material
             for (ItemStack itemStack : player.getInventory().getContents())
-                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(quotation.getExchangeType()))
+                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(stock.getExchangeType()))
                     bal += itemStack.getAmount();
 
             if (bal < price) {
@@ -300,7 +300,7 @@ public class PlayerData {
             }
 
             // Check for Bukkit event
-            Share share = new Share(type, player.getUniqueId(), quotation, leverage, amount, minPrice, maxPrice);
+            Share share = new Share(type, player.getUniqueId(), stock, leverage, amount, minPrice, maxPrice);
 
             PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, share);
             Bukkit.getPluginManager().callEvent(called);
@@ -312,7 +312,7 @@ public class PlayerData {
 
             // We withdraw the amount of shares he bought
             for (ItemStack itemStack : player.getInventory().getContents()) {
-                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(quotation.getExchangeType())) {
+                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(stock.getExchangeType())) {
                     double withdraw = Math.min(itemStack.getAmount(), price);
                     itemStack.setAmount(itemStack.getAmount() - (int) withdraw);
                     price -= withdraw;
@@ -320,13 +320,13 @@ public class PlayerData {
             }
         }
 
-        quotation.getHandler().whenBought(type.equals(ShareType.NORMAL) ? amount : -amount);
+        stock.getHandler().whenBought(type.equals(ShareType.NORMAL) ? amount : -amount);
 
         // Send player message
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(
                 "shares", Stonks.plugin.configManager.shareFormat.format(amount),
                 "price", Stonks.plugin.configManager.stockPriceFormat.format(price),
-                "name", quotation.getName()).send(player);
+                "name", stock.getName()).send(player);
 
         // Successfully bought
         return true;

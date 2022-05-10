@@ -1,9 +1,9 @@
-package fr.lezoo.stonks.quotation.handler;
+package fr.lezoo.stonks.stock.handler;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.QuotationInfo;
-import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.StockInfo;
+import fr.lezoo.stonks.stock.TimeScale;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RealStockHandler implements StockHandler {
-    private final Quotation quotation;
+    private final Stock stock;
     private double lastPrice;
 
 
-    public RealStockHandler(Quotation quotation) {
-        this.quotation = quotation;
+    public RealStockHandler(Stock stock) {
+        this.stock = stock;
     }
 
     @Override
@@ -38,17 +38,17 @@ public class RealStockHandler implements StockHandler {
         //We update all the data List
         for (TimeScale time : TimeScale.values()) {
             //We get the list corresponding to the time
-            List<QuotationInfo> workingData = new ArrayList<>();
-            Validate.notNull(quotation.getData(time), "The data for " + quotation.getId() + " for " + time.toString() + " is null");
-            workingData.addAll(quotation.getData(time));
+            List<StockInfo> workingData = new ArrayList<>();
+            Validate.notNull(stock.getData(time), "The data for " + stock.getId() + " for " + time.toString() + " is null");
+            workingData.addAll(stock.getData(time));
             //If the the latest data of workingData is too old we add another one
-            if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / Quotation.BOARD_DATA_NUMBER) {
-                workingData.add(new QuotationInfo(System.currentTimeMillis(), lastPrice));
+            if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / Stock.BOARD_DATA_NUMBER) {
+                workingData.add(new StockInfo(System.currentTimeMillis(), lastPrice));
                 //If the list contains too much data we remove the older ones
-                if (workingData.size() > Quotation.BOARD_DATA_NUMBER)
+                if (workingData.size() > Stock.BOARD_DATA_NUMBER)
                     workingData.remove(0);
                 //We save the changes we made in the attribute
-                quotation.setData(time, workingData);
+                stock.setData(time, workingData);
             }
         }
     }
@@ -57,7 +57,7 @@ public class RealStockHandler implements StockHandler {
     public void refreshPrice() {
         Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
             try {
-                lastPrice = Stonks.plugin.stockAPI.getPrice(quotation.getId());
+                lastPrice = Stonks.plugin.stockAPI.getPrice(stock.getId());
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             } catch (IOException e) {

@@ -4,8 +4,8 @@ import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.command.objects.CommandTreeNode;
 import fr.lezoo.stonks.command.objects.parameter.Parameter;
 import fr.lezoo.stonks.display.board.DisplayInfo;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.TimeScale;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ public class GiveMapTreeNode extends CommandTreeNode {
     public GiveMapTreeNode(CommandTreeNode parent) {
         super(parent, "givemap");
 
-        addParameter(Parameter.QUOTATION_ID);
+        addParameter(Parameter.STOCK_ID);
         addParameter(Parameter.TIME_SCALE);
         addParameter(Parameter.PLAYER_OPTIONAL);
     }
@@ -25,9 +25,9 @@ public class GiveMapTreeNode extends CommandTreeNode {
         //returning a throw usage will automatically send all the usage list to the player.
         if (args.length == 0)
             return CommandResult.THROW_USAGE;
-        Quotation quotation = Stonks.plugin.quotationManager.get(args[1]);
-        if (quotation == null) {
-            sender.sendMessage(ChatColor.RED + "Could not find target quotation");
+        Stock stock = Stonks.plugin.stockManager.get(args[1]);
+        if (stock == null) {
+            sender.sendMessage(ChatColor.RED + "Could not find target stock");
             return CommandResult.FAILURE;
         }
 
@@ -45,8 +45,8 @@ public class GiveMapTreeNode extends CommandTreeNode {
             return CommandResult.FAILURE;
         }
 
-        DisplayInfo displayInfo = new DisplayInfo(quotation, display);
-        target.getInventory().addItem(Stonks.plugin.configManager.quotationMap.build(target, displayInfo));
+        DisplayInfo displayInfo = new DisplayInfo(stock, display);
+        target.getInventory().addItem(Stonks.plugin.configManager.stockMap.build(target, displayInfo));
 
         return CommandResult.SUCCESS;
     }

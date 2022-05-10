@@ -7,8 +7,8 @@ import fr.lezoo.stonks.gui.objects.item.InventoryItem;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.TimeScale;
 import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.ChatInput;
@@ -23,10 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import java.text.DecimalFormat;
 
 /**
- * Menu where you can buy or short shares for a specific quotation.
+ * Menu where you can buy or short shares for a specific stock.
  */
-public class QuotationShareMenu extends EditableInventory {
-    public QuotationShareMenu() {
+public class ShareMenu extends EditableInventory {
+    public ShareMenu() {
         super("share-menu");
     }
 
@@ -37,7 +37,7 @@ public class QuotationShareMenu extends EditableInventory {
             return new CustomActionItem(config);
 
         if (function.startsWith("info"))
-            return new QuotationInfoItem(config);
+            return new StockInfoItem(config);
 
         if (function.startsWith("leverage"))
             return new LeverageItem(config);
@@ -57,28 +57,28 @@ public class QuotationShareMenu extends EditableInventory {
         return new SimpleItem(config);
     }
 
-    public GeneratedInventory generate(PlayerData player, Quotation quotation) {
-        return new GeneratedShareMenu(player, this, quotation);
+    public GeneratedInventory generate(PlayerData player, Stock stock) {
+        return new GeneratedShareMenu(player, this, stock);
     }
 
-    public class GeneratedShareMenu extends GeneratedInventory implements QuotationInventory {
-        private final Quotation quotation;
+    public class GeneratedShareMenu extends GeneratedInventory implements StockInventory {
+        private final Stock stock;
 
-        public GeneratedShareMenu(PlayerData playerData, EditableInventory editable, Quotation quotation) {
+        public GeneratedShareMenu(PlayerData playerData, EditableInventory editable, Stock stock) {
             super(playerData, editable);
 
-            this.quotation = quotation;
+            this.stock = stock;
         }
 
         @NotNull
         @Override
-        public Quotation getQuotation() {
-            return quotation;
+        public Stock getStock() {
+            return stock;
         }
 
         @Override
         public String applyNamePlaceholders(String str) {
-            return str.replace("{name}", quotation.getName());
+            return str.replace("{name}", stock.getName());
         }
 
         @Override
@@ -92,7 +92,7 @@ public class QuotationShareMenu extends EditableInventory {
             }
 
             if (item.getFunction().equals("back")) {
-                Stonks.plugin.configManager.QUOTATION_LIST.generate(playerData).open();
+                Stonks.plugin.configManager.STOCK_LIST.generate(playerData).open();
                 return;
             }
 
@@ -111,7 +111,7 @@ public class QuotationShareMenu extends EditableInventory {
 
             //We buy the shares using the leverage,minPrice,maxPrice provided
             if (item instanceof AmountActionItem)
-                playerData.buyShare(quotation, item instanceof BuyShareItem ? ShareType.NORMAL : ShareType.SHORT, ((AmountActionItem) item).getAmount());
+                playerData.buyShare(stock, item instanceof BuyShareItem ? ShareType.NORMAL : ShareType.SHORT, ((AmountActionItem) item).getAmount());
 
             if (item instanceof CustomActionItem) {
                 ShareType type = item.getFunction().equalsIgnoreCase("buy-custom") ? ShareType.NORMAL : ShareType.SHORT;
@@ -156,8 +156,8 @@ public class QuotationShareMenu extends EditableInventory {
         @Override
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
-            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getQuotation().getId());
-            holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.quotation.getPrice() * amount));
+            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getStock().getId());
+            holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.stock.getPrice() * amount));
             holders.register("leverage", Utils.fourDigits.format(orderInfo.getLeverage()));
             holders.register("min-price", orderInfo.getStringMinPrice());
             holders.register("max-price", orderInfo.getStringMaxPrice());
@@ -187,8 +187,8 @@ public class QuotationShareMenu extends EditableInventory {
         @Override
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
-            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getQuotation().getId());
-            holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.quotation.getPrice() * amount));
+            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getStock().getId());
+            holders.register("price", Stonks.plugin.configManager.stockPriceFormat.format(inv.stock.getPrice() * amount));
             holders.register("leverage", Utils.fourDigits.format(orderInfo.getLeverage()));
             holders.register("min-price", orderInfo.getStringMinPrice());
             holders.register("max-price", orderInfo.getStringMaxPrice());
@@ -214,7 +214,7 @@ public class QuotationShareMenu extends EditableInventory {
         @Override
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
-            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getQuotation().getId());
+            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getStock().getId());
             holders.register("leverage", Utils.fourDigits.format(orderInfo.getLeverage()));
             holders.register("min-price", orderInfo.getStringMinPrice());
             holders.register("max-price", orderInfo.getStringMaxPrice());
@@ -230,7 +230,7 @@ public class QuotationShareMenu extends EditableInventory {
         @Override
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders holders = new Placeholders();
-            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getQuotation().getId());
+            OrderInfo orderInfo = inv.getPlayerData().getOrderInfo(inv.getStock().getId());
             holders.register("leverage", Utils.fourDigits.format(orderInfo.getLeverage()));
             holders.register("min-price", orderInfo.getStringMinPrice());
             holders.register("max-price", orderInfo.getStringMaxPrice());
@@ -245,7 +245,7 @@ public class QuotationShareMenu extends EditableInventory {
 
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders placeholders = new Placeholders();
-            placeholders.register("min-price", inv.getPlayerData().getOrderInfo(inv.getQuotation().getId()).getStringMinPrice());
+            placeholders.register("min-price", inv.getPlayerData().getOrderInfo(inv.getStock().getId()).getStringMinPrice());
             return placeholders;
         }
 
@@ -258,14 +258,14 @@ public class QuotationShareMenu extends EditableInventory {
 
         public Placeholders getPlaceholders(GeneratedShareMenu inv, int n) {
             Placeholders placeholders = new Placeholders();
-            placeholders.register("max-price", inv.getPlayerData().getOrderInfo(inv.getQuotation().getId()).getStringMaxPrice());
+            placeholders.register("max-price", inv.getPlayerData().getOrderInfo(inv.getStock().getId()).getStringMaxPrice());
             return placeholders;
         }
     }
 
 
-    public class QuotationInfoItem extends InventoryItem<GeneratedShareMenu> {
-        public QuotationInfoItem(ConfigurationSection config) {
+    public class StockInfoItem extends InventoryItem<GeneratedShareMenu> {
+        public StockInfoItem(ConfigurationSection config) {
             super(config);
         }
 
@@ -275,18 +275,18 @@ public class QuotationShareMenu extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("name", inv.quotation.getName());
+            holders.register("name", inv.stock.getName());
 
-            holders.register("week-low", format.format(inv.quotation.getLowest(TimeScale.WEEK)));
-            holders.register("week-high", format.format(inv.quotation.getHighest(TimeScale.WEEK)));
-            holders.register("month-low", format.format(inv.quotation.getLowest(TimeScale.MONTH)));
-            holders.register("month-high", format.format(inv.quotation.getHighest(TimeScale.MONTH)));
+            holders.register("week-low", format.format(inv.stock.getLowest(TimeScale.WEEK)));
+            holders.register("week-high", format.format(inv.stock.getHighest(TimeScale.WEEK)));
+            holders.register("month-low", format.format(inv.stock.getLowest(TimeScale.MONTH)));
+            holders.register("month-high", format.format(inv.stock.getHighest(TimeScale.MONTH)));
 
             // TODO instead of comparing to 1 day ago, compare to the beginning of the day, same with month, year..
-            holders.register("hour-evolution", Utils.formatRate(inv.quotation.getEvolution(TimeScale.HOUR)));
-            holders.register("day-evolution", Utils.formatRate(inv.quotation.getEvolution(TimeScale.DAY)));
-            holders.register("week-evolution", Utils.formatRate(inv.quotation.getEvolution(TimeScale.WEEK)));
-            holders.register("month-evolution", Utils.formatRate(inv.quotation.getEvolution(TimeScale.MONTH)));
+            holders.register("hour-evolution", Utils.formatRate(inv.stock.getEvolution(TimeScale.HOUR)));
+            holders.register("day-evolution", Utils.formatRate(inv.stock.getEvolution(TimeScale.DAY)));
+            holders.register("week-evolution", Utils.formatRate(inv.stock.getEvolution(TimeScale.WEEK)));
+            holders.register("month-evolution", Utils.formatRate(inv.stock.getEvolution(TimeScale.MONTH)));
 
             return holders;
         }

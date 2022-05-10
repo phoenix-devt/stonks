@@ -1,25 +1,21 @@
-package fr.lezoo.stonks.command.nodes.quotation;
+package fr.lezoo.stonks.command.nodes.stock;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.command.objects.CommandTreeNode;
 import fr.lezoo.stonks.command.objects.parameter.NumericalParameter;
 import fr.lezoo.stonks.command.objects.parameter.SimpleParameter;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.QuotationInfo;
-import fr.lezoo.stonks.quotation.handler.FictiveStockHandler;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.StockInfo;
+import fr.lezoo.stonks.stock.handler.FictiveStockHandler;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 
 public class CreateTreeNode extends CommandTreeNode {
     public CreateTreeNode(CommandTreeNode parent) {
         super(parent, "create");
 
-        addParameter(new SimpleParameter("quotation_id"));
-        addParameter(new SimpleParameter("Quotation_Name"));
+        addParameter(new SimpleParameter("stock_id"));
+        addParameter(new SimpleParameter("StockName"));
         addParameter(new NumericalParameter("<initialPrice>", 10, 1000, 1000000));
         addParameter(new NumericalParameter("<initialSupply>", 1000, 10000, 100000));
     }
@@ -32,8 +28,8 @@ public class CreateTreeNode extends CommandTreeNode {
         args[2] = args[2].toLowerCase();
         args[3] = args[3].toLowerCase().replace("_", " "); // Replace "_" by spaces for the name
 
-        if (Stonks.plugin.quotationManager.has(args[2])) {
-            sender.sendMessage(ChatColor.RED + "There is already a quotation with ID " + args[2]);
+        if (Stonks.plugin.stockManager.has(args[2])) {
+            sender.sendMessage(ChatColor.RED + "There is already a stock with ID " + args[2]);
             return CommandResult.FAILURE;
         }
 
@@ -46,7 +42,7 @@ public class CreateTreeNode extends CommandTreeNode {
             return CommandResult.FAILURE;
         }
 
-        Stonks.plugin.quotationManager.register(new Quotation(args[2], args[3], (quotation)->new FictiveStockHandler(quotation,initialSupply), null, null, new QuotationInfo(System.currentTimeMillis(), initialPrice)));
+        Stonks.plugin.stockManager.register(new Stock(args[2], args[3], stock->new FictiveStockHandler(stock,initialSupply), null, null, new StockInfo(System.currentTimeMillis(), initialPrice)));
         return CommandResult.SUCCESS;
     }
 }

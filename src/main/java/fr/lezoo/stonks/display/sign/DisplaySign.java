@@ -1,9 +1,9 @@
 package fr.lezoo.stonks.display.sign;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.TimeScale;
-import fr.lezoo.stonks.quotation.handler.RealStockHandler;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.TimeScale;
+import fr.lezoo.stonks.stock.handler.RealStockHandler;
 import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.util.Utils;
 import org.bukkit.Location;
@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class DisplaySign {
-    private final Quotation quotation;
+    private final Stock stock;
     private final Position pos;
 
     private long lastCheck;
@@ -25,11 +25,11 @@ public class DisplaySign {
     /**
      * Used when creating a display sign using the special command
      *
-     * @param quotation Quotation to take info from
+     * @param stock Stock to take info from
      * @param pos       Position of the display sign
      */
-    public DisplaySign(Quotation quotation, Position pos) {
-        this.quotation = quotation;
+    public DisplaySign(Stock stock, Position pos) {
+        this.stock = stock;
         this.pos = pos;
 
         update();
@@ -39,14 +39,14 @@ public class DisplaySign {
      * Used when loading a display sign from the save file
      */
     public DisplaySign(ConfigurationSection config) {
-        quotation = Objects.requireNonNull(Stonks.plugin.quotationManager.get(config.getString("quotation")), "Could not find quotation");
+        stock = Objects.requireNonNull(Stonks.plugin.stockManager.get(config.getString("stock")), "Could not find stock");
         pos = Position.from(config.getConfigurationSection("position"));
 
         update();
     }
 
-    public Quotation getQuotation() {
-        return quotation;
+    public Stock getStock() {
+        return stock;
     }
 
     public Position getPosition() {
@@ -71,7 +71,7 @@ public class DisplaySign {
         // Update sign
         Sign sign = (Sign) loc.getBlock().getState();
         for (int j = 0; j < 4; j++)
-            sign.setLine(j, applyPlaceholders(quotation, format.get(j)));
+            sign.setLine(j, applyPlaceholders(stock, format.get(j)));
 
         // Save block state update
         sign.update();
@@ -79,7 +79,7 @@ public class DisplaySign {
 
     public void save(ConfigurationSection config) {
         UUID randomId = UUID.randomUUID();
-        config.set(randomId + ".quotation", quotation.getId());
+        config.set(randomId + ".stock", stock.getId());
 
         config.set(randomId + ".position.world", pos.getWorld().getName());
         config.set(randomId + ".position.x", pos.getX());
@@ -87,13 +87,13 @@ public class DisplaySign {
         config.set(randomId + ".position.z", pos.getZ());
     }
 
-    private String applyPlaceholders(Quotation quotation, String input) {
-        return input.replace("{quotation-name}", quotation.getName())
-                .replace("{quotation-id}", quotation.getId())
-                .replace("{current-price}", Stonks.plugin.configManager.stockPriceFormat.format(quotation.getPrice()))
-                .replace("{hour-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.HOUR)))
-                .replace("{day-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.DAY)))
-                .replace("{week-evolution}", Utils.formatRate(quotation.getEvolution(TimeScale.WEEK)))
-                .replace("{quotation-type}", quotation.getHandler() instanceof RealStockHandler ? "Real Stock" : "Virtual");
+    private String applyPlaceholders(Stock stock, String input) {
+        return input.replace("{stock-name}", stock.getName())
+                .replace("{stock-id}", stock.getId())
+                .replace("{current-price}", Stonks.plugin.configManager.stockPriceFormat.format(stock.getPrice()))
+                .replace("{hour-evolution}", Utils.formatRate(stock.getEvolution(TimeScale.HOUR)))
+                .replace("{day-evolution}", Utils.formatRate(stock.getEvolution(TimeScale.DAY)))
+                .replace("{week-evolution}", Utils.formatRate(stock.getEvolution(TimeScale.WEEK)))
+                .replace("{stock-type}", stock.getHandler() instanceof RealStockHandler ? "Real Stock" : "Virtual");
     }
 }

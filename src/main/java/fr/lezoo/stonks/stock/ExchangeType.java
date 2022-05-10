@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation;
+package fr.lezoo.stonks.stock;
 
 import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;

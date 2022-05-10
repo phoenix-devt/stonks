@@ -9,8 +9,8 @@ import fr.lezoo.stonks.gui.objects.item.InventoryItem;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.quotation.ExchangeType;
-import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.stock.ExchangeType;
+import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.Utils;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Displays all your shares from a SPECIFIC quotation
+ * Displays all your shares from a SPECIFIC stock
  */
 public class SpecificPortfolio extends EditableInventory {
     public SpecificPortfolio() {
@@ -61,12 +61,12 @@ public class SpecificPortfolio extends EditableInventory {
         return new SimpleItem(config);
     }
 
-    public GeneratedInventory generate(PlayerData player, Quotation quotation) {
-        return new GeneratedSpecificPortfolio(player, quotation, this);
+    public GeneratedInventory generate(PlayerData player, Stock stock) {
+        return new GeneratedSpecificPortfolio(player, stock, this);
     }
 
-    public class GeneratedSpecificPortfolio extends GeneratedInventory implements QuotationInventory {
-        private final Quotation quotation;
+    public class GeneratedSpecificPortfolio extends GeneratedInventory implements StockInventory {
+        private final Stock stock;
         private final int perPage;
 
         // Page indexing arbitrarily starts at 0
@@ -75,31 +75,31 @@ public class SpecificPortfolio extends EditableInventory {
         private final List<Share> shares = new ArrayList<>();
         private int maxPage;
 
-        public GeneratedSpecificPortfolio(PlayerData playerData, Quotation quotation, EditableInventory editable) {
+        public GeneratedSpecificPortfolio(PlayerData playerData, Stock stock, EditableInventory editable) {
             super(playerData, editable);
 
             // Get amount of shares displayed per page
             this.perPage = editable.getByFunction("share").getSlots().size();
-            this.quotation = quotation;
+            this.stock = stock;
 
             updateInventoryData();
         }
 
         @NotNull
         @Override
-        public Quotation getQuotation() {
-            return quotation;
+        public Stock getStock() {
+            return stock;
         }
 
         private void updateInventoryData() {
             shares.clear();
-            shares.addAll(playerData.getShares(quotation, displayOpenShares));
+            shares.addAll(playerData.getShares(stock, displayOpenShares));
             maxPage = Math.max(((int) Math.ceil((double) shares.size() / perPage)) - 1, 0);
         }
 
         @Override
         public String applyNamePlaceholders(String str) {
-            return str.replace("{name}", quotation.getName())
+            return str.replace("{name}", stock.getName())
                     .replace("{share-status}", displayOpenShares ? "open" : "closed")
                     .replace("{page}", "" + (page + 1))
                     .replace("{max}", "" + (maxPage + 1));
@@ -118,7 +118,7 @@ public class SpecificPortfolio extends EditableInventory {
 
             // Back to list
             if (item instanceof BackItem) {
-                Stonks.plugin.configManager.QUOTATION_LIST.generate(playerData).open();
+                Stonks.plugin.configManager.STOCK_LIST.generate(playerData).open();
                 return;
             }
 
@@ -144,7 +144,7 @@ public class SpecificPortfolio extends EditableInventory {
                 if (shareId == null || shareId.isEmpty())
                     return;
 
-                Share share = playerData.getShareById(quotation, UUID.fromString(shareId));
+                Share share = playerData.getShareById(stock, UUID.fromString(shareId));
 
                 if (event.getAction() == InventoryAction.PICKUP_HALF) {
                     PlayerGenerateSharePaperEvent called = new PlayerGenerateSharePaperEvent(playerData, share);
@@ -160,7 +160,7 @@ public class SpecificPortfolio extends EditableInventory {
                     for (ItemStack dropped : player.getInventory().addItem(paper).values())
                         player.getWorld().dropItem(player.getLocation(), dropped);
 
-                    Message.GET_SHARE_PAPER.format("name", quotation.getName(),
+                    Message.GET_SHARE_PAPER.format("name", stock.getName(),
                             "shares", Utils.fourDigits.format(share.getOrderInfo().getAmount())).send(player);
 
                     updateInventoryData();
@@ -176,20 +176,20 @@ public class SpecificPortfolio extends EditableInventory {
                     double taxRate = playerData.getTaxRate();
                     double gain = share.calculateGain(taxRate), earned = share.getCloseEarning(taxRate);
                     Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getOrderInfo().getAmount()),
-                            "name", quotation.getName(),
+                            "name", stock.getName(),
                             "gain", Utils.formatGain(gain)).send(player);
 
 
-                    // Virtual quotation
-                    if (share.getQuotation().isVirtual()) {
+                    // Virtual stock
+                    if (share.getStock().isVirtual()) {
                         Stonks.plugin.economy.depositPlayer(player, earned);
                     //Register in the StockHandler
-                        quotation.getHandler().whenBought(share.getType().equals(ShareType.NORMAL)?-share.getShares():share.getShares());
+                        stock.getHandler().whenBought(share.getType().equals(ShareType.NORMAL)?-share.getShares():share.getShares());
 
                     }
-                    // Physical quotation
+                    // Physical stock
                     else {
-                        ExchangeType exchangeType = share.getQuotation().getExchangeType();
+                        ExchangeType exchangeType = share.getStock().getExchangeType();
                         int realGain = (int) Math.floor(earned);
                         ItemStack giveItem = new ItemStack(exchangeType.getMaterial());
                         if (exchangeType.hasModelData()) {
@@ -282,7 +282,7 @@ public class SpecificPortfolio extends EditableInventory {
         public ItemStack getDisplayedItem(GeneratedSpecificPortfolio inv, int n) {
             int index = getSlots().size() * inv.page + n;
 
-            // If above quotation number, display 'No share'
+            // If above stock number, display 'No share'
             if (index >= inv.shares.size())
                 return noShare.getDisplayedItem(inv, n);
 
@@ -311,12 +311,12 @@ public class SpecificPortfolio extends EditableInventory {
 
             DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
 
-            holders.register("name", inv.quotation.getName());
+            holders.register("name", inv.stock.getName());
             holders.register("leverage", Utils.fourDigits.format(share.getOrderInfo().getLeverage()));
             holders.register("amount", format.format(share.getOrderInfo().getAmount()));
             holders.register("min-price", share.getStringMinPrice());
             holders.register("max-price", share.getStringMaxPrice());
-            holders.register("current-stock", format.format(inv.quotation.getPrice()));
+            holders.register("current-stock", format.format(inv.stock.getPrice()));
             holders.register("initial-stock", format.format(share.getInitialPrice()));
             holders.register("share-type", share.getType().toString().toLowerCase());
 

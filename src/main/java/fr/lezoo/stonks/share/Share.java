@@ -1,7 +1,7 @@
 package fr.lezoo.stonks.share;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class Share {
     private final UUID uuid, owner;
     private final ShareType type;
-    private final Quotation quotation;
+    private final Stock stock;
     private final long timeStamp;
     private final double initialPrice;
     // if the share is closed it gets the final price and display it
@@ -54,13 +54,13 @@ public class Share {
      * Used when shares are being created, bought or shorted.
      *
      * @param type      Type of share
-     * @param quotation Quotation
+     * @param stock Stock
      * @param leverage  Multiplicative factor for the money made out of,
      *                  or lost by a share purchase
      * @param shares    Amount of shares purchased
      */
-    public Share(ShareType type, UUID owner, Quotation quotation, int leverage, double shares, double maxPrice, double minPrice) {
-        this(UUID.randomUUID(), owner, type, quotation, quotation.getPrice(), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
+    public Share(ShareType type, UUID owner, Stock stock, int leverage, double shares, double maxPrice, double minPrice) {
+        this(UUID.randomUUID(), owner, type, stock, stock.getPrice(), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
     }
 
     /**
@@ -69,18 +69,18 @@ public class Share {
      * @param uuid         Share unique identifier
      * @param owner        Share owner (player) UUID
      * @param type         Type of share
-     * @param quotation    Quotation the share is from
-     * @param initialPrice Stock price when quotation was created
+     * @param stock    Stock the share is from
+     * @param initialPrice Stock price when stock was created
      * @param leverage     Multiplicative factor for the money made out of,
      *                     or lost by a share purchase
      * @param shares       Amount of shares purchased
      * @param timeStamp    Time of share creation (millis)
      */
-    public Share(UUID uuid, UUID owner, ShareType type, Quotation quotation, double initialPrice, int leverage, double shares, double maxPrice, double minPrice, long timeStamp) {
+    public Share(UUID uuid, UUID owner, ShareType type, Stock stock, double initialPrice, int leverage, double shares, double maxPrice, double minPrice, long timeStamp) {
         this.uuid = uuid;
         this.owner = owner;
         this.type = type;
-        this.quotation = quotation;
+        this.stock = stock;
         this.initialPrice = initialPrice;
         orderInfo.setLeverage(leverage);
         orderInfo.setAmount(shares);
@@ -96,7 +96,7 @@ public class Share {
         this.uuid = UUID.fromString(config.getName());
         this.owner = UUID.fromString(config.getString("owner"));
         this.type = ShareType.valueOf(config.getString("type"));
-        this.quotation = Stonks.plugin.quotationManager.get(config.getString("quotation"));
+        this.stock = Stonks.plugin.stockManager.get(config.getString("stock"));
         orderInfo.setAmount(config.getDouble("shares"));
         orderInfo.setLeverage(config.getInt("leverage"));
         this.timeStamp = config.getLong("timestamp");
@@ -122,7 +122,7 @@ public class Share {
 
         // Mandatory info
         this.type = ShareType.valueOf(container.get(Utils.namespacedKey("ShareType"), PersistentDataType.STRING));
-        this.quotation = Objects.requireNonNull(Stonks.plugin.quotationManager.get(container.get(Utils.namespacedKey("StockId"), PersistentDataType.STRING)), "Could not find quotation");
+        this.stock = Objects.requireNonNull(Stonks.plugin.stockManager.get(container.get(Utils.namespacedKey("StockId"), PersistentDataType.STRING)), "Could not find stock");
         this.timeStamp = container.get(Utils.namespacedKey("ShareTimeStamp"), PersistentDataType.LONG);
         this.initialPrice = container.get(Utils.namespacedKey("ShareInitialPrice"), PersistentDataType.DOUBLE);
 
@@ -137,7 +137,7 @@ public class Share {
     public void saveInConfig(ConfigurationSection config) {
         config.set(uuid + ".type", type.name());
         config.set(uuid + ".owner", owner.toString());
-        config.set(uuid + ".quotation", quotation.getId());
+        config.set(uuid + ".stock", stock.getId());
         config.set(uuid + ".shares", orderInfo.getAmount());
         config.set(uuid + ".leverage", orderInfo.getLeverage());
         config.set(uuid + ".timestamp", timeStamp);
@@ -163,8 +163,8 @@ public class Share {
         return type;
     }
 
-    public Quotation getQuotation() {
-        return quotation;
+    public Stock getStock() {
+        return stock;
     }
 
 
@@ -234,9 +234,9 @@ public class Share {
     public void close(@NotNull CloseReason closeReason) {
         Validate.isTrue(isOpen(), "Share is already closed");
         this.closeReason = Objects.requireNonNull(closeReason, "Reason cannot be null");
-        this.sellPrice = quotation.getPrice();
+        this.sellPrice = stock.getPrice();
         //You make it as if you bought the counter order
-        quotation.getHandler().whenBought(type.equals(ShareType.NORMAL)?-getShares():getShares());
+        stock.getHandler().whenBought(type.equals(ShareType.NORMAL)?-getShares():getShares());
     }
 
     public void setWallet(double wallet) {
@@ -276,7 +276,7 @@ public class Share {
     public double calculateGain(double taxRate) {
 
         // Find applicable share price
-        double sharePrice = isOpen() ? quotation.getPrice() : sellPrice;
+        double sharePrice = isOpen() ? stock.getPrice() : sellPrice;
 
         // <Difference in price between when it was bought and now> * <leverage> * <number of shares>
         double gain = (sharePrice - initialPrice) * (type == ShareType.SHORT ? -1 : 1) * orderInfo.getLeverage() * orderInfo.getAmount();

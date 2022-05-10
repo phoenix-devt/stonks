@@ -18,7 +18,7 @@ public class ConfigFile {
 
 
     /**
-     * @param name File name WITHOUT EXTENSION like "quotations"
+     * @param name File name WITHOUT EXTENSION like "stocks"
      */
     public ConfigFile(String name) {
         this(Stonks.plugin, "", name);

@@ -3,7 +3,7 @@ package fr.lezoo.stonks.manager;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.ShareClosedEvent;
 import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.share.CloseReason;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.util.ConfigFile;
@@ -22,7 +22,7 @@ public class ShareManager {
             if (share.isOpen()) {
 
                 // Check if the share needs to be closed
-                if (share.getMaxPrice() <= share.getQuotation().getPrice() || share.getMinPrice() >= share.getQuotation().getPrice()) {
+                if (share.getMaxPrice() <= share.getStock().getPrice() || share.getMinPrice() >= share.getStock().getPrice()) {
                     // Close the share
                     share.close(CloseReason.AUTOMATIC);
                     Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
@@ -41,7 +41,7 @@ public class ShareManager {
     public void load() {
 
         // Register shares
-        FileConfiguration config = new ConfigFile("sharedata").getConfig();
+        FileConfiguration config = new ConfigFile("share-data").getConfig();
         for (String key : config.getKeys(false))
             try {
                 Share share = new Share(config.getConfigurationSection(key));
@@ -52,7 +52,7 @@ public class ShareManager {
     }
 
     public void save() {
-        ConfigFile config = new ConfigFile("sharedata");
+        ConfigFile config = new ConfigFile("share-data");
 
         // Remove old
         for (String key : config.getConfig().getKeys(false))
@@ -74,13 +74,13 @@ public class ShareManager {
     }
 
     /**
-     * @return All shares from that quotation
+     * @return All shares from that stock
      */
-    public Set<Share> getByQuotation(Quotation quotation) {
+    public Set<Share> getByStock(Stock stock) {
         Set<Share> shares = new HashSet<>();
 
         for (Share checked : mapped.values())
-            if (checked.getQuotation().equals(quotation))
+            if (checked.getStock().equals(stock))
                 shares.add(checked);
 
         return shares;

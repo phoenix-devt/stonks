@@ -4,7 +4,7 @@ PHYSICAL_SHARE_BILL:
   model-data: 0
   lore:
     - '&7This bill can be used at the broker'
-    - '&7to redeem &c{amount} &7shares of &c{quotation-name}&7.'
+    - '&7to redeem &c{amount} &7shares of &c{stock-name}&7.'
     - '&7'
     - '&7Leverage: &c{leverage}'
     - '&7Share Type: &c{type}'
@@ -24,11 +24,11 @@ TRADING_BOOK:
 
 QUOTATION_MAP:
   type: FILLED_MAP
-  name: '&6Quotation Map ({quotation-name})'
+  name: '&6Stock Map ({stock-name})'
   model-data: 0
   lore:
-    - '&7Quotation Name: {quotation-name}'
+    - '&7Stock Name: {stock-name}'
     - '&7Time Scale: {time-scale}'
-    - '&7Quotation Type: {quotation-type}'
+    - '&7Stock Type: {stock-type}'
     - '&7Highest Price: {highest-price}'
     - '&7Lowest Price: {lowest-price}'

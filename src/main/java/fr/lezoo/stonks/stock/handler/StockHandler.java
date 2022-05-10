@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation.handler;
+package fr.lezoo.stonks.stock.handler;
 
 import org.bukkit.configuration.ConfigurationSection;
 

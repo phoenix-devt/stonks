@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation;
+package fr.lezoo.stonks.stock;
 
 public enum TimeScale {
     MINUTE(1000L * 60L),

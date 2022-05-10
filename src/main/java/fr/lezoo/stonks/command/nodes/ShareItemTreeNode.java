@@ -16,7 +16,7 @@ public class ShareItemTreeNode extends CommandTreeNode {
 
 
 
-        // stonks shareitem <quotationId> <shares> <leverage>
+        // stonks shareitem <stockId> <shares> <leverage>
         // TODO
 
 

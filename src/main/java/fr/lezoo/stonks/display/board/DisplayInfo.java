@@ -1,25 +1,25 @@
 package fr.lezoo.stonks.display.board;
 
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.TimeScale;
 
 /**
  * All the information needed to create a display board
  */
 public class DisplayInfo {
-    private final Quotation quotation;
+    private final Stock stock;
     private final TimeScale timeDisplay;
 
     public TimeScale getTimeDisplay() {
         return timeDisplay;
     }
 
-    public Quotation getQuotation() {
-        return quotation;
+    public Stock getStock() {
+        return stock;
     }
 
-    public DisplayInfo(Quotation quotation, TimeScale timeDisplay) {
-        this.quotation = quotation;
+    public DisplayInfo(Stock stock, TimeScale timeDisplay) {
+        this.stock = stock;
         this.timeDisplay = timeDisplay;
     }
 }

@@ -1,23 +1,23 @@
 package fr.lezoo.stonks.api.event;
 
-import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.stock.Stock;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when a quotation receives a price update
+ * Called when a stock receives a price update
  */
-public class QuotationUpdateEvent extends Event {
-    private final Quotation quotation;
+public class StockPriceUpdateEvent extends Event {
+    private final Stock stock;
 
     private static final HandlerList handlers = new HandlerList();
 
-    public QuotationUpdateEvent(Quotation quotation) {
-        this.quotation = quotation;
+    public StockPriceUpdateEvent(Stock stock) {
+        this.stock = stock;
     }
 
-    public Quotation getQuotation() {
-        return quotation;
+    public Stock getStock() {
+        return stock;
     }
 
     @Override

@@ -1,14 +1,14 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.QuotationList;
-import fr.lezoo.stonks.gui.QuotationShareMenu;
+import fr.lezoo.stonks.gui.StockList;
+import fr.lezoo.stonks.gui.ShareMenu;
 import fr.lezoo.stonks.gui.SpecificPortfolio;
 import fr.lezoo.stonks.gui.objects.EditableInventory;
-import fr.lezoo.stonks.item.QuotationMap;
+import fr.lezoo.stonks.item.StockMap;
 import fr.lezoo.stonks.item.SharePaper;
 import fr.lezoo.stonks.item.TradingBook;
-import fr.lezoo.stonks.quotation.api.StockAPI;
+import fr.lezoo.stonks.stock.api.StockAPI;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.util.message.Language;
@@ -30,15 +30,15 @@ public class ConfigManager {
     // List of items to reload
     public SharePaper sharePaper;
     public TradingBook tradingBook;
-    public QuotationMap quotationMap;
+    public StockMap stockMap;
 
     // Accessible public GUIs
-    public final QuotationList QUOTATION_LIST = new QuotationList();
-    public final QuotationShareMenu QUOTATION_SHARE = new QuotationShareMenu();
+    public final StockList STOCK_LIST = new StockList();
+    public final ShareMenu QUOTATION_SHARE = new ShareMenu();
 
     public final SpecificPortfolio SPECIFIC_PORTFOLIO = new SpecificPortfolio();
 
-    private final EditableInventory[] guis = {QUOTATION_LIST, QUOTATION_SHARE, SPECIFIC_PORTFOLIO};
+    private final EditableInventory[] guis = {STOCK_LIST, QUOTATION_SHARE, SPECIFIC_PORTFOLIO};
 
     // Accessible public config fields
     public DecimalFormat stockPriceFormat, shareFormat;
@@ -125,7 +125,7 @@ public class ConfigManager {
         // Reload items
         FileConfiguration itemsConfig = new ConfigFile("/language", "items").getConfig();
         sharePaper = new SharePaper(itemsConfig.getConfigurationSection("PHYSICAL_SHARE_BILL"));
-        quotationMap = new QuotationMap(itemsConfig.getConfigurationSection("QUOTATION_MAP"));
+        stockMap = new StockMap(itemsConfig.getConfigurationSection("QUOTATION_MAP"));
         tradingBook = new TradingBook(itemsConfig.getConfigurationSection("TRADING_BOOK"));
 
         // Reload GUIs
@@ -148,10 +148,10 @@ public class ConfigManager {
      */
     public enum DefaultFile {
         ITEMS("language", "items.yml"),
-        QUOTATIONS("", "quotations.yml"),
+        QUOTATIONS("", "stocks.yml"),
         BOARD("language", "board.yml"),
 
-        GUI_QUOTATION_LIST("language/gui", "quotation-list.yml"),
+        GUI_QUOTATION_LIST("language/gui", "stock-list.yml"),
         GUI_SHARE_MENU("language/gui", "share-menu.yml"),
         GUI_SPECIFIC_PORTFOLIO("language/gui", "specific-portfolio.yml"),
         ;

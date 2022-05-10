@@ -10,7 +10,7 @@ public class PlayerBuyShareEvent extends PlayerDataEvent {
     private static final HandlerList handlers = new HandlerList();
 
     /**
-     * Called when a player buys a share from a certain quotation
+     * Called when a player buys a share from a certain stock
      *
      * @param playerData Player buying the share
      * @param share      Share bought

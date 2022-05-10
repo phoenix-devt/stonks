@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation.api;
+package fr.lezoo.stonks.stock.api;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
@@ -24,23 +24,23 @@ public abstract class StockAPI {
     }
 
     /**
-     * @param quotationId the id/symbol of the quotation we want to have the price
-     * @return the current price of the quotation
+     * @param stockId the id/symbol of the stock we want to have the price
+     * @return the current price of the stock
      */
-    public double getPrice(String quotationId) throws URISyntaxException, IOException, InterruptedException, ParseException {
+    public double getPrice(String stockId) throws URISyntaxException, IOException, InterruptedException, ParseException {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(new URI(getURL(quotationId))).GET().build();
+        HttpRequest request = HttpRequest.newBuilder(new URI(getURL(stockId))).GET().build();
         HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return parseResponse(httpResponse.body(), quotationId);
+        return parseResponse(httpResponse.body(), stockId);
     }
 
     public String getStockKey() {
         return apiKey;
     }
 
-    public abstract String getURL(String quotationId);
+    public abstract String getURL(String stockId);
 
-    public abstract double parseResponse(String response, String quotationId) throws ParseException;
+    public abstract double parseResponse(String response, String stockId) throws ParseException;
 
     @NotNull
     public static StockAPI fromConfig(ConfigurationSection config) {

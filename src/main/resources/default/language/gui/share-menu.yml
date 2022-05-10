@@ -1,5 +1,5 @@
 # GUI display name
-name: 'Shares for{name}'
+name: 'Shares for {name}'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -142,7 +142,7 @@ items:
   min-price:
     slots: [41]
     function: min-price
-    name: '&aMin price'
+    name: '&aMinimum price'
     item: ORANGE_CONCRETE
     lore:
       -  '*Optionnal*'
@@ -153,7 +153,7 @@ items:
   max-price:
     slots: [42]
     function: max-price
-    name: '&aMax price'
+    name: '&aMaximum price'
     item: LIGHT_BLUE_CONCRETE
     lore:
       -  '*Optionnal*'

@@ -1,13 +1,11 @@
-package fr.lezoo.stonks.command.nodes.quotation;
+package fr.lezoo.stonks.command.nodes.stock;
 
-import fr.lezoo.stonks.command.nodes.quotation.CreateTreeNode;
-import fr.lezoo.stonks.command.nodes.quotation.RemoveTreeNode;
 import fr.lezoo.stonks.command.objects.CommandTreeNode;
 import org.bukkit.command.CommandSender;
 
-public class QuotationTreeNode extends CommandTreeNode {
-    public QuotationTreeNode(CommandTreeNode parent) {
-        super(parent, "quotation");
+public class StockTreeNode extends CommandTreeNode {
+    public StockTreeNode(CommandTreeNode parent) {
+        super(parent, "stock");
 
         addChild(new CreateTreeNode(this));
         addChild(new RemoveTreeNode(this));

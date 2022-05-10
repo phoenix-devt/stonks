@@ -3,9 +3,9 @@ package fr.lezoo.stonks.display.board;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.manager.ConfigManager;
-import fr.lezoo.stonks.quotation.Quotation;
-import fr.lezoo.stonks.quotation.QuotationInfo;
-import fr.lezoo.stonks.quotation.TimeScale;
+import fr.lezoo.stonks.stock.Stock;
+import fr.lezoo.stonks.stock.StockInfo;
+import fr.lezoo.stonks.stock.TimeScale;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,7 +35,7 @@ import java.util.UUID;
 
 public class Board {
     private final UUID uuid;
-    private final Quotation quotation;
+    private final Stock stock;
     private final int height, width;
     private final Location location;
     private final TimeScale time;
@@ -49,9 +49,9 @@ public class Board {
             BOARD_X = new NamespacedKey(Stonks.plugin, "BoardX"),
             BOARD_Y = new NamespacedKey(Stonks.plugin, "BoardY");
 
-    public Board(Quotation quotation, int width, int height, Location location, TimeScale time, BlockFace boardFace) {
+    public Board(Stock stock, int width, int height, Location location, TimeScale time, BlockFace boardFace) {
         this.uuid = UUID.randomUUID();
-        this.quotation = quotation;
+        this.stock = stock;
         this.width = width;
         this.height = height;
         this.location = location;
@@ -65,7 +65,7 @@ public class Board {
 
     public Board(ConfigurationSection config) {
         uuid = UUID.fromString(config.getName());
-        quotation = Stonks.plugin.quotationManager.get(config.getString("quotationid"));
+        stock = Stonks.plugin.stockManager.get(config.getString("stock-id"));
         width = config.getInt("width");
         height = config.getInt("height");
         location = new Location(Bukkit.getWorld(config.getString("world")), config.getInt("x"), config.getInt("y"), config.getInt("z"));
@@ -114,8 +114,8 @@ public class Board {
         }
     }
 
-    public Quotation getQuotation() {
-        return quotation;
+    public Stock getStock() {
+        return stock;
     }
 
     public int getHeight() {
@@ -143,18 +143,18 @@ public class Board {
     }
 
     /**
-     * Saves the board into boarddata.yml
+     * Saves the board into board-data.yml
      */
-    public void saveBoard(FileConfiguration boarddata) {
-        boarddata.set(uuid.toString() + ".quotationid", quotation.getId());
-        boarddata.set(uuid + ".width", width);
-        boarddata.set(uuid + ".height", height);
-        boarddata.set(uuid + ".x", location.getX());
-        boarddata.set(uuid + ".y", location.getY());
-        boarddata.set(uuid + ".z", location.getZ());
-        boarddata.set(uuid + ".world", location.getWorld().getName());
-        boarddata.set(uuid + ".time", time.toString().toLowerCase());
-        boarddata.set(uuid + ".direction", boardFace.name());
+    public void saveBoard(FileConfiguration config) {
+        config.set(uuid.toString() + ".stock-id", stock.getId());
+        config.set(uuid + ".width", width);
+        config.set(uuid + ".height", height);
+        config.set(uuid + ".x", location.getX());
+        config.set(uuid + ".y", location.getY());
+        config.set(uuid + ".z", location.getZ());
+        config.set(uuid + ".world", location.getWorld().getName());
+        config.set(uuid + ".time", time.toString().toLowerCase());
+        config.set(uuid + ".direction", boardFace.name());
     }
 
     public void checkBackground() {
@@ -219,15 +219,15 @@ public class Board {
     public Placeholders getPlaceholders() {
         Placeholders holders = new Placeholders();
         DecimalFormat format = Stonks.plugin.configManager.stockPriceFormat;
-        holders.register("quotation-id", quotation.getId());
-        holders.register("quotation-name", quotation.getName());
-        holders.register("current-price", format.format(quotation.getPrice()));
-        holders.register("lowest-price", format.format(quotation.getLowest(time)));
-        holders.register("highest-price", format.format(quotation.getHighest(time)));
-        holders.register("evolution", quotation.getEvolution(time));
+        holders.register("stock-id", stock.getId());
+        holders.register("stock-name", stock.getName());
+        holders.register("current-price", format.format(stock.getPrice()));
+        holders.register("lowest-price", format.format(stock.getLowest(time)));
+        holders.register("highest-price", format.format(stock.getHighest(time)));
+        holders.register("evolution", stock.getEvolution(time));
         holders.register("time-scale", time.toString().toLowerCase());
-        holders.register("quotation-type", quotation.getClass().getSimpleName());
-        holders.register("exchange-type", quotation.getExchangeType() == null ? "money" : quotation.getExchangeType().toString().toLowerCase());
+        holders.register("stock-type", stock.getClass().getSimpleName());
+        holders.register("exchange-type", stock.getExchangeType() == null ? "money" : stock.getExchangeType().toString().toLowerCase());
         return holders;
     }
 
@@ -241,25 +241,25 @@ public class Board {
         int BOARD_HEIGHT = 128 * height;
         int BOARD_WIDTH = 128 * width;
 
-        // If not enough data on quotation data we take care of avoiding IndexOutOfBounds
+        // If not enough data on stock data we take care of avoiding IndexOutOfBounds
         BufferedImage image = new BufferedImage(BOARD_WIDTH, BOARD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) image.getGraphics();
-        List<QuotationInfo> quotationData = quotation.getData(time);
-        //If the quotation is Empty we print an error
-        Validate.isTrue(quotationData.size() != 0, "The quotation : " + quotation.getId() + " has no values!!");
+        List<StockInfo> stockData = stock.getData(time);
+        //If the stock is Empty we print an error
+        Validate.isTrue(stockData.size() != 0, "The stock : " + stock.getId() + " has no values!!");
 
-        int data_taken = Math.min(Quotation.BOARD_DATA_NUMBER, quotationData.size());
+        int data_taken = Math.min(Stock.BOARD_DATA_NUMBER, stockData.size());
 
-        int index = quotationData.size() - data_taken;
+        int index = stockData.size() - data_taken;
 
         // Look at the lowest val in the time we look backward to set the scale
-        double minVal = quotationData.get(index).getPrice();
-        double maxVal = quotationData.get(index).getPrice();
+        double minVal = stockData.get(index).getPrice();
+        double maxVal = stockData.get(index).getPrice();
         for (int i = 1; i < data_taken; i++) {
-            if (quotationData.get(index + i).getPrice() > maxVal)
-                maxVal = quotationData.get(index + i).getPrice();
-            if (quotationData.get(index + i).getPrice() < minVal)
-                minVal = quotationData.get(index + i).getPrice();
+            if (stockData.get(index + i).getPrice() > maxVal)
+                maxVal = stockData.get(index + i).getPrice();
+            if (stockData.get(index + i).getPrice() < minVal)
+                minVal = stockData.get(index + i).getPrice();
         }
 
         // White background
@@ -274,8 +274,8 @@ public class Board {
         g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 3 / 128));
         // We want only 2 numbers after the command
         g2d.drawString(holders.apply(config.getString("time-scale")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("quotation-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("quotation-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("stock-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(config.getString("stock-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("exchange-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("current-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(config.getString("lowest-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
@@ -302,12 +302,12 @@ public class Board {
         // If price = maxVal y =0.25 IMAGE_SIZE
         // If price = min Val y=0.95*IMAGE_SIZE (BOTTOM)
         double x = 0;
-        double y = 0.95 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (quotationData.get(index).getPrice() - minVal) / (maxVal - minVal));
+        double y = 0.95 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (stockData.get(index).getPrice() - minVal) / (maxVal - minVal));
         curve.moveTo(x, y);
         for (int i = 1; i < data_taken; i++) {
             // if data_taken < NUMBER_DATA,the graphics will be on the left of the screen mainly
-            x = i * BOARD_WIDTH * 0.8 / Quotation.BOARD_DATA_NUMBER;
-            y = 0.95 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (quotationData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
+            x = i * BOARD_WIDTH * 0.8 / Stock.BOARD_DATA_NUMBER;
+            y = 0.95 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (stockData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
             curve.lineTo(x, y);
         }
 

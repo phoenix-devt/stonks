@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.quotation;
+package fr.lezoo.stonks.stock;
 
 import com.expression.parser.Parser;
 import fr.lezoo.stonks.Stonks;
@@ -9,7 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.Random;
 
 public class Dividends {
-    private final Quotation quotation;
+    private final Stock stock;
     private final String formula;
 
     /**
@@ -27,22 +27,22 @@ public class Dividends {
     /**
      * Default dividends
      */
-    public Dividends(Quotation quotation) {
-        this(quotation, Stonks.plugin.configManager.defaultDividendFormula, Stonks.plugin.configManager.defaultDividendPeriod);
+    public Dividends(Stock stock) {
+        this(stock, Stonks.plugin.configManager.defaultDividendFormula, Stonks.plugin.configManager.defaultDividendPeriod);
     }
 
     /**
-     * Public constructor for adding dividends to quotations
+     * Public constructor for adding dividends to stocks
      *
      * @param formula The formula to calculate the amount of dividends
      *                to give to a player every X days
      * @param period  Dividends are given to players every X days
      */
-    public Dividends(Quotation quotation, String formula, int period) {
+    public Dividends(Stock stock, String formula, int period) {
         Validate.isTrue(period > 0, "Period must be positive");
         Validate.notNull(formula, "Dividend formula cannot be null");
 
-        this.quotation = quotation;
+        this.stock = stock;
         this.formula = formula;
         this.period = period;
         this.lastApplication = System.currentTimeMillis();
@@ -51,8 +51,8 @@ public class Dividends {
     /**
      * Loads information about stock dividends from a config
      */
-    public Dividends(Quotation quotation, ConfigurationSection config) {
-        this.quotation = quotation;
+    public Dividends(Stock stock, ConfigurationSection config) {
+        this.stock = stock;
         this.formula = config.getString("formula");
         this.period = config.getInt("period");
         this.lastApplication = config.getLong("last");
@@ -91,7 +91,7 @@ public class Dividends {
 
         String parsed = formula.replace("{amount}", String.valueOf(share.getOrderInfo().getAmount()))
                 .replace("{random}", String.valueOf(random))
-                .replace("{price}", String.valueOf(quotation.getPrice()));
+                .replace("{price}", String.valueOf(stock.getPrice()));
 
         return Parser.simpleEval(parsed);
     }

@@ -5,7 +5,7 @@ import fr.lezoo.stonks.command.nodes.GiveTradingBookTreeNode;
 import fr.lezoo.stonks.command.nodes.ReloadTreeNode;
 import fr.lezoo.stonks.command.nodes.debug.DebugTreeNode;
 import fr.lezoo.stonks.command.nodes.display.DisplayTreeNode;
-import fr.lezoo.stonks.command.nodes.quotation.QuotationTreeNode;
+import fr.lezoo.stonks.command.nodes.stock.StockTreeNode;
 import fr.lezoo.stonks.command.objects.CommandTreeRoot;
 
 public class StonksCommandRoot extends CommandTreeRoot {
@@ -14,7 +14,7 @@ public class StonksCommandRoot extends CommandTreeRoot {
 
         addChild(new GiveMapTreeNode(this));
         addChild(new GiveTradingBookTreeNode(this));
-        addChild(new QuotationTreeNode(this));
+        addChild(new StockTreeNode(this));
         addChild(new ReloadTreeNode(this));
         addChild(new DisplayTreeNode(this));
         addChild(new DebugTreeNode(this));

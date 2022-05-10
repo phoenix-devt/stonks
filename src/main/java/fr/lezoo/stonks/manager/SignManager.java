@@ -2,7 +2,7 @@ package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.sign.DisplaySign;
-import fr.lezoo.stonks.quotation.Quotation;
+import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.Position;
 import org.apache.commons.lang.Validate;
@@ -44,13 +44,13 @@ public class SignManager implements FileManager {
 
 
     /**
-     * @return Current display signs linked to given quotation
+     * @return Current display signs linked to given stock
      */
-    public Set<DisplaySign> getByQuotation(Quotation quotation) {
+    public Set<DisplaySign> getByStock(Stock stock) {
         Set<DisplaySign> signs = new HashSet<>();
 
         for (DisplaySign sign : mapped.values())
-            if (sign.getQuotation().equals(quotation))
+            if (sign.getStock().equals(stock))
                 signs.add(sign);
 
         return signs;
@@ -58,7 +58,7 @@ public class SignManager implements FileManager {
 
     @Override
     public void load() {
-        FileConfiguration config = new ConfigFile("signdata").getConfig();
+        FileConfiguration config = new ConfigFile("sign-data").getConfig();
         for (String key : config.getKeys(false))
             try {
                 register(new DisplaySign(config.getConfigurationSection(key)));
@@ -69,7 +69,7 @@ public class SignManager implements FileManager {
 
     @Override
     public void save() {
-        ConfigFile config = new ConfigFile("signdata");
+        ConfigFile config = new ConfigFile("sign-data");
 
         // Remove older
         for (String key : config.getConfig().getKeys(false))
