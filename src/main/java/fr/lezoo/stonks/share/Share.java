@@ -53,14 +53,14 @@ public class Share {
     /**
      * Used when shares are being created, bought or shorted.
      *
-     * @param type      Type of share
-     * @param stock Stock
-     * @param leverage  Multiplicative factor for the money made out of,
-     *                  or lost by a share purchase
-     * @param shares    Amount of shares purchased
+     * @param type     Type of share
+     * @param stock    Stock
+     * @param leverage Multiplicative factor for the money made out of,
+     *                 or lost by a share purchase
+     * @param shares   Amount of shares purchased
      */
     public Share(ShareType type, UUID owner, Stock stock, int leverage, double shares, double maxPrice, double minPrice) {
-        this(UUID.randomUUID(), owner, type, stock, stock.getPrice(), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
+        this(UUID.randomUUID(), owner, type, stock, stock.getHandler().getShareInitialPrice(type == ShareType.NORMAL ? shares : -shares), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
     }
 
     /**
@@ -69,7 +69,7 @@ public class Share {
      * @param uuid         Share unique identifier
      * @param owner        Share owner (player) UUID
      * @param type         Type of share
-     * @param stock    Stock the share is from
+     * @param stock        Stock the share is from
      * @param initialPrice Stock price when stock was created
      * @param leverage     Multiplicative factor for the money made out of,
      *                     or lost by a share purchase
@@ -167,7 +167,6 @@ public class Share {
         return stock;
     }
 
-
     /**
      * @return Time (in millis) at which the share was created
      */
@@ -197,7 +196,6 @@ public class Share {
     public double getMinPrice() {
         return orderInfo.getMinPrice();
     }
-
 
     public String getStringMinPrice() {
         return orderInfo.getMinPrice() == 0 ? "none" : Utils.fourDigits.format(orderInfo.getMinPrice());
@@ -236,7 +234,7 @@ public class Share {
         this.closeReason = Objects.requireNonNull(closeReason, "Reason cannot be null");
         this.sellPrice = stock.getPrice();
         //You make it as if you bought the counter order
-        stock.getHandler().whenBought(type.equals(ShareType.NORMAL)?-getShares():getShares());
+        stock.getHandler().whenBought(type.equals(ShareType.NORMAL) ? -getShares() : getShares());
     }
 
     public void setWallet(double wallet) {
@@ -261,7 +259,7 @@ public class Share {
      *
      * @param taxRate Rate of tax on benefits
      * @return Money earned by the player if he were to close
-     * this share right now.
+     *         this share right now.
      */
     public double getCloseEarning(double taxRate) {
         return Math.max(calculateGain(taxRate) + initialPrice * orderInfo.getAmount(), 0);
@@ -271,7 +269,7 @@ public class Share {
      * Does not take dividends wallet into account
      *
      * @return Money gained by the player (may be negative)
-     * if they were to claim the share right now
+     *         if they were to claim the share right now
      */
     public double calculateGain(double taxRate) {
 

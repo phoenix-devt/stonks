@@ -14,35 +14,37 @@ public class FictiveStockHandler implements StockHandler {
     private final Stock stock;
 
     private double priceMultiplier;
-    private final double initialSupply;
-    //Initial supply + supply by people
-    private double totalSupply;
+    private final double initialMarketShares;
+
+    /**
+     * Sum of initial amount of shares PLUS shares bought by investors
+     */
+    private double totalMarketShares;
 
     private static final Random RANDOM = new Random();
 
-    public FictiveStockHandler(Stock stock, double initialSupply) {
+    public FictiveStockHandler(Stock stock, double initialMarketShares) {
         this.stock = stock;
-        this.initialSupply = initialSupply;
-        //We setup the price multiplier
-        this.priceMultiplier = stock.getPrice() / initialSupply;
-        this.totalSupply = initialSupply;
-        //p=calculatePrice()*priceMultiplier();
+        this.initialMarketShares = initialMarketShares;
 
+        // We setup the price multiplier
+        this.priceMultiplier = stock.getPrice() / initialMarketShares;
+        this.totalMarketShares = initialMarketShares;
     }
 
     public FictiveStockHandler(Stock stock, ConfigurationSection config) {
         this.stock = stock;
 
-        initialSupply = config.getDouble("initial-supply");
-        totalSupply = config.contains("total-supply") ? config.getDouble("total-supply") : initialSupply;
-        priceMultiplier = config.contains("price-multiplier") ? config.getDouble("price-multiplier"): stock.getPrice() / initialSupply  ;
+        initialMarketShares = config.getDouble("initial-supply");
+        totalMarketShares = config.contains("total-supply") ? config.getDouble("total-supply") : initialMarketShares;
+        priceMultiplier = config.contains("price-multiplier") ? config.getDouble("price-multiplier") : stock.getPrice() / initialMarketShares;
     }
-
 
     @Override
     public void refresh() {
-        double price = calculatePrice(totalSupply);
-        //We setup the price in the stock
+        double price = computePrice(totalMarketShares);
+
+        // We setup the price in the stock
         for (TimeScale time : TimeScale.values()) {
 
             // We get the list corresponding to the time
@@ -54,63 +56,65 @@ public class FictiveStockHandler implements StockHandler {
 
             // If the the latest data of workingData is too old we add another one
             if (System.currentTimeMillis() - lastTimeStamp > time.getTime() / Stock.BOARD_DATA_NUMBER) {
-
                 workingData.add(new StockInfo(System.currentTimeMillis(), price));
+
                 // If the list contains too much data we remove the older ones
                 if (workingData.size() > Stock.BOARD_DATA_NUMBER)
                     workingData.remove(0);
+
                 // We save the changes we made in the attribute
                 stock.setData(time, workingData);
             }
         }
     }
 
-
+    @Override
+    public double getCurrentPrice() {
+        return computePrice(totalMarketShares);
+    }
 
     @Override
-    public void whenBought(double stocksBought) {
-        totalSupply += (int) stocksBought;
+    public void whenBought(double signedShares) {
+        totalMarketShares += signedShares;
     }
 
     @Override
     public void saveInFile(ConfigurationSection config) {
-        config.set("initial-supply", initialSupply);
-        config.set("total-supply", totalSupply);
+        config.set("initial-supply", initialMarketShares);
+        config.set("total-supply", totalMarketShares);
         config.set("price-multiplier", priceMultiplier);
     }
 
     /**
-     * Calculates the price the stock should have at any moment
+     * @return The price the stock should have at any moment
      */
-    //Calculate the price the course will have if you buy shares
-    public double calculatePrice(double totalSup) {
-        return priceMultiplier * (totalSup < initialSupply / 10 ? calculateExponential(totalSup) : totalSup);
+    public double computePrice(double totalShares) {
+        return priceMultiplier * (totalShares < initialMarketShares / 10 ? expBehaviour(totalShares) : totalShares);
     }
 
-
-    public double calculateExponential(double totalSup) {
-        return initialSupply / 10 * (Math.exp(totalSup - (initialSupply / 10)));
+    private double expBehaviour(double totalSup) {
+        return initialMarketShares / 10 * (Math.exp(totalSup - (initialMarketShares / 10)));
     }
-
-    public double getPriceMultiplier() {
-        return priceMultiplier;
-    }
-
-    public double getInitialSupply() {
-        return initialSupply;
-    }
-
-    public double getTotalSupply() {
-        return totalSupply;
-    }
-
 
     @Override
-    //Formula for the change in price over time
-    public void refreshPrice() {
-        //We just refresh the priceMultiplier
-        priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(stock.getRefreshPeriod()) /
-                (Math.sqrt(10*TimeScale.HOUR.getTime()));
+    public double getShareInitialPrice(double signedShares) {
+        return computePrice(totalMarketShares + signedShares);
     }
 
+    /**
+     * In this mathematical model where the price only depends on the
+     * amount of shares currently in the market, refreshPrice only applies
+     * some randomness to current price to simulate more market actors.
+     * <p>
+     * A huge advantage of this model is that it's entirely independent
+     * of time, no need to integrate over time with respect to the change
+     * in demand.
+     * <p>
+     * If volatility equals 1 you can expect to have a 10% change in 1 hour.
+     */
+    @Override
+    public void refreshPrice() {
+        priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(stock.getRefreshPeriod()) /
+                (Math.sqrt(10 * TimeScale.HOUR.getTime()));
+    }
 }

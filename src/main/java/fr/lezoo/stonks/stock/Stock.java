@@ -246,10 +246,8 @@ public class Stock {
      * @return Current stock price
      */
     public double getPrice() {
-        List<StockInfo> latest = stockData.get(TimeScale.HOUR);
-        return latest.get(latest.size() - 1).getPrice();
+        return handler.getCurrentPrice();
     }
-
 
     @Override
     public boolean equals(Object o) {

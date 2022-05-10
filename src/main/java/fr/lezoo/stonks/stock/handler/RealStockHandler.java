@@ -18,13 +18,12 @@ public class RealStockHandler implements StockHandler {
     private final Stock stock;
     private double lastPrice;
 
-
     public RealStockHandler(Stock stock) {
         this.stock = stock;
     }
 
     @Override
-    public void whenBought(double stocksBought) {
+    public void whenBought(double signedShares) {
         // Nothing happens
     }
 
@@ -34,20 +33,36 @@ public class RealStockHandler implements StockHandler {
     }
 
     @Override
+    public double getShareInitialPrice(double signedShares) {
+        return stock.getPrice();
+    }
+
+    @Override
+    public double getCurrentPrice() {
+        List<StockInfo> latest = stock.getData(TimeScale.HOUR);
+        return latest.get(latest.size() - 1).getPrice();
+    }
+
+    @Override
     public void refresh() {
-        //We update all the data List
+
+        // We update all the data List
         for (TimeScale time : TimeScale.values()) {
-            //We get the list corresponding to the time
+
+            // We get the list corresponding to the time
             List<StockInfo> workingData = new ArrayList<>();
             Validate.notNull(stock.getData(time), "The data for " + stock.getId() + " for " + time.toString() + " is null");
             workingData.addAll(stock.getData(time));
-            //If the the latest data of workingData is too old we add another one
+
+            // If the the latest data of workingData is too old we add another one
             if (System.currentTimeMillis() - workingData.get(workingData.size() - 1).getTimeStamp() > time.getTime() / Stock.BOARD_DATA_NUMBER) {
                 workingData.add(new StockInfo(System.currentTimeMillis(), lastPrice));
-                //If the list contains too much data we remove the older ones
+
+                // If the list contains too much data we remove the older ones
                 if (workingData.size() > Stock.BOARD_DATA_NUMBER)
                     workingData.remove(0);
-                //We save the changes we made in the attribute
+
+                // We save the changes we made in the attribute
                 stock.setData(time, workingData);
             }
         }
@@ -67,9 +82,6 @@ public class RealStockHandler implements StockHandler {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-
         });
-
     }
 }

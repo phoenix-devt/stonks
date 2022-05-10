@@ -1,5 +1,6 @@
 package fr.lezoo.stonks.util;
 
+import fr.lezoo.stonks.listener.TradingInteractListener;
 import fr.lezoo.stonks.listener.temp.TemporaryListener;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.stock.Stock;
@@ -48,5 +49,6 @@ public class SimpleChatInput extends TemporaryListener {
     @Override
     public void whenClosed() {
         playerData.setOnChatInput(false);
+        TradingInteractListener.displayChoices(playerData, stock);
     }
 }

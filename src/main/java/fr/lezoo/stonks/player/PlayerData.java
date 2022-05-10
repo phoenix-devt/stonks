@@ -2,12 +2,11 @@ package fr.lezoo.stonks.player;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
-import fr.lezoo.stonks.stock.ExchangeType;
-import fr.lezoo.stonks.stock.Stock;
-import fr.lezoo.stonks.stock.handler.FictiveStockHandler;
 import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
+import fr.lezoo.stonks.stock.ExchangeType;
+import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.message.Message;
 import org.apache.commons.lang.Validate;
@@ -245,29 +244,21 @@ public class PlayerData {
      * Called when a player tries to buy a share. This checks for the
      * player's balance and calls a bukkit cancelable event.
      *
-     * @param stock Stock to buy share from
-     * @param type      Type of share
-     * @param amount    Amount of shares bought
+     * @param stock  Stock to buy share from
+     * @param type   Type of share
+     * @param amount Amount of shares bought
      * @return If the share was successfully bought or not
      */
-    // TODO check
     public boolean buyShare(Stock stock, ShareType type, double amount, int leverage, double maxPrice, double minPrice) {
-        double price = stock.getPrice() * amount;
-
-        if (!stock.isRealStock()) {
-            //Want the price at which the player will buy his shares to be affected by the amount he bought to avoid abuses
-            //e.g if the player buy 10% of the shares the price will go 10% but we don't want hium to instantly gain 10% fo the price
-            FictiveStockHandler handler = (FictiveStockHandler) stock.getHandler();
-            price = handler.calculatePrice(handler.getTotalSupply() - (type.equals(ShareType.NORMAL) ? amount : -amount));
-        }
+        final double moneyPaid = amount * stock.getPrice();
 
         // If it exchanges money
         if (stock.isVirtual()) {
 
             // Check for balance
-            double bal = Stonks.plugin.economy.getBalance(player);
-            if (bal < price) {
-                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", Stonks.plugin.configManager.stockPriceFormat.format(price - bal)).send(player);
+            double balance = Stonks.plugin.economy.getBalance(player);
+            if (balance < moneyPaid) {
+                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", Stonks.plugin.configManager.stockPriceFormat.format(moneyPaid - balance)).send(player);
                 return false;
             }
 
@@ -281,21 +272,21 @@ public class PlayerData {
 
             // Remove from balance and buy shares
             giveShare(share);
-            Stonks.plugin.economy.withdrawPlayer(player, price);
+            Stonks.plugin.economy.withdrawPlayer(player, moneyPaid);
 
         } else {
 
             // We make the price an int cause we can't withdraw half items (makes the player lose a bit of money
-            price = Math.ceil(price);
+            long moneyPaidCeil = (long) Math.ceil(moneyPaid);
 
-            int bal = 0;
             // We check the amount of the item the player has in his inventory (the material is defined by custom model data and material
+            int balance = 0;
             for (ItemStack itemStack : player.getInventory().getContents())
                 if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(stock.getExchangeType()))
-                    bal += itemStack.getAmount();
+                    balance += itemStack.getAmount();
 
-            if (bal < price) {
-                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", Stonks.plugin.configManager.stockPriceFormat.format(price - bal)).send(player);
+            if (balance < moneyPaidCeil) {
+                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", String.valueOf(moneyPaidCeil - balance)).send(player);
                 return false;
             }
 
@@ -311,21 +302,20 @@ public class PlayerData {
             giveShare(share);
 
             // We withdraw the amount of shares he bought
-            for (ItemStack itemStack : player.getInventory().getContents()) {
+            for (ItemStack itemStack : player.getInventory().getContents())
                 if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(stock.getExchangeType())) {
-                    double withdraw = Math.min(itemStack.getAmount(), price);
+                    double withdraw = Math.min(itemStack.getAmount(), moneyPaidCeil);
                     itemStack.setAmount(itemStack.getAmount() - (int) withdraw);
-                    price -= withdraw;
+                    moneyPaidCeil -= withdraw;
                 }
-            }
         }
 
-        stock.getHandler().whenBought(type.equals(ShareType.NORMAL) ? amount : -amount);
+        stock.getHandler().whenBought(type == ShareType.NORMAL ? amount : -amount);
 
         // Send player message
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(
                 "shares", Stonks.plugin.configManager.shareFormat.format(amount),
-                "price", Stonks.plugin.configManager.stockPriceFormat.format(price),
+                "price", Stonks.plugin.configManager.stockPriceFormat.format(moneyPaid),
                 "name", stock.getName()).send(player);
 
         // Successfully bought

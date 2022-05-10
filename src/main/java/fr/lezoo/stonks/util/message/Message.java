@@ -12,7 +12,7 @@ public enum Message {
     NOT_ENOUGH_MONEY("&cYou don't have enough money: you need ${left} more"),
     BUY_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou bought {shares} shares from {name} for ${price}."),
     SELL_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou short-sold {shares} shares from {name} for ${price}."),
-    CLOSE_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou closed {shares} shares from {name} for a final gain of ${gain}."),
+    CLOSE_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou closed {shares} shares from {name} for a final gain of ${gain}"),
     GET_SHARE_PAPER(new SoundReader(Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2), "&eYou virtually closed your order and got an order paper for {shares} shares of {name}."),
     CLAIM_SHARE_PAPER(new SoundReader(Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2), "&eYou claimed {shares} shares of {name} for a total current value of ${value}."),
     CLAIM_DIVIDENDS(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou successfully redeemed &f${amount} &efrom your dividends."),
