@@ -3,12 +3,16 @@ package fr.lezoo.stonks.listener;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.display.board.Board;
 import fr.lezoo.stonks.display.board.BoardRaycast;
+import fr.lezoo.stonks.display.sign.DisplaySign;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.ShareType;
+import fr.lezoo.stonks.util.Position;
 import fr.lezoo.stonks.util.message.Message;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+
+import org.bukkit.block.data.type.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,18 +27,33 @@ public class TradingInteractListener implements Listener {
         Player player = event.getPlayer();
 
         //We check if the player is left clicking
-        if (event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK)
+        if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            checkBoard(player);
             return;
+        }
 
+
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && event.getClickedBlock().getType().name().contains("SIGN")) {
+            Position pos = Position.from(event.getClickedBlock().getLocation());
+            if (!Stonks.plugin.signManager.has(pos))
+                return;
+            DisplaySign sign = Stonks.plugin.signManager.get(pos);
+            Stonks.plugin.configManager.STOCK_LIST.generate(PlayerData.get(player)).open();
+        }
+    }
+
+
+    public void checkBoard(Player player) {
         BoardRaycast cast = new BoardRaycast(player);
         if (!cast.hasHit())
             return;
-
         checkDownSquare(player, cast.getHit(), cast.getVerticalCoordinate(), cast.getHorizontalCoordinate());
         checkMiddleDownSquare(player, cast.getHit(), cast.getVerticalCoordinate(), cast.getHorizontalCoordinate());
         checkMiddleUpSquare(player, cast.getHit(), cast.getVerticalCoordinate(), cast.getHorizontalCoordinate());
         checkUpSquare(player, cast.getHit(), cast.getVerticalCoordinate(), cast.getHorizontalCoordinate());
+
     }
+
 
     //Does what needs to be done when the top square is touched
     public void checkUpSquare(Player player, Board board, double verticalOffset, double horizontalOffset) {

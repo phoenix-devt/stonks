@@ -18,6 +18,10 @@ public class SignManager implements FileManager {
         return mapped.containsKey(position);
     }
 
+    public DisplaySign get(Position position) {
+        return mapped.get(position);
+    }
+
     /**
      * Update the information given by all the signs
      */
@@ -39,8 +43,6 @@ public class SignManager implements FileManager {
     public void unregister(Position pos) {
         mapped.remove(pos);
     }
-
-
 
 
     /**
