@@ -107,7 +107,7 @@ public class StockList extends EditableInventory {
 
                 Stock stock = Stonks.plugin.stockManager.get(stockId);
                 if (event.getAction() == InventoryAction.PICKUP_ALL)
-                    Stonks.plugin.configManager.QUOTATION_SHARE.generate(playerData, stock).open();
+                    Stonks.plugin.configManager.SHARE_MENU.generate(playerData, stock).open();
                 if (event.getAction() == InventoryAction.PICKUP_HALF)
                     Stonks.plugin.configManager.SPECIFIC_PORTFOLIO.generate(playerData, stock).open();
             }

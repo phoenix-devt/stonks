@@ -7,9 +7,19 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
 
+/**
+ * A hashable position object which
+ * can be used as a hashMap key type
+ *
+ * @author jules
+ */
 public class Position {
     private final World world;
     private final int x, y, z;
+
+    public Position(Location loc) {
+        this(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
 
     public Position(World world, int x, int y, int z) {
         this.world = world;

@@ -22,7 +22,7 @@ TRADING_BOOK:
     - '&7The max price before the share is automatically closed'
     - '&7The min price before the share is automatically closed'
 
-QUOTATION_MAP:
+STOCK_MAP:
   type: FILLED_MAP
   name: '&6Stock Map ({stock-name})'
   model-data: 0

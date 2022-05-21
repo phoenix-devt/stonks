@@ -34,11 +34,11 @@ public class ConfigManager {
 
     // Accessible public GUIs
     public final StockList STOCK_LIST = new StockList();
-    public final ShareMenu QUOTATION_SHARE = new ShareMenu();
+    public final ShareMenu SHARE_MENU = new ShareMenu();
 
     public final SpecificPortfolio SPECIFIC_PORTFOLIO = new SpecificPortfolio();
 
-    private final EditableInventory[] guis = {STOCK_LIST, QUOTATION_SHARE, SPECIFIC_PORTFOLIO};
+    private final EditableInventory[] guis = {STOCK_LIST, SHARE_MENU, SPECIFIC_PORTFOLIO};
 
     // Accessible public config fields
     public DecimalFormat stockPriceFormat, shareFormat;
@@ -125,7 +125,7 @@ public class ConfigManager {
         // Reload items
         FileConfiguration itemsConfig = new ConfigFile("/language", "items").getConfig();
         sharePaper = new SharePaper(itemsConfig.getConfigurationSection("PHYSICAL_SHARE_BILL"));
-        stockMap = new StockMap(itemsConfig.getConfigurationSection("QUOTATION_MAP"));
+        stockMap = new StockMap(itemsConfig.getConfigurationSection("STOCK_MAP"));
         tradingBook = new TradingBook(itemsConfig.getConfigurationSection("TRADING_BOOK"));
 
         // Reload GUIs
@@ -148,10 +148,10 @@ public class ConfigManager {
      */
     public enum DefaultFile {
         ITEMS("language", "items.yml"),
-        QUOTATIONS("", "stocks.yml"),
+        STOCKS("", "stocks.yml"),
         BOARD("language", "board.yml"),
 
-        GUI_QUOTATION_LIST("language/gui", "stock-list.yml"),
+        GUI_STOCK_LIST("language/gui", "stock-list.yml"),
         GUI_SHARE_MENU("language/gui", "share-menu.yml"),
         GUI_SPECIFIC_PORTFOLIO("language/gui", "specific-portfolio.yml"),
         ;

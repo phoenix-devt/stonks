@@ -1,25 +1,18 @@
+-----------------------------------------------
+STONKS TODO
+-----------------------------------------------
 
-
-
-
----- STONKS TODO
-
-
-TODO
-1)
-2)
+A IMPLEMENTER
 - Systeme pour close et open la share a un peu ameliorer au niveau des messages
-- Ameliorer le rendu pour : Board image et dialog box
-
-A RAJOUTER / RENFORCER
 - Support MySQL pour les données (avec BungeeCord)
-- Afficher les STONKS sur une MAP
 - Option pour changer le taux de comission d'une personne
 - Stock creation GUI
 
+A RENFORCER
+-
+
 PROBLEMES AVEC L'ANCIEN PLUGIN
 - option de stocks max par personne
-- deux types d'actions : virtuelles, où avec des objets réels (itemStacks)
 - placeholder pour le top des portfolios
 https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-other-stocks-on
 
@@ -27,7 +20,9 @@ OK
 - Enlever le son pour refresh les board
 - Afficher les stocks sur DES PANNEAUX pour voir en temps réel !!
 -Custom model data etc pour un stock mieux faire
+- deux types d'actions : virtuelles, où avec des objets réels (itemStacks)
 - option pour acheter automatiquement ou vendre auto en fonction de certaines conditions des stocks OK
+- Afficher les STONKS sur une MAP
 - TRANSFORMER UN STOCK EN UN OBJET CLIQUABLE que l'on peut redeem au NPC
 - des stocks factices qui varient avec des formules mathématiques toutes configurables
 - deux types d'actions : virtuelles, où avec des objets réels (itemStacks)
@@ -36,6 +31,7 @@ https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-
 - commande pour simple pour rajouter un boarddisplay
 - les dividendes
 - GUIs que l'on peut modifier (api déjà existante)
+- Ameliorer le rendu pour : Board image et dialog box
 - NPC pour ouvrir le menu des stocks
 - option pour visualiser nos stocks ce qu'on appelle le "portfolio"
 - leviers ("Leverage")
@@ -43,8 +39,7 @@ https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-
 - language full configurable
 - option pour fermer le marché temporairement
 
----- COMPANIES TODO
-
+PLAYER COMPANIES
 Love this idea! I read a comment somewhere down below about being able to create our own stocks...
 I would suggest to create a code that allows server owners to place the required amount of funds
 to go ipo, a player may set the amount of money they want to put into the company, then choose how

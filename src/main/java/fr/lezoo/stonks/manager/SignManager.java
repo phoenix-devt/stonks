@@ -6,7 +6,9 @@ import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.Position;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -40,9 +42,6 @@ public class SignManager implements FileManager {
         mapped.remove(pos);
     }
 
-
-
-
     /**
      * @return Current display signs linked to given stock
      */
@@ -54,6 +53,11 @@ public class SignManager implements FileManager {
                 signs.add(sign);
 
         return signs;
+    }
+
+    @Nullable
+    public DisplaySign getByPosition(Location loc) {
+        return mapped.get(new Position(loc));
     }
 
     @Override
