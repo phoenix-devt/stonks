@@ -11,7 +11,7 @@ import java.util.List;
 public enum Message {
     NOT_ENOUGH_MONEY("&cYou don't have enough money: you need ${left} more"),
     BUY_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou bought {shares} shares from {name} for ${price}."),
-    SELL_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou short-sold {shares} shares from {name} for ${price}."),
+    SELL_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou shorted {shares} shares from {name} for ${price}."),
     CLOSE_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou closed {shares} shares from {name} for a final gain of ${gain}"),
     GET_SHARE_PAPER(new SoundReader(Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2), "&eYou virtually closed your order and got an order paper for {shares} shares of {name}."),
     CLAIM_SHARE_PAPER(new SoundReader(Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2), "&eYou claimed {shares} shares of {name} for a total current value of ${value}."),
@@ -30,7 +30,7 @@ public enum Message {
     SET_MAX_PRICE_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "", "&eWrite in the chat the max-price you want your share to automatically close at"),
 
     BUY_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "", "&eWrite in the chat the amount of shares you would like to buy."),
-    SELL_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "", "&eWrite in the chat the amount of shares you would like to buy."),
+    SELL_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "", "&eWrite in the chat the amount of shares you would like to short."),
     NOT_VALID_NUMBER("&c{input} is not a valid number."),
     NO_ORDER("You don't have any order for {stock-name}"),
     NO_AMOUNT("You didn't specify the amount of shares you wanted for {stock-name}"),

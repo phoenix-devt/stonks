@@ -93,6 +93,12 @@ public class Board {
         checkItemFrames();
     }
 
+    /**
+     * Have the board hook onto any previously existing item frames
+     * when reloading or restarting the server. If Stonks doesn't
+     * look for item frames the ones previously placed down drop on
+     * the ground which makes up a mess
+     */
     private void lookForPreviousItemFrames() {
         for (ItemFrame checked : location.getWorld().getEntitiesByClass(ItemFrame.class)) {
             if (!checked.getPersistentDataContainer().has(new NamespacedKey(Stonks.plugin, "BoardId"), PersistentDataType.STRING))
@@ -157,17 +163,24 @@ public class Board {
         config.set(uuid + ".direction", boardFace.name());
     }
 
+    /**
+     * Makes sure there are blocks behind the display board. IF there aren't
+     * any at some board point it places one block behind it
+     */
     public void checkBackground() {
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++) {
                 BoardPoint point = pointArray[x][y];
-                Location location=point.getLocation().clone().subtract(boardFace.getDirection());
+                Location location = point.getLocation().clone().subtract(boardFace.getDirection());
                 if (location.getBlock().getType().equals(Material.AIR))
                     location.getBlock().setType(BACKGROUND_MATERIAL);
             }
     }
 
-
+    /**
+     * Checks for item frames, fills them if they don't have any item.
+     * Also creates them if they are dead/there are none
+     */
     public void checkItemFrames() {
 
         for (int x = 0; x < width; x++)
@@ -183,7 +196,6 @@ public class Board {
 
                     // Create a new one
                     point.createItemFrame();
-
                 }
             }
     }

@@ -1,8 +1,11 @@
 package fr.lezoo.stonks.stock.handler;
 
+import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.share.ShareType;
 import org.bukkit.configuration.ConfigurationSection;
 
 public interface StockHandler {
+
     /**
      * Adds the value of the price for each time scale
      */
@@ -12,7 +15,7 @@ public interface StockHandler {
 
     void saveInFile(ConfigurationSection config);
 
-    void whenBought(double signedShares);
+    void whenBought(ShareType type, double shares);
 
     double getCurrentPrice();
 
@@ -21,13 +24,15 @@ public interface StockHandler {
      * the stock price increases, the player can just instantly resell
      * his share to "surf on his own wave" and generate infinite money.
      * <p>
-     * A fix is to consider that the share was bought at the price
-     * the stock has AFTER the share is bought. This method calculates
-     * the price of the stock if the stock were to have an extra
-     * amount of shares in the server.
+     * The best fix is to have the share gain be calculated NOT based on
+     * the instantaneous stock price but on the price the stock WOULD have
+     * if the share had never existed.
+     * <p>
+     * This method requires a stock price computation. That method is useless
+     * for real stocks because the investor has NO influence whatsoever on the stock.
      *
-     * @param signedShares Amount of shares bought, negative for shorting.
+     * @param share Share being sold
      * @return Price of a share when buying it
      */
-    double getShareInitialPrice(double signedShares);
+    double getSellPrice(Share share);
 }

@@ -1,6 +1,8 @@
 package fr.lezoo.stonks.stock.handler;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.stock.StockInfo;
 import fr.lezoo.stonks.stock.TimeScale;
@@ -23,7 +25,7 @@ public class RealStockHandler implements StockHandler {
     }
 
     @Override
-    public void whenBought(double signedShares) {
+    public void whenBought(ShareType type, double signedShares) {
         // Nothing happens
     }
 
@@ -33,14 +35,14 @@ public class RealStockHandler implements StockHandler {
     }
 
     @Override
-    public double getShareInitialPrice(double signedShares) {
-        return stock.getPrice();
-    }
-
-    @Override
     public double getCurrentPrice() {
         List<StockInfo> latest = stock.getData(TimeScale.HOUR);
         return latest.get(latest.size() - 1).getPrice();
+    }
+
+    @Override
+    public double getSellPrice(Share share) {
+        return stock.getPrice();
     }
 
     @Override

@@ -13,7 +13,7 @@ public class PlayerClaimShareEvent extends PlayerDataEvent {
      * Called when a player claims a share from a certain stock.
      * It is called for both closed and open shares.
      * <p>
-     * Not to be mistaken for the {@link ShareClosedEvent}
+     * Not to be mistaken for the {@link ShareClosedEvent}.
      *
      * @param playerData Player closing the share
      * @param share      Share closed

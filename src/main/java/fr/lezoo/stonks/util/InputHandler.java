@@ -27,7 +27,7 @@ public class InputHandler {
             Message.NOT_VALID_AMOUNT.format("input", input).send(player);
             return false;
         }
-        playerData.buyShare(stock, ShareType.SHORT, amount);
+        playerData.buyShare(stock, ShareType.NORMAL, amount);
         return true;
     };
     public static final TriFunction<PlayerData, String, Stock, Boolean> SHORT_CUSTOM_AMOUNT_HANDLER = (playerData, input, stock) -> {

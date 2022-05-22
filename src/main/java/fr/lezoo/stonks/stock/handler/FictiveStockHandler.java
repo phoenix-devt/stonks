@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.stock.handler;
 
-import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.stock.StockInfo;
 import fr.lezoo.stonks.stock.TimeScale;
@@ -23,12 +24,12 @@ public class FictiveStockHandler implements StockHandler {
 
     private static final Random RANDOM = new Random();
 
-    public FictiveStockHandler(Stock stock, double initialMarketShares) {
+    public FictiveStockHandler(Stock stock, double price, double initialMarketShares) {
         this.stock = stock;
         this.initialMarketShares = initialMarketShares;
 
         // We setup the price multiplier
-        this.priceMultiplier = stock.getPrice() / initialMarketShares;
+        this.priceMultiplier = price / initialMarketShares;
         this.totalMarketShares = initialMarketShares;
     }
 
@@ -74,8 +75,13 @@ public class FictiveStockHandler implements StockHandler {
     }
 
     @Override
-    public void whenBought(double signedShares) {
-        totalMarketShares += signedShares;
+    public void whenBought(ShareType type, double shares) {
+        totalMarketShares += (type == ShareType.NORMAL ? 1 : -1) * shares;
+    }
+
+    @Override
+    public double getSellPrice(Share share) {
+        return computePrice(totalMarketShares + share.getShares() * (share.getType() == ShareType.NORMAL ? -1 : 1));
     }
 
     @Override
@@ -86,6 +92,7 @@ public class FictiveStockHandler implements StockHandler {
     }
 
     /**
+     * @param totalShares Amount of shares in the market
      * @return The price the stock should have at any moment
      */
     public double computePrice(double totalShares) {
@@ -94,11 +101,6 @@ public class FictiveStockHandler implements StockHandler {
 
     private double expBehaviour(double totalSup) {
         return initialMarketShares / 10 * (Math.exp(totalSup - (initialMarketShares / 10)));
-    }
-
-    @Override
-    public double getShareInitialPrice(double signedShares) {
-        return computePrice(totalMarketShares + signedShares);
     }
 
     /**
@@ -114,7 +116,7 @@ public class FictiveStockHandler implements StockHandler {
      */
     @Override
     public void refreshPrice() {
-        priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(stock.getRefreshPeriod()) /
-                (Math.sqrt(10 * TimeScale.HOUR.getTime()));
+        //  priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(stock.getRefreshPeriod()) /
+        //         (Math.sqrt(10 * TimeScale.HOUR.getTime()));
     }
 }

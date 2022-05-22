@@ -8,6 +8,4 @@ public class StonksAPI {
     public StonksAPI(JavaPlugin plugin) {
         this.plugin = plugin;
     }
-
-
 }

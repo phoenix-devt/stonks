@@ -51,20 +51,21 @@ public class Share {
     private double wallet;
 
     /**
-     * Used when shares are being created, bought or shorted.
+     * Public constructor for a newly created share
      *
+     * @param owner    Share owner (player) UUID
      * @param type     Type of share
-     * @param stock    Stock
+     * @param stock    Stock the share is from
      * @param leverage Multiplicative factor for the money made out of,
      *                 or lost by a share purchase
      * @param shares   Amount of shares purchased
      */
-    public Share(ShareType type, UUID owner, Stock stock, int leverage, double shares, double maxPrice, double minPrice) {
-        this(UUID.randomUUID(), owner, type, stock, stock.getHandler().getShareInitialPrice(type == ShareType.NORMAL ? shares : -shares), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
+    public Share(UUID owner, ShareType type, Stock stock, double leverage, double shares, double maxPrice, double minPrice) {
+        this(UUID.randomUUID(), owner, type, stock, stock.getPrice(), leverage, shares, maxPrice, minPrice, System.currentTimeMillis());
     }
 
     /**
-     * Public construtor
+     * Full public constructor
      *
      * @param uuid         Share unique identifier
      * @param owner        Share owner (player) UUID
@@ -76,7 +77,7 @@ public class Share {
      * @param shares       Amount of shares purchased
      * @param timeStamp    Time of share creation (millis)
      */
-    public Share(UUID uuid, UUID owner, ShareType type, Stock stock, double initialPrice, int leverage, double shares, double maxPrice, double minPrice, long timeStamp) {
+    public Share(UUID uuid, UUID owner, ShareType type, Stock stock, double initialPrice, double leverage, double shares, double maxPrice, double minPrice, long timeStamp) {
         this.uuid = uuid;
         this.owner = owner;
         this.type = type;
@@ -98,7 +99,7 @@ public class Share {
         this.type = ShareType.valueOf(config.getString("type"));
         this.stock = Stonks.plugin.stockManager.get(config.getString("stock"));
         orderInfo.setAmount(config.getDouble("shares"));
-        orderInfo.setLeverage(config.getInt("leverage"));
+        orderInfo.setLeverage(config.getDouble("leverage"));
         this.timeStamp = config.getLong("timestamp");
         this.initialPrice = config.getDouble("initial");
         orderInfo.setMinPrice(config.getDouble("min-price"));
@@ -232,9 +233,8 @@ public class Share {
     public void close(@NotNull CloseReason closeReason) {
         Validate.isTrue(isOpen(), "Share is already closed");
         this.closeReason = Objects.requireNonNull(closeReason, "Reason cannot be null");
+        stock.getHandler().whenBought(type, -getShares());
         this.sellPrice = stock.getPrice();
-        //You make it as if you bought the counter order
-        stock.getHandler().whenBought(type.equals(ShareType.NORMAL) ? -getShares() : getShares());
     }
 
     public void setWallet(double wallet) {
@@ -274,7 +274,7 @@ public class Share {
     public double calculateGain(double taxRate) {
 
         // Find applicable share price
-        double sharePrice = isOpen() ? stock.getPrice() : sellPrice;
+        double sharePrice = isOpen() ? stock.getHandler().getSellPrice(this) : sellPrice;
 
         // <Difference in price between when it was bought and now> * <leverage> * <number of shares>
         double gain = (sharePrice - initialPrice) * (type == ShareType.SHORT ? -1 : 1) * orderInfo.getLeverage() * orderInfo.getAmount();

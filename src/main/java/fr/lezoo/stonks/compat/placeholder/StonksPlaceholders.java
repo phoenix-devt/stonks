@@ -52,7 +52,7 @@ public class StonksPlaceholders extends PlaceholderExpansion {
         }
 
         if (params.startsWith("share_money_")) {
-            String id = params.substring(7);
+            String id = params.substring(12);
             if (!Stonks.plugin.stockManager.has(id))
                 return "?";
 
@@ -70,6 +70,6 @@ public class StonksPlaceholders extends PlaceholderExpansion {
             return String.valueOf(sum);
         }
 
-        return "";
+        return null;
     }
 }

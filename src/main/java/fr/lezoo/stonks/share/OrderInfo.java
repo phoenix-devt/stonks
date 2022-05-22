@@ -4,7 +4,7 @@ import fr.lezoo.stonks.util.Utils;
 
 public class OrderInfo {
     private double amount, minPrice, maxPrice;
-    private int leverage;
+    private double leverage;
 
     public OrderInfo() {
         leverage = 1;
@@ -25,7 +25,7 @@ public class OrderInfo {
         return minPrice != -1;
     }
 
-    public void setLeverage(int leverage) {
+    public void setLeverage(double leverage) {
         this.leverage = leverage;
     }
 
@@ -41,7 +41,7 @@ public class OrderInfo {
         this.maxPrice = maxPrice;
     }
 
-    public int getLeverage() {
+    public double getLeverage() {
         return leverage;
     }
 

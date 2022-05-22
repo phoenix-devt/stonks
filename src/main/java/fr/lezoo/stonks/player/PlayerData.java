@@ -122,7 +122,7 @@ public class PlayerData {
      */
     public Set<Share> getShares(Stock stock, boolean open) {
         // We filter to only have the ones of the specified share Status
-        return shares.getOrDefault(stock.getId(), new HashSet<>())
+        return getShares(stock)
                 .stream()
                 .filter((share) -> share.isOpen() == open)
                 .collect(Collectors.toSet());
@@ -249,7 +249,7 @@ public class PlayerData {
      * @param amount Amount of shares bought
      * @return If the share was successfully bought or not
      */
-    public boolean buyShare(Stock stock, ShareType type, double amount, int leverage, double maxPrice, double minPrice) {
+    public boolean buyShare(Stock stock, ShareType type, double amount, double leverage, double maxPrice, double minPrice) {
         final double moneyPaid = amount * stock.getPrice();
 
         // If it exchanges money
@@ -263,7 +263,7 @@ public class PlayerData {
             }
 
             // Check for Bukkit event
-            Share share = new Share(type, player.getUniqueId(), stock, leverage, amount, maxPrice, minPrice);
+            Share share = new Share(player.getUniqueId(), type, stock, leverage, amount, maxPrice, minPrice);
 
             PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, share);
             Bukkit.getPluginManager().callEvent(called);
@@ -291,7 +291,7 @@ public class PlayerData {
             }
 
             // Check for Bukkit event
-            Share share = new Share(type, player.getUniqueId(), stock, leverage, amount, minPrice, maxPrice);
+            Share share = new Share(player.getUniqueId(), type, stock, leverage, amount, maxPrice, minPrice);
 
             PlayerBuyShareEvent called = new PlayerBuyShareEvent(this, share);
             Bukkit.getPluginManager().callEvent(called);
@@ -310,7 +310,7 @@ public class PlayerData {
                 }
         }
 
-        stock.getHandler().whenBought(type == ShareType.NORMAL ? amount : -amount);
+        stock.getHandler().whenBought(type, amount);
 
         // Send player message
         (type == ShareType.NORMAL ? Message.BUY_SHARES : Message.SELL_SHARES).format(

@@ -1,17 +1,17 @@
 package fr.lezoo.stonks;
 
 import fr.lezoo.stonks.command.PortfolioCommand;
-import fr.lezoo.stonks.command.StocksCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
+import fr.lezoo.stonks.command.StocksCommand;
 import fr.lezoo.stonks.command.StonksCommandRoot;
 import fr.lezoo.stonks.compat.placeholder.DefaultPlaceholderParser;
 import fr.lezoo.stonks.compat.placeholder.PlaceholderAPIParser;
 import fr.lezoo.stonks.compat.placeholder.PlaceholderParser;
 import fr.lezoo.stonks.compat.placeholder.StonksPlaceholders;
+import fr.lezoo.stonks.listener.DisplayBoardListener;
 import fr.lezoo.stonks.listener.DisplaySignListener;
 import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.listener.SharePaperListener;
-import fr.lezoo.stonks.listener.DisplayBoardListener;
 import fr.lezoo.stonks.manager.*;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.stock.TimeScale;
@@ -89,10 +89,10 @@ public class Stonks extends JavaPlugin {
 
         // Initialize managers
         configManager.reload();
-        //load stockAPIManager
         stockManager.load();
         shareManager.load();
-        boardManager.load();
+        // A delay is required otherwise entities are not loaded yet
+        Bukkit.getScheduler().runTaskLater(this, () -> boardManager.load(), 20);
         signManager.load();
         playerManager.load();
 
@@ -149,13 +149,13 @@ public class Stonks extends JavaPlugin {
         }.runTaskTimer(this, 0, 20L * this.configManager.boardRefreshTime);
 
         // Refresh the shares
-        new BukkitRunnable() {
+       /* new BukkitRunnable() {
 
             @Override
             public void run() {
                 shareManager.refresh();
             }
-        }.runTaskTimer(this, 0L, configManager.shareRefreshTime);
+        }.runTaskTimer(this, 0L, configManager.shareRefreshTime);*/
     }
 
 

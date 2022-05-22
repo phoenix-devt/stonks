@@ -33,16 +33,16 @@ public class CreateTreeNode extends CommandTreeNode {
             return CommandResult.FAILURE;
         }
 
-        double initialPrice,initialSupply;
+        double initialPrice, initialSupply;
         try {
             initialPrice = Double.parseDouble(args[4]);
-            initialSupply=Double.parseDouble(args[5]);
+            initialSupply = Double.parseDouble(args[5]);
         } catch (IllegalArgumentException exception) {
             sender.sendMessage(ChatColor.RED + "Please enter a valid number");
             return CommandResult.FAILURE;
         }
 
-        Stonks.plugin.stockManager.register(new Stock(args[2], args[3], stock->new FictiveStockHandler(stock,initialSupply), null, null, new StockInfo(System.currentTimeMillis(), initialPrice)));
+        Stonks.plugin.stockManager.register(new Stock(args[2], args[3], stock -> new FictiveStockHandler(stock, initialPrice, initialSupply), null, null, new StockInfo(System.currentTimeMillis(), initialPrice)));
         return CommandResult.SUCCESS;
     }
 }

@@ -40,7 +40,7 @@ items:
       - '&7Current Share Price: {current-share}'
       - ''
       - '&8-------------------------------'
-      - '&7&lGain if sold now: {gain}'
+      - '&7&lGain if closed now: {gain}'
       - '&8-------------------------------'
       - ''
       - '&e► Left click to close it.'

@@ -73,11 +73,9 @@ public class Stock {
         for (TimeScale disp : TimeScale.values())
             stockData.put(disp, Arrays.asList(firstStockData));
         Stonks.plugin.stockManager.initializeStockData(this);
-        //Handler provider needs to be set up in last
+        // Handler provider needs to be set up in last
         this.handler = handlerProvider.apply(this);
         this.refreshPeriod =handler instanceof RealStockHandler? REAL_STOCK_DEFAULT_REFRESH_PERIOD:VIRTUAL_STOCK_DEFAULT_REFRESH_PERIOD;
-
-
     }
 
     /**

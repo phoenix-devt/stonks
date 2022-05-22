@@ -1,10 +1,12 @@
 package fr.lezoo.stonks.util;
 
+import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.gui.StockInventory;
 import fr.lezoo.stonks.gui.objects.PluginInventory;
 import fr.lezoo.stonks.listener.temp.TemporaryListener;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.stock.Stock;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -45,11 +47,12 @@ public class ChatInput extends TemporaryListener {
             return;
 
         event.setCancelled(true);
-
-        if (inputHandler.apply(inv.getPlayerData(), event.getMessage(), inv instanceof StockInventory ? ((StockInventory) inv).getStock() : null)) {
-            close();
-            inv.open();
-        }
+        Bukkit.getScheduler().runTask(Stonks.plugin, () -> {
+            if (inputHandler.apply(inv.getPlayerData(), event.getMessage(), inv instanceof StockInventory ? ((StockInventory) inv).getStock() : null)) {
+                close();
+                inv.open();
+            }
+        });
     }
 
     @EventHandler

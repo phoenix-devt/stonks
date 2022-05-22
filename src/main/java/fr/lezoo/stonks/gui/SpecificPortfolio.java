@@ -3,16 +3,17 @@ package fr.lezoo.stonks.gui;
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.api.event.PlayerClaimShareEvent;
 import fr.lezoo.stonks.api.event.PlayerGenerateSharePaperEvent;
+import fr.lezoo.stonks.api.event.ShareClosedEvent;
 import fr.lezoo.stonks.gui.objects.EditableInventory;
 import fr.lezoo.stonks.gui.objects.GeneratedInventory;
 import fr.lezoo.stonks.gui.objects.item.InventoryItem;
 import fr.lezoo.stonks.gui.objects.item.Placeholders;
 import fr.lezoo.stonks.gui.objects.item.SimpleItem;
 import fr.lezoo.stonks.player.PlayerData;
+import fr.lezoo.stonks.share.CloseReason;
+import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.stock.ExchangeType;
 import fr.lezoo.stonks.stock.Stock;
-import fr.lezoo.stonks.share.Share;
-import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.util.Utils;
 import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.Bukkit;
@@ -175,19 +176,20 @@ public class SpecificPortfolio extends EditableInventory {
                     // Close and claim share
                     double taxRate = playerData.getTaxRate();
                     double gain = share.calculateGain(taxRate), earned = share.getCloseEarning(taxRate);
-                    Message.CLOSE_SHARES.format("shares", Utils.fourDigits.format(share.getOrderInfo().getAmount()),
+                    Message.CLOSE_SHARES.format("shares", Stonks.plugin.configManager.shareFormat.format(share.getOrderInfo().getAmount()),
                             "name", stock.getName(),
                             "gain", Utils.formatGain(gain)).send(player);
 
+                    // Close and call event
+                    share.close(CloseReason.OTHER);
+                    if (displayOpenShares)
+                        Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
 
                     // Virtual stock
-                    if (share.getStock().isVirtual()) {
+                    if (share.getStock().isVirtual())
                         Stonks.plugin.economy.depositPlayer(player, earned);
-                    //Register in the StockHandler
-                        stock.getHandler().whenBought(share.getType().equals(ShareType.NORMAL)?-share.getShares():share.getShares());
 
-                    }
-                    // Physical stock
+                        // Physical stock
                     else {
                         ExchangeType exchangeType = share.getStock().getExchangeType();
                         int realGain = (int) Math.floor(earned);

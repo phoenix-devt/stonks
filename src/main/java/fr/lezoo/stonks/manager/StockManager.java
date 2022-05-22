@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.api.event.StockPriceUpdateEvent;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.stock.StockInfo;
 import fr.lezoo.stonks.stock.TimeScale;
@@ -114,6 +115,7 @@ public class StockManager implements FileManager {
                 @Override
                 public void run() {
                     stock.getHandler().refreshPrice();
+                    Bukkit.getPluginManager().callEvent(new StockPriceUpdateEvent(stock));
                 }
             };
             refreshRunnable.runTaskTimer(Stonks.plugin, 20, stock.getRefreshPeriod());

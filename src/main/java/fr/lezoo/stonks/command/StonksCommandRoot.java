@@ -10,7 +10,6 @@ public class StonksCommandRoot extends CommandTreeRoot {
     public StonksCommandRoot() {
         super("stonks", "stonks.admin");
 
-        // addChild(new GiveTradingBookTreeNode(this));
         addChild(new StockTreeNode(this));
         addChild(new ReloadTreeNode(this));
         addChild(new DisplayTreeNode(this));

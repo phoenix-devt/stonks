@@ -5,6 +5,7 @@ import fr.lezoo.stonks.api.event.StockPriceUpdateEvent;
 import fr.lezoo.stonks.display.sign.DisplaySign;
 import fr.lezoo.stonks.player.PlayerData;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -17,7 +18,7 @@ public class DisplaySignListener implements Listener {
             sign.update();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void clickOnSign(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType().name().endsWith("SIGN")) {
             DisplaySign sign = Stonks.plugin.signManager.getByPosition(event.getClickedBlock().getLocation());

@@ -21,6 +21,10 @@ public class PlayerGenerateSharePaperEvent extends PlayerDataEvent {
         this.share = share;
     }
 
+    public Share getShare() {
+        return share;
+    }
+
     @Override
     public HandlerList getHandlers() {
         return handlers;

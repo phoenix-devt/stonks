@@ -36,7 +36,7 @@ public class SharePaper extends CustomItem<Share> {
         nbt.set(Utils.namespacedKey("StockId"), PersistentDataType.STRING, share.getStock().getId());
         nbt.set(Utils.namespacedKey("ShareTimeStamp"), PersistentDataType.LONG, share.getCreationTime());
         nbt.set(Utils.namespacedKey("ShareAmount"), PersistentDataType.DOUBLE, share.getOrderInfo().getAmount());
-        nbt.set(Utils.namespacedKey("ShareLeverage"), PersistentDataType.INTEGER, share.getOrderInfo().getLeverage());
+        nbt.set(Utils.namespacedKey("ShareLeverage"), PersistentDataType.DOUBLE, share.getOrderInfo().getLeverage());
         nbt.set(Utils.namespacedKey("ShareType"), PersistentDataType.STRING, share.getType().name());
         nbt.set(Utils.namespacedKey("ShareInitialPrice"), PersistentDataType.DOUBLE, share.getInitialPrice());
         nbt.set(Utils.namespacedKey("ShareWallet"), PersistentDataType.DOUBLE, share.getWallet());

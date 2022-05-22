@@ -116,16 +116,8 @@ public class ShareMenu extends EditableInventory {
             if (item instanceof CustomActionItem) {
                 ShareType type = item.getFunction().equalsIgnoreCase("buy-custom") ? ShareType.NORMAL : ShareType.SHORT;
                 (type == ShareType.NORMAL ? Message.BUY_CUSTOM_ASK : Message.SELL_CUSTOM_ASK).format().send(player);
-
-                if (type == ShareType.NORMAL) {
-                    new ChatInput(this, InputHandler.BUY_CUSTOM_AMOUNT_HANDLER);
-                } else {
-                    new ChatInput(this, InputHandler.SHORT_CUSTOM_AMOUNT_HANDLER);
-                }
-
+                new ChatInput(this, type == ShareType.NORMAL ? InputHandler.BUY_CUSTOM_AMOUNT_HANDLER : InputHandler.SHORT_CUSTOM_AMOUNT_HANDLER);
             }
-
-
         }
 
         @Override
@@ -248,7 +240,6 @@ public class ShareMenu extends EditableInventory {
             placeholders.register("min-price", inv.getPlayerData().getOrderInfo(inv.getStock().getId()).getStringMinPrice());
             return placeholders;
         }
-
     }
 
     public class MaxPriceItem extends InventoryItem<GeneratedShareMenu> {
@@ -262,7 +253,6 @@ public class ShareMenu extends EditableInventory {
             return placeholders;
         }
     }
-
 
     public class StockInfoItem extends InventoryItem<GeneratedShareMenu> {
         public StockInfoItem(ConfigurationSection config) {
