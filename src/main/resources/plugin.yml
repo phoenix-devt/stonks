@@ -1,7 +1,7 @@
 name: ${project.name}
 version: ${project.version}
 main: fr.lezoo.stonks.Stonks
-author: [ GMF, Indyuce ]
+author: [ ka0rX, Indyuce ]
 depend: [ Vault, PlaceholderAPI]
 description: ${project.description}
 api-version: 1.13
