@@ -55,7 +55,7 @@ public class StockMapRenderer extends MapRenderer {
 
         List<StockInfo> stockData = stock.getData(time);
         // If the stock is Empty we print an error
-        Validate.isTrue(stockData.size() != 0, "The stock : " + stock.getId() + " has no values!!");
+        Validate.isTrue(stockData.size() != 0, "Quotation '" + stock.getId() + "' has no data!");
 
         int data_taken = Math.min(Stock.BOARD_DATA_NUMBER, stockData.size());
         int index = stockData.size() - data_taken;

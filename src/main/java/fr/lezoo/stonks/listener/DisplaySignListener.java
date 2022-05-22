@@ -12,13 +12,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class DisplaySignListener implements Listener {
 
     @EventHandler
-    public void a(StockPriceUpdateEvent event) {
+    public void updateSigns(StockPriceUpdateEvent event) {
         for (DisplaySign sign : Stonks.plugin.signManager.getByStock(event.getStock()))
             sign.update();
     }
 
     @EventHandler
-    public void b(PlayerInteractEvent event) {
+    public void clickOnSign(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType().name().endsWith("SIGN")) {
             DisplaySign sign = Stonks.plugin.signManager.getByPosition(event.getClickedBlock().getLocation());
             if (sign != null)

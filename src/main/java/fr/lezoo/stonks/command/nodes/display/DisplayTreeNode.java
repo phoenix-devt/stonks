@@ -11,6 +11,7 @@ public class DisplayTreeNode extends CommandTreeNode {
 
         addChild(new SignTreeNode(this));
         addChild(new BoardTreeNode(this));
+        addChild(new MapTreeNode(this));
     }
 
     @Override

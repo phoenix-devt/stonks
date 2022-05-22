@@ -11,7 +11,7 @@ import fr.lezoo.stonks.compat.placeholder.StonksPlaceholders;
 import fr.lezoo.stonks.listener.DisplaySignListener;
 import fr.lezoo.stonks.listener.PlayerListener;
 import fr.lezoo.stonks.listener.SharePaperListener;
-import fr.lezoo.stonks.listener.TradingInteractListener;
+import fr.lezoo.stonks.listener.DisplayBoardListener;
 import fr.lezoo.stonks.manager.*;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.stock.TimeScale;
@@ -115,7 +115,7 @@ public class Stonks extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new SharePaperListener(), this);
         Bukkit.getPluginManager().registerEvents(new DisplaySignListener(), this);
-        Bukkit.getPluginManager().registerEvents(new TradingInteractListener(), this);
+        Bukkit.getPluginManager().registerEvents(new DisplayBoardListener(), this);
 
         // Refresh the signs
         new BukkitRunnable() {

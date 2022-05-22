@@ -1,4 +1,4 @@
-package fr.lezoo.stonks.command.nodes;
+package fr.lezoo.stonks.command.nodes.display;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.command.objects.CommandTreeNode;
@@ -11,9 +11,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class GiveMapTreeNode extends CommandTreeNode {
-    public GiveMapTreeNode(CommandTreeNode parent) {
-        super(parent, "givemap");
+public class MapTreeNode extends CommandTreeNode {
+    public MapTreeNode(CommandTreeNode parent) {
+        super(parent, "map");
 
         addParameter(Parameter.STOCK_ID);
         addParameter(Parameter.TIME_SCALE);
@@ -22,24 +22,24 @@ public class GiveMapTreeNode extends CommandTreeNode {
 
     @Override
     public CommandResult execute(CommandSender sender, String[] args) {
-        //returning a throw usage will automatically send all the usage list to the player.
-        if (args.length == 0)
+        if (args.length < 3)
             return CommandResult.THROW_USAGE;
-        Stock stock = Stonks.plugin.stockManager.get(args[1]);
+
+        Stock stock = Stonks.plugin.stockManager.get(args[2]);
         if (stock == null) {
             sender.sendMessage(ChatColor.RED + "Could not find target stock");
             return CommandResult.FAILURE;
         }
 
-        TimeScale display = null;
+        TimeScale display ;
         try {
-            display = TimeScale.valueOf(args[2].toUpperCase());
+            display = TimeScale.valueOf(args[3].toUpperCase());
         } catch (IllegalArgumentException exception) {
             sender.sendMessage(ChatColor.RED + "Could not find corresponding time scale");
             return CommandResult.FAILURE;
         }
 
-        Player target = args.length > 3 ? Bukkit.getPlayer(args[3]) : sender instanceof Player ? (Player) sender : null;
+        Player target = args.length > 4 ? Bukkit.getPlayer(args[4]) : sender instanceof Player ? (Player) sender : null;
         if (target == null && !(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "Could not find target player");
             return CommandResult.FAILURE;

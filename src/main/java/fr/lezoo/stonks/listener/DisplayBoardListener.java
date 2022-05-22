@@ -17,7 +17,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 
-public class TradingInteractListener implements Listener {
+public class DisplayBoardListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
