@@ -24,13 +24,13 @@ shares-decimal-format: '0.#'
 map-refresh-time: 30
 
 # How frequently display boards refresh
-board-refresh-time: 30
+board-refresh-time: 10
 
 # How frequently Stonks checks for shares that need to automatically close
 share-refresh-time: 60
 
 # How frequently display signs refresh
-sign-refresh-time: 80
+sign-refresh-time: 10
 
 # Default tax rate on share benefit
 default-tax-rate: 0

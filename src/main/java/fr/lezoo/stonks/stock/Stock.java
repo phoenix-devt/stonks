@@ -52,7 +52,8 @@ public class Stock {
      */
     public static final int BOARD_DATA_NUMBER = 100;
 
-    private static final long DEFAULT_REFRESH_PERIOD = TimeScale.MINUTE.getTime() / (BOARD_DATA_NUMBER / 50);
+    private static final long REAL_STOCK_DEFAULT_REFRESH_PERIOD = TimeScale.HOUR.getTime() / (BOARD_DATA_NUMBER * 50);
+    private static final long VIRTUAL_STOCK_DEFAULT_REFRESH_PERIOD = TimeScale.MINUTE.getTime() / (BOARD_DATA_NUMBER * 50);
 
 
     /**
@@ -71,10 +72,11 @@ public class Stock {
         this.exchangeType = exchangeType;
         for (TimeScale disp : TimeScale.values())
             stockData.put(disp, Arrays.asList(firstStockData));
-        this.refreshPeriod = DEFAULT_REFRESH_PERIOD;
         Stonks.plugin.stockManager.initializeStockData(this);
         //Handler provider needs to be set up in last
         this.handler = handlerProvider.apply(this);
+        this.refreshPeriod =handler instanceof RealStockHandler? REAL_STOCK_DEFAULT_REFRESH_PERIOD:VIRTUAL_STOCK_DEFAULT_REFRESH_PERIOD;
+
 
     }
 
@@ -87,7 +89,6 @@ public class Stock {
 
         // If it doesn't have a field dividends we use the default dividends given in the config.yml
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : new Dividends(this);
-        this.refreshPeriod = config.getLong("refresh-period", DEFAULT_REFRESH_PERIOD);
 
 
         exchangeType = config.contains("exchange-type") ? new ExchangeType(config.getConfigurationSection("exchange-type")) : null;
@@ -95,6 +96,7 @@ public class Stock {
         Stonks.plugin.stockManager.initializeStockData(this);
         //Handler provider needs to be set up in last
         this.handler = config.getBoolean("real-stock") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
+        this.refreshPeriod = config.getLong("refresh-period", config.getBoolean("real-stock") ?REAL_STOCK_DEFAULT_REFRESH_PERIOD:VIRTUAL_STOCK_DEFAULT_REFRESH_PERIOD);
 
     }
 
