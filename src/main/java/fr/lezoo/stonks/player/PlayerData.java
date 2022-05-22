@@ -67,7 +67,7 @@ public class PlayerData {
             }
 
         taxDeduction = config.getDouble("tax-deduction");
-        taxRate = config.contains("tax-rate") ? config.getDouble("tax-rate") : -1;
+        taxRate = config.getDouble("tax-rate", Stonks.plugin.configManager.defaultTaxRate);
     }
 
     public void saveInConfig(FileConfiguration config) {
@@ -75,6 +75,7 @@ public class PlayerData {
         // Remove old shares
         config.set("shares", null);
         config.set("tax-deduction", taxDeduction);
+        config.set("tax-rate", taxRate);
 
         // Save newest shares
         for (String stockId : shares.keySet()) {
@@ -131,7 +132,7 @@ public class PlayerData {
     }
 
     public double getTaxRate() {
-        return taxRate == -1 ? Stonks.plugin.configManager.defaultTaxRate : taxRate;
+        return taxRate;
     }
 
     /**

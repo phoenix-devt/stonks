@@ -149,13 +149,13 @@ public class Stonks extends JavaPlugin {
         }.runTaskTimer(this, 0, 20L * this.configManager.boardRefreshTime);
 
         // Refresh the shares
-       /* new BukkitRunnable() {
+        new BukkitRunnable() {
 
             @Override
             public void run() {
                 shareManager.refresh();
             }
-        }.runTaskTimer(this, 0L, configManager.shareRefreshTime);*/
+        }.runTaskTimer(this, 0L, configManager.shareRefreshTime);
     }
 
 
@@ -170,7 +170,7 @@ public class Stonks extends JavaPlugin {
 
     /**
      * @return If the stock market is closed and no shares
-     * can be bought or closed
+     *         can be bought or closed
      */
     public boolean isClosed() {
 

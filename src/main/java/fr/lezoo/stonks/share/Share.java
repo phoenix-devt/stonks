@@ -130,7 +130,7 @@ public class Share {
 
         // Non final info
         orderInfo.setAmount(container.get(Utils.namespacedKey("ShareAmount"), PersistentDataType.DOUBLE));
-        orderInfo.setLeverage(container.get(Utils.namespacedKey("ShareLeverage"), PersistentDataType.INTEGER));
+        orderInfo.setLeverage(container.get(Utils.namespacedKey("ShareLeverage"), PersistentDataType.DOUBLE));
         this.wallet = container.get(Utils.namespacedKey("ShareWallet"), PersistentDataType.DOUBLE);
         this.closeReason = container.has(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING) ? CloseReason.valueOf(container.get(Utils.namespacedKey("CloseReason"), PersistentDataType.STRING)) : null;
         this.sellPrice = isOpen() ? 0 : container.get(Utils.namespacedKey("SellPrice"), PersistentDataType.DOUBLE);

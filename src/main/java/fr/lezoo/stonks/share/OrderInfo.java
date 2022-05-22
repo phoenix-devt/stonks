@@ -3,12 +3,11 @@ package fr.lezoo.stonks.share;
 import fr.lezoo.stonks.util.Utils;
 
 public class OrderInfo {
-    private double amount, minPrice, maxPrice;
-    private double leverage;
+    private double amount, leverage, minPrice, maxPrice;
 
     public OrderInfo() {
-        leverage = 1;
         amount = 0;
+        leverage = 1;
         minPrice = 0;
         maxPrice = Double.POSITIVE_INFINITY;
     }

@@ -1,13 +1,12 @@
 package fr.lezoo.stonks.manager;
 
 import fr.lezoo.stonks.Stonks;
-import fr.lezoo.stonks.gui.StockList;
 import fr.lezoo.stonks.gui.ShareMenu;
 import fr.lezoo.stonks.gui.SpecificPortfolio;
+import fr.lezoo.stonks.gui.StockList;
 import fr.lezoo.stonks.gui.objects.EditableInventory;
-import fr.lezoo.stonks.item.StockMap;
 import fr.lezoo.stonks.item.SharePaper;
-import fr.lezoo.stonks.item.TradingBook;
+import fr.lezoo.stonks.item.StockMap;
 import fr.lezoo.stonks.stock.api.StockAPI;
 import fr.lezoo.stonks.util.ConfigFile;
 import fr.lezoo.stonks.util.ConfigSchedule;
@@ -29,7 +28,6 @@ public class ConfigManager {
 
     // List of items to reload
     public SharePaper sharePaper;
-    public TradingBook tradingBook;
     public StockMap stockMap;
 
     // Accessible public GUIs
@@ -49,7 +47,7 @@ public class ConfigManager {
     public int dividendsRedeemHour;
 
     public long boardRefreshTime, shareRefreshTime, signRefreshTime, mapRefreshTime;
-    public double offerDemandImpact, volatility, defaultTaxRate;
+    public double defaultTaxRate;
     public int maxInteractionDistance, defaultDividendPeriod;
     public String defaultDividendFormula;
 
@@ -66,8 +64,6 @@ public class ConfigManager {
         closeTimeEnabled = Stonks.plugin.getConfig().getBoolean("close-time.enabled");
         closeTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.from"));
         openTime = new ConfigSchedule(Stonks.plugin.getConfig().getConfigurationSection("close-time.to"));
-        offerDemandImpact = Stonks.plugin.getConfig().getDouble("offer-demand-impact");
-        volatility = Stonks.plugin.getConfig().getDouble("volatility");
         displaySignFormat = Stonks.plugin.getConfig().getStringList("custom-sign-format");
         dividendsRedeemHour = Stonks.plugin.getConfig().getInt("dividends-redeem-hour");
         mapRefreshTime = Stonks.plugin.getConfig().getLong("map-refresh-time");
@@ -126,7 +122,6 @@ public class ConfigManager {
         FileConfiguration itemsConfig = new ConfigFile("/language", "items").getConfig();
         sharePaper = new SharePaper(itemsConfig.getConfigurationSection("PHYSICAL_SHARE_BILL"));
         stockMap = new StockMap(itemsConfig.getConfigurationSection("STOCK_MAP"));
-        tradingBook = new TradingBook(itemsConfig.getConfigurationSection("TRADING_BOOK"));
 
         // Reload GUIs
         for (EditableInventory inv : guis)

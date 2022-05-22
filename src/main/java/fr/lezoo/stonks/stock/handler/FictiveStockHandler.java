@@ -16,7 +16,7 @@ public class FictiveStockHandler implements StockHandler {
     private final Stock stock;
 
     private double priceMultiplier;
-    private final double initialMarketShares;
+    private final double initialMarketShares, volatility;
 
     /**
      * Sum of initial amount of shares PLUS shares bought by investors
@@ -24,6 +24,7 @@ public class FictiveStockHandler implements StockHandler {
     private double totalMarketShares;
 
     private static final Random RANDOM = new Random();
+    private static final double DEFAULT_VOLATILITY = .01;
 
     public FictiveStockHandler(Stock stock, double price, double initialMarketShares) {
         this.stock = stock;
@@ -32,12 +33,14 @@ public class FictiveStockHandler implements StockHandler {
         // We setup the price multiplier
         this.priceMultiplier = price / initialMarketShares;
         this.totalMarketShares = initialMarketShares;
+        this.volatility = DEFAULT_VOLATILITY;
     }
 
     public FictiveStockHandler(Stock stock, ConfigurationSection config) {
         this.stock = stock;
 
         initialMarketShares = config.getDouble("initial-supply");
+        volatility = config.getDouble("volatility", DEFAULT_VOLATILITY);
         totalMarketShares = config.contains("total-supply") ? config.getDouble("total-supply") : initialMarketShares;
         priceMultiplier = config.contains("price-multiplier") ? config.getDouble("price-multiplier") : stock.getPrice() / initialMarketShares;
     }
@@ -90,6 +93,7 @@ public class FictiveStockHandler implements StockHandler {
         config.set("initial-supply", initialMarketShares);
         config.set("total-supply", totalMarketShares);
         config.set("price-multiplier", priceMultiplier);
+        config.set("volatility", volatility);
     }
 
     /**
@@ -117,7 +121,7 @@ public class FictiveStockHandler implements StockHandler {
      */
     @Override
     public void refreshPrice() {
-        priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(stock.getRefreshPeriod()) /
+        priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * volatility * Math.sqrt(stock.getRefreshPeriod()) /
                 (Math.sqrt(10 * TimeScale.HOUR.getTime()));
     }
 }

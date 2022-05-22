@@ -38,10 +38,6 @@ default-tax-rate: 0
 # The impact of the offer and demand on the stock price 1 : maximal and 0 not any impact
 offer-demand-impact: 0.5
 
-# The volatily of the stocks 0 is no volatility and 1 is very volatile
-# With volatity around 1 demand impact the stocks can change by 10% in 1 hour in the worst case
-volatility: 0.01
-
 # The way dates are formatted in the plugin
 # Check out this page for more info
 # https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
@@ -59,10 +55,6 @@ close-time:
   to:
     hour: 4
     min: 0
-
-# Maximum amount of shares owned per player.
-# Set to 0 for no limit.
-max-shares: 0
 
 # Hour of the day at which dividends are given to players.
 dividends-redeem-hour: 10
