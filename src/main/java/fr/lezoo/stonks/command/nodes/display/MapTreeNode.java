@@ -31,7 +31,7 @@ public class MapTreeNode extends CommandTreeNode {
             return CommandResult.FAILURE;
         }
 
-        TimeScale display ;
+        TimeScale display;
         try {
             display = TimeScale.valueOf(args[3].toUpperCase());
         } catch (IllegalArgumentException exception) {

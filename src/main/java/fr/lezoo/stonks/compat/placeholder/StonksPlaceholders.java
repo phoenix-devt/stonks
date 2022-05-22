@@ -2,8 +2,8 @@ package fr.lezoo.stonks.compat.placeholder;
 
 import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.player.PlayerData;
-import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.share.Share;
+import fr.lezoo.stonks.stock.Stock;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -58,7 +58,7 @@ public class StonksPlaceholders extends PlaceholderExpansion {
 
             double sum = 0;
             for (Share share : playerData.getShares(Stonks.plugin.stockManager.get(id)))
-                sum += share.getCloseEarning(0);
+                sum += share.getCloseEarning(0, 0);
             return String.valueOf(sum);
         }
 
@@ -66,7 +66,7 @@ public class StonksPlaceholders extends PlaceholderExpansion {
             double sum = 0;
             for (Stock stock : Stonks.plugin.stockManager.getStocks())
                 for (Share share : playerData.getShares(stock))
-                    sum += share.getCloseEarning(0);
+                    sum += share.getCloseEarning(0, 0);
             return String.valueOf(sum);
         }
 

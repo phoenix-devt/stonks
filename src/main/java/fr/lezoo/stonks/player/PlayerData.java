@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class PlayerData {
     private final UUID uuid;
     private Player player;
-    private double taxRate;
+    private double taxRate, taxDeduction;
 
     /**
      * Links stock IDs to order infos
@@ -66,6 +66,7 @@ public class PlayerData {
                     this.shares.put(stockKey, shares);
             }
 
+        taxDeduction = config.getDouble("tax-deduction");
         taxRate = config.contains("tax-rate") ? config.getDouble("tax-rate") : -1;
     }
 
@@ -73,6 +74,7 @@ public class PlayerData {
 
         // Remove old shares
         config.set("shares", null);
+        config.set("tax-deduction", taxDeduction);
 
         // Save newest shares
         for (String stockId : shares.keySet()) {
@@ -165,6 +167,14 @@ public class PlayerData {
 
         // Add to shares list
         this.shares.get(share.getStock().getId()).add(share);
+    }
+
+    public double getTaxDeduction() {
+        return taxDeduction;
+    }
+
+    public void deductTax(double taxDeduction) {
+        this.taxDeduction += taxDeduction;
     }
 
     public void unregisterShare(Share share) {

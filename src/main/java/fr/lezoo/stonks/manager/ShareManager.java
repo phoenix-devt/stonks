@@ -30,7 +30,7 @@ public class ShareManager {
                 }
 
                 // Automatically closes share when in deficit
-                if (share.getCloseEarning(0) <= 0) {
+                if (share.getCloseEarning(0, 0) <= 0) {
                     share.close(CloseReason.DEFICIT);
                     Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
                     return;

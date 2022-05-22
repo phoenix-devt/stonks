@@ -1,5 +1,6 @@
 package fr.lezoo.stonks.stock.handler;
 
+import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.stock.Stock;
@@ -116,7 +117,7 @@ public class FictiveStockHandler implements StockHandler {
      */
     @Override
     public void refreshPrice() {
-        //  priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(stock.getRefreshPeriod()) /
-        //         (Math.sqrt(10 * TimeScale.HOUR.getTime()));
+        priceMultiplier *= 1 + (RANDOM.nextDouble() - 0.5) * Stonks.plugin.configManager.volatility * Math.sqrt(stock.getRefreshPeriod()) /
+                (Math.sqrt(10 * TimeScale.HOUR.getTime()));
     }
 }

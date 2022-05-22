@@ -174,14 +174,18 @@ public class SpecificPortfolio extends EditableInventory {
                         return;
 
                     // Close and claim share
-                    double taxRate = playerData.getTaxRate();
-                    double gain = share.calculateGain(taxRate), earned = share.getCloseEarning(taxRate);
+                    final double taxRate = playerData.getTaxRate(), taxDeduction = playerData.getTaxDeduction();
+                    final double[] array = share.calculateGain(taxDeduction, taxRate);
+                    final double gain = array[0], earned = share.getCloseEarning(taxDeduction, taxRate);
                     Message.CLOSE_SHARES.format("shares", Stonks.plugin.configManager.shareFormat.format(share.getOrderInfo().getAmount()),
                             "name", stock.getName(),
                             "gain", Utils.formatGain(gain)).send(player);
 
+                    // Update tax deduction for later
+                    playerData.deductTax(Math.max(0, -gain * taxRate) - array[1]);
+
                     // Close and call event
-                    share.close(CloseReason.OTHER);
+                    share.close(CloseReason.MANUAL);
                     if (displayOpenShares)
                         Bukkit.getPluginManager().callEvent(new ShareClosedEvent(share));
 
@@ -322,10 +326,10 @@ public class SpecificPortfolio extends EditableInventory {
             holders.register("initial-stock", format.format(share.getInitialPrice()));
             holders.register("share-type", share.getType().toString().toLowerCase());
 
-            double taxRate = inv.getPlayerData().getTaxRate();
+            final double taxRate = inv.getPlayerData().getTaxRate(), taxDeduction = inv.getPlayerData().getTaxDeduction();
             holders.register("initial-share", format.format(share.getInitialPrice() * share.getOrderInfo().getAmount()));
-            holders.register("current-share", format.format(share.getCloseEarning(taxRate)));
-            holders.register("gain", Utils.formatGain(share.calculateGain(taxRate)));
+            holders.register("current-share", format.format(share.getCloseEarning(taxDeduction, taxRate)));
+            holders.register("gain", Utils.formatGain(share.calculateGain(taxDeduction, taxRate)[0]));
 
             return holders;
         }

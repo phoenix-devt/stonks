@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.command;
 
 import fr.lezoo.stonks.command.nodes.ReloadTreeNode;
+import fr.lezoo.stonks.command.nodes.SetTaxRateTreeNode;
 import fr.lezoo.stonks.command.nodes.debug.DebugTreeNode;
 import fr.lezoo.stonks.command.nodes.display.DisplayTreeNode;
 import fr.lezoo.stonks.command.nodes.stock.StockTreeNode;
@@ -14,6 +15,7 @@ public class StonksCommandRoot extends CommandTreeRoot {
         addChild(new ReloadTreeNode(this));
         addChild(new DisplayTreeNode(this));
         addChild(new DebugTreeNode(this));
+        addChild(new SetTaxRateTreeNode(this));
         // addChild(new ShareItemTreeNode(this));
     }
 }

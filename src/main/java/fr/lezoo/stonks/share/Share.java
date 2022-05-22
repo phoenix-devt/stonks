@@ -1,6 +1,7 @@
 package fr.lezoo.stonks.share;
 
 import fr.lezoo.stonks.Stonks;
+import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
@@ -252,38 +253,47 @@ public class Share {
         wallet += gain;
     }
 
+    public double getCloseEarning(PlayerData playerData) {
+        return getCloseEarning(playerData.getTaxDeduction(), playerData.getTaxRate());
+    }
+
     /**
      * Does not take dividends wallet into account
      * <p>
      * The share cannot be valued negatively
      *
-     * @param taxRate Rate of tax on benefits
+     * @param investorTaxDeduction Tax reduction for the investor, 0 if none
+     * @param taxRate              Rate of tax on benefits
      * @return Money earned by the player if he were to close
      *         this share right now.
      */
-    public double getCloseEarning(double taxRate) {
-        return Math.max(calculateGain(taxRate) + initialPrice * orderInfo.getAmount(), 0);
+    public double getCloseEarning(double investorTaxDeduction, double taxRate) {
+        return Math.max(calculateGain(investorTaxDeduction, taxRate)[0] + initialPrice * orderInfo.getAmount(), 0);
     }
 
     /**
      * Does not take dividends wallet into account
      *
+     * @param investorTaxDeduction Tax reduction for the investor, 0 if none
+     * @param taxRate              Rate of tax on benefits
      * @return Money gained by the player (may be negative)
-     *         if they were to claim the share right now
+     *         if they were to claim the share right now.
+     *         The second value returned is the amount of
+     *         tax deduced taking into account tax deduction
      */
-    public double calculateGain(double taxRate) {
+    public double[] calculateGain(double investorTaxDeduction, double taxRate) {
 
         // Find applicable share price
-        double sharePrice = isOpen() ? stock.getHandler().getSellPrice(this) : sellPrice;
+        final double sharePrice = isOpen() ? stock.getHandler().getSellPrice(this) : sellPrice;
 
         // <Difference in price between when it was bought and now> * <leverage> * <number of shares>
-        double gain = (sharePrice - initialPrice) * (type == ShareType.SHORT ? -1 : 1) * orderInfo.getLeverage() * orderInfo.getAmount();
+        final double gain = (sharePrice - initialPrice) * (type == ShareType.SHORT ? -1 : 1) * orderInfo.getLeverage() * orderInfo.getAmount();
 
         // Tax on benefits only
-        if (gain > 0)
-            gain *= 1 - taxRate;
+        final double theoreticalTax = Math.max(0, gain * taxRate), deduced = Math.min(theoreticalTax, investorTaxDeduction);
+        final double effectiveTax = theoreticalTax - deduced;
 
-        return gain;
+        return new double[]{gain - effectiveTax, deduced};
     }
 
     @Override

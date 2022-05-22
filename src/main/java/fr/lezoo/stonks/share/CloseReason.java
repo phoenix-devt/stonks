@@ -8,12 +8,10 @@ public enum CloseReason {
     AUTOMATIC,
 
     /**
-     * When a share automatically closes due to server
-     * preference when hitting too much debts
+     * When a share automatically closes as its value hits zero
      * <p>
-     * Shares with this close reason are automatically claimed
-     * when the user logs in to make sure they are claimed
-     * after closing automatically
+     * Shares like this aren't worth anything anymore since they won't
+     * update in the future so they're just flushed upon player login
      */
     DEFICIT,
 
@@ -21,6 +19,11 @@ public enum CloseReason {
      * When a share was closed using the close command
      */
     COMMAND,
+
+    /**
+     * When a player closes a share manually
+     */
+    MANUAL,
 
     /**
      * Any other reason not listed here
