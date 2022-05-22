@@ -35,9 +35,6 @@ sign-refresh-time: 10
 # Default tax rate on share benefit
 default-tax-rate: 0
 
-# The impact of the offer and demand on the stock price 1 : maximal and 0 not any impact
-offer-demand-impact: 0.5
-
 # The way dates are formatted in the plugin
 # Check out this page for more info
 # https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
