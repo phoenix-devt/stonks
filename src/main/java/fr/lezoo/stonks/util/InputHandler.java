@@ -68,11 +68,11 @@ public class InputHandler {
     };
 
     public static final TriFunction<PlayerData, String, Stock, Boolean> SET_LEVERAGE_HANDLER = (playerData, input, stock) -> {
-        int amount;
+        double amount;
 
         Player player = playerData.getPlayer();
         try {
-            amount = Integer.parseInt(input);
+            amount = Double.parseDouble(input);
         } catch (IllegalArgumentException exception) {
             Message.NOT_VALID_NUMBER.format("input", input).send(player);
             return false;
