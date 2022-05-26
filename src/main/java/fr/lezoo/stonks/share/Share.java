@@ -199,12 +199,12 @@ public class Share {
         return orderInfo.getMinPrice();
     }
 
-    public String getStringMinPrice() {
-        return orderInfo.getMinPrice() == 0 ? "none" : Utils.fourDigits.format(orderInfo.getMinPrice());
+    public String getMinPriceAsString() {
+        return orderInfo.getMinPrice() == 0 ? "None" : Utils.fourDigits.format(orderInfo.getMinPrice());
     }
 
-    public String getStringMaxPrice() {
-        return orderInfo.getMaxPrice() == Double.POSITIVE_INFINITY ? "none" : Utils.fourDigits.format(orderInfo.getMaxPrice());
+    public String getMaxPriceAsString() {
+        return orderInfo.getMaxPrice() == Double.POSITIVE_INFINITY ? "None" : Utils.fourDigits.format(orderInfo.getMaxPrice());
     }
 
     @NotNull

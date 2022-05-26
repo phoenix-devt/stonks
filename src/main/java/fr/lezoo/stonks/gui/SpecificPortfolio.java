@@ -320,11 +320,11 @@ public class SpecificPortfolio extends EditableInventory {
             holders.register("name", inv.stock.getName());
             holders.register("leverage", Utils.fourDigits.format(share.getOrderInfo().getLeverage()));
             holders.register("amount", format.format(share.getOrderInfo().getAmount()));
-            holders.register("min-price", share.getStringMinPrice());
-            holders.register("max-price", share.getStringMaxPrice());
+            holders.register("min-price", share.getMinPriceAsString());
+            holders.register("max-price", share.getMaxPriceAsString());
             holders.register("current-stock", format.format(inv.stock.getPrice()));
             holders.register("initial-stock", format.format(share.getInitialPrice()));
-            holders.register("share-type", share.getType().toString().toLowerCase());
+            holders.register("share-type", share.getType().getTranslation());
 
             final double taxRate = inv.getPlayerData().getTaxRate(), taxDeduction = inv.getPlayerData().getTaxDeduction();
             holders.register("initial-share", format.format(share.getInitialPrice() * share.getOrderInfo().getAmount()));
