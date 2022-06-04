@@ -4,6 +4,7 @@ import fr.lezoo.stonks.command.PortfolioCommand;
 import fr.lezoo.stonks.command.RedeemDividendsCommand;
 import fr.lezoo.stonks.command.StocksCommand;
 import fr.lezoo.stonks.command.StonksCommandRoot;
+import fr.lezoo.stonks.compat.Metrics;
 import fr.lezoo.stonks.compat.placeholder.DefaultPlaceholderParser;
 import fr.lezoo.stonks.compat.placeholder.PlaceholderAPIParser;
 import fr.lezoo.stonks.compat.placeholder.PlaceholderParser;
@@ -78,8 +79,8 @@ public class Stonks extends JavaPlugin {
             return;
         }
 
-        // Metrics data TODO change once plugin is posted on Spigot
-        /*new Metrics(this, 111111);*/
+        // Metrics data
+        new Metrics(this, 5184);
 
         // Update checker, TODO change when plugin is on Spigot
         /*new SpigotPlugin(11111, this).checkForUpdate();*/
