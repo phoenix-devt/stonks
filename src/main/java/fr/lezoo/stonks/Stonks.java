@@ -19,6 +19,7 @@ import fr.lezoo.stonks.stock.TimeScale;
 import fr.lezoo.stonks.stock.api.StockAPI;
 import fr.lezoo.stonks.util.ConfigSchedule;
 import fr.lezoo.stonks.version.ServerVersion;
+import fr.lezoo.stonks.version.SpigotPlugin;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -82,8 +83,8 @@ public class Stonks extends JavaPlugin {
         // Metrics data
         new Metrics(this, 5184);
 
-        // Update checker, TODO change when plugin is on Spigot
-        /*new SpigotPlugin(11111, this).checkForUpdate();*/
+        // Update checker
+        new SpigotPlugin(102158, this).checkForUpdate();
 
         // Reload config BEFORE config is reloaded
         saveDefaultConfig();

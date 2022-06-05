@@ -1,0 +1,76 @@
+-----------------------------------------------
+STONKS TODO
+-----------------------------------------------
+
+A IMPLEMENTER
+- Systeme pour close et open la share a un peu ameliorer au niveau des messages
+- Support MySQL pour les données (avec BungeeCord)
+- Stock creation GUI
+
+A RENFORCER
+-
+
+PROBLEMES AVEC L'ANCIEN PLUGIN
+- option de stocks max par personne
+- placeholder pour le top des portfolios
+https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-other-stocks-on
+
+PLAYER COMPANIES
+Love this idea! I read a comment somewhere down below about being able to create our own stocks...
+I would suggest to create a code that allows server owners to place the required amount of funds
+to go ipo, a player may set the amount of money they want to put into the company, then choose how
+many shares that company will have. So say I have $100,000 in the company I want to ipo, and I select
+10,000 shares, the value of those shares when the player's company gets listed will be $10 each. The
+way the price of those shares increase in value is based on the current price someone is willing to
+buy the stock, and the price they are willing to sell it for. So say someone is willing to buy (Player Company)
+for $10, another player wants to sell it for $10.10, and a third player believes the company will be
+worth more in the future, so they just say "screw it, $10.10 is cheap imo", that sell order is then bought,
+thus driving the stock price from $10.00 (the ipo price), to $10.10. Same can happen going down as well.
+The player that owns the company must pay a fee each (day/week/month/year) to stay listed on the exchange,
+this causes players to gather profits for their company. That fee is then given to stockholders in dividends
+to keep them happy owning the stock. The more profit the company brings in, the more money goes to that fee,
+the higher the dividend pay. Money stays flowing through the server rather than feeding it to the console.
+When a player as well wants to create a stock, their should be an option to do so that requires they deposit
+a set amount that is configured by the server owner. Players must keep depositing money into where that file
+stores the company/stock info, thats where the plugin can take the fees for dividends from. Ofc player shops
+will allow companies to profit on the server and put it back towards their shareholders. Can also figure a way
+to allow companies do offerings to gather money for a project they have in mind. I think things around ownership,
+being able to sell your company's stock, shouldn't be too hard to gather ideas around. Of course if this happens,
+the stock should go down since more is going back into supply.
+
+REPUTATION SYSTEM
+Ability for everyone to rate other players. criteria for relevance based on the amount of ratings very important
+SIMPLE GUIs and ability to leave comments?
+simple like steam: +rep or -rep
+
+- CONTRACT SYSTEM
+middle men appointed by moderators who are the intermediators of moderators, if a contract is not fulfilled then
+the middleman can refer to a moderator
+
+
+
+- ECO plugin ?
+
+OK
+- Option pour changer le taux de comission d'une personne
+- Enlever le son pour refresh les board
+- Afficher les stocks sur DES PANNEAUX pour voir en temps réel !!
+- Custom model data etc pour un stock mieux faire
+- deux types d'actions : virtuelles, où avec des objets réels (itemStacks)
+- option pour acheter automatiquement ou vendre auto en fonction de certaines conditions des stocks OK
+- Afficher les STONKS sur une MAP
+- TRANSFORMER UN STOCK EN UN OBJET CLIQUABLE que l'on peut redeem au NPC
+- des stocks factices qui varient avec des formules mathématiques toutes configurables
+- deux types d'actions : virtuelles, où avec des objets réels (itemStacks)
+- Implementer une formule de base,period pour les dividendes qui s'appliquera sur toutes (qui peux etre changée dans la config)
+- https://bitbucket.org/tchristofferson/stocks/issues/75/option-to-buy-bitcoin-or-other-stocks-on
+- Commande pour simple pour rajouter un boarddisplay
+- les dividendes
+- GUIs que l'on peut modifier (api déjà existante)
+- Ameliorer le rendu pour : Board image et dialog box
+- NPC pour ouvrir le menu des stocks
+- option pour visualiser nos stocks ce qu'on appelle le "portfolio"
+- leviers ("Leverage")
+- API full utilisable
+- language full configurable
+- option pour fermer le marché temporairement
