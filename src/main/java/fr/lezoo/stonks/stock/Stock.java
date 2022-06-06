@@ -199,6 +199,7 @@ public class Stock {
         else {
             config.set(id + ".exchange-type.material", exchangeType.getMaterial().name());
             config.set(id + ".exchange-type.model-data", exchangeType.getModelData());
+            config.set(id + ".exchange-type.display", exchangeType.getDisplay());
         }
 
         Stonks.plugin.stockManager.save(this);

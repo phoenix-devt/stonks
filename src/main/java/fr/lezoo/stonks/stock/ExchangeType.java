@@ -5,6 +5,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -12,15 +13,21 @@ import java.util.Objects;
 public class ExchangeType {
     private final Material material;
     private final int modelData;
+    private final String display;
 
     public ExchangeType(ConfigurationSection config) {
         material = Material.valueOf(Utils.enumName(config.getString("material")));
         Validate.isTrue(material != Material.AIR, "Cannot use AIR as exchange type");
         modelData = config.getInt("model-data");
+        display = config.getString("display", Utils.caseOnWords(material.name().toLowerCase().replace("_", " ")));
     }
 
     public Material getMaterial() {
         return material;
+    }
+
+    public String getDisplay() {
+        return display;
     }
 
     public boolean hasModelData() {
@@ -29,6 +36,16 @@ public class ExchangeType {
 
     public int getModelData() {
         return modelData;
+    }
+
+    public ItemStack generateItem() {
+        ItemStack stack = new ItemStack(material);
+        if (hasModelData()) {
+            ItemMeta meta = stack.getItemMeta();
+            meta.setCustomModelData(modelData);
+            stack.setItemMeta(meta);
+        }
+        return stack;
     }
 
     public boolean matches(@Nullable ItemStack item) {

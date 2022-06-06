@@ -193,7 +193,7 @@ public class StockList extends EditableInventory {
             holders.register("week-high", format.format(stock.getHighest(TimeScale.WEEK)));
             holders.register("month-low", format.format(stock.getLowest(TimeScale.MONTH)));
             holders.register("month-high", format.format(stock.getHighest(TimeScale.MONTH)));
-            holders.register("exchange-type", stock.isVirtual() ? "money" : stock.getExchangeType().toString().toLowerCase());
+            holders.register("exchange-type", stock.isVirtual() ? "Cash" : stock.getExchangeType().getDisplay());
             holders.register("stock-type", stock.getClass().getSimpleName());
             return holders;
         }

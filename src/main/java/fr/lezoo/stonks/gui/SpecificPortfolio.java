@@ -197,13 +197,8 @@ public class SpecificPortfolio extends EditableInventory {
                     else {
                         ExchangeType exchangeType = share.getStock().getExchangeType();
                         int realGain = (int) Math.floor(earned);
-                        ItemStack giveItem = new ItemStack(exchangeType.getMaterial());
-                        if (exchangeType.hasModelData()) {
-                            ItemMeta meta = giveItem.getItemMeta();
-                            meta.setCustomModelData(exchangeType.getModelData());
-                            giveItem.setItemMeta(meta);
-                        }
-                        while (realGain >= 0) {
+                        ItemStack giveItem = exchangeType.generateItem();
+                        while (realGain > 0) {
                             int withdraw = Math.min(realGain, 64);
                             realGain -= withdraw;
 
