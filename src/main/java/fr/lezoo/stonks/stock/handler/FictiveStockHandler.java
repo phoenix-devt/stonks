@@ -1,15 +1,11 @@
 package fr.lezoo.stonks.stock.handler;
 
-import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
 import fr.lezoo.stonks.stock.Stock;
-import fr.lezoo.stonks.stock.StockInfo;
 import fr.lezoo.stonks.stock.TimeScale;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class FictiveStockHandler implements StockHandler {
@@ -43,34 +39,6 @@ public class FictiveStockHandler implements StockHandler {
         volatility = config.getDouble("volatility", DEFAULT_VOLATILITY);
         totalMarketShares = config.contains("total-supply") ? config.getDouble("total-supply") : initialMarketShares;
         priceMultiplier = config.contains("price-multiplier") ? config.getDouble("price-multiplier") : stock.getPrice() / initialMarketShares;
-    }
-
-    @Override
-    public void refresh() {
-        double price = computePrice(totalMarketShares);
-
-        // We setup the price in the stock
-        for (TimeScale time : TimeScale.values()) {
-
-            // We get the list corresponding to the time
-            List<StockInfo> workingData = new ArrayList<>();
-            workingData.addAll(stock.getData(time));
-
-            // This fixes an issue with empty working data
-            long lastTimeStamp = workingData.isEmpty() ? 0 : workingData.get(workingData.size() - 1).getTimeStamp();
-
-            // If the the latest data of workingData is too old we add another one
-            if (System.currentTimeMillis() - lastTimeStamp > time.getTime() / Stock.BOARD_DATA_NUMBER) {
-                workingData.add(new StockInfo(System.currentTimeMillis(), price));
-
-                // If the list contains too much data we remove the older ones
-                if (workingData.size() > Stock.BOARD_DATA_NUMBER)
-                    workingData.remove(0);
-
-                // We save the changes we made in the attribute
-                stock.setData(time, workingData);
-            }
-        }
     }
 
     @Override

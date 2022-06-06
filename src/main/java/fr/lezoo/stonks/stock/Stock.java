@@ -31,7 +31,6 @@ public class Stock {
     @Nullable
     private final ExchangeType exchangeType;
 
-
     @NotNull
     private final StockHandler handler;
 
@@ -55,14 +54,13 @@ public class Stock {
     private static final long REAL_STOCK_DEFAULT_REFRESH_PERIOD = TimeScale.HOUR.getTime() / (BOARD_DATA_NUMBER * 50);
     private static final long VIRTUAL_STOCK_DEFAULT_REFRESH_PERIOD = TimeScale.MINUTE.getTime() / (BOARD_DATA_NUMBER * 50);
 
-
     /**
      * Public constructor to create a new Stock from scratch
      *
-     * @param id                 Internal stock id
-     * @param name               Name of the stock
-     * @param dividends          Whether or not this stocks gives dividends to investors
-     * @param exchangeType       The material being exchanged, or null if the stock is virtual
+     * @param id             Internal stock id
+     * @param name           Name of the stock
+     * @param dividends      Whether or not this stocks gives dividends to investors
+     * @param exchangeType   The material being exchanged, or null if the stock is virtual
      * @param firstStockData The only StockInfo that exists
      */
     public Stock(String id, String name, Function<Stock, StockHandler> handlerProvider, Dividends dividends, @Nullable ExchangeType exchangeType, StockInfo firstStockData) {
@@ -75,7 +73,7 @@ public class Stock {
         Stonks.plugin.stockManager.initializeStockData(this);
         // Handler provider needs to be set up in last
         this.handler = handlerProvider.apply(this);
-        this.refreshPeriod =handler instanceof RealStockHandler? REAL_STOCK_DEFAULT_REFRESH_PERIOD:VIRTUAL_STOCK_DEFAULT_REFRESH_PERIOD;
+        this.refreshPeriod = handler instanceof RealStockHandler ? REAL_STOCK_DEFAULT_REFRESH_PERIOD : VIRTUAL_STOCK_DEFAULT_REFRESH_PERIOD;
     }
 
     /**
@@ -88,14 +86,11 @@ public class Stock {
         // If it doesn't have a field dividends we use the default dividends given in the config.yml
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : new Dividends(this);
 
-
         exchangeType = config.contains("exchange-type") ? new ExchangeType(config.getConfigurationSection("exchange-type")) : null;
-        // Set the data of the stock
-        Stonks.plugin.stockManager.initializeStockData(this);
-        //Handler provider needs to be set up in last
         this.handler = config.getBoolean("real-stock") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
-        this.refreshPeriod = config.getLong("refresh-period", config.getBoolean("real-stock") ?REAL_STOCK_DEFAULT_REFRESH_PERIOD:VIRTUAL_STOCK_DEFAULT_REFRESH_PERIOD);
-
+        // Set the data of the stock after initializing stock handler
+        Stonks.plugin.stockManager.initializeStockData(this);
+        this.refreshPeriod = config.getLong("refresh-period", config.getBoolean("real-stock") ? REAL_STOCK_DEFAULT_REFRESH_PERIOD : VIRTUAL_STOCK_DEFAULT_REFRESH_PERIOD);
     }
 
     public String getId() {
@@ -126,8 +121,18 @@ public class Stock {
         return exchangeType == null;
     }
 
+    /**
+     * @return Returned object is NOT a clone
+     */
+    @NotNull
     public List<StockInfo> getData(TimeScale disp) {
-        return stockData.get(disp);
+        List<StockInfo> found = stockData.get(disp);
+        if (found != null)
+            return found;
+
+        found = new ArrayList<>();
+        stockData.put(disp, found);
+        return found;
     }
 
     public boolean isRealStock() {
@@ -140,16 +145,6 @@ public class Stock {
 
     public long getRefreshPeriod() {
         return refreshPeriod;
-    }
-
-    /**
-     * Updates the attributes of Stock regarding on the time given
-     *
-     * @param time          the time corresponding to the data
-     * @param stockData the data we want to update
-     */
-    public void setData(TimeScale time, List<StockInfo> stockData) {
-        this.stockData.put(time, stockData);
     }
 
     /**
@@ -207,7 +202,6 @@ public class Stock {
         }
 
         Stonks.plugin.stockManager.save(this);
-
     }
 
     /**
@@ -240,6 +234,30 @@ public class Stock {
             if (stockInfo.getPrice() > max)
                 max = stockInfo.getPrice();
         return max;
+    }
+
+    public void saveCurrentStateAsStockData() {
+
+        // Compute current price
+        double price = handler.getCurrentPrice();
+
+        for (TimeScale time : TimeScale.values()) {
+
+            // Find mutable list of stock data
+            List<StockInfo> workingData = getData(time);
+
+            // This fixes an issue with empty working data
+            long lastTimeStamp = workingData.isEmpty() ? 0 : workingData.get(workingData.size() - 1).getTimeStamp();
+
+            // If the the latest data FOR THAT TIME SCALE is too old, ADD a new one
+            if (System.currentTimeMillis() - lastTimeStamp > time.getTime() / Stock.BOARD_DATA_NUMBER) {
+                workingData.add(new StockInfo(System.currentTimeMillis(), price));
+
+                // If the list contains too much data we remove the older ones
+                if (workingData.size() > Stock.BOARD_DATA_NUMBER)
+                    workingData.remove(0);
+            }
+        }
     }
 
     /**

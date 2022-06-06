@@ -47,9 +47,8 @@ public class StockManager implements FileManager {
      * The refreshPrice method is here to get an updated version of the price
      */
     public void refresh() {
-        for(LoadedStock stock:mapped.values()) {
-            stock.stock.getHandler().refresh();
-        }
+        for (LoadedStock stock : mapped.values())
+            stock.stock.saveCurrentStateAsStockData();
     }
 
     @Override
@@ -125,66 +124,48 @@ public class StockManager implements FileManager {
     /**
      * set the stock data for a stock when StockManager loads
      *
-     * @param stock The stock which data needs to be set
+     * @param stock The stock which data needs to be initialized
      */
     public void initializeStockData(Stock stock) {
-        // We load the different data from the yml if they exist
-        if (new ConfigFile("stock-data").getConfig().getKeys(false).contains(stock.getId())) {
 
+        // Load the different data from the yml if they exist
+        FileConfiguration stockData = new ConfigFile("stock-data").getConfig();
+        if (stockData.contains(stock.getId())) {
             ConfigurationSection section = new ConfigFile("stock-data").getConfig().getConfigurationSection(stock.getId());
-
 
             for (TimeScale time : TimeScale.values()) {
                 int i = 0;
-                List<StockInfo> workingStock = new ArrayList<>();
-
+                List<StockInfo> workingStock = stock.getData(time);
                 while (section.contains(time.toString().toLowerCase() + "data." + i)) {
                     workingStock.add(new StockInfo(section.getConfigurationSection(time.toString().toLowerCase() + "data." + i)));
                     i++;
                 }
-
-                // We change the attribute
-                stock.setData(time, workingStock);
-
             }
         }
-        //Otherwise we create the firstStockData depending on the stock type
+
+        // Otherwise we create the first stock data depending on stock type
         else {
-
-
-            if (stock.getHandler() instanceof RealStockHandler) {
-
+            if (stock.isRealStock()) {
                 Bukkit.getScheduler().runTaskAsynchronously(Stonks.plugin, () -> {
                     try {
                         double price = Stonks.plugin.stockAPI.getPrice(stock.getId());
                         StockInfo firstStockData = new StockInfo(System.currentTimeMillis(), price);
                         for (TimeScale disp : TimeScale.values())
-                            stock.setData(disp, Arrays.asList(firstStockData));
+                            stock.getData(disp).add(firstStockData);
 
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ParseException e) {
+                    } catch (URISyntaxException | IOException | InterruptedException | ParseException e) {
                         e.printStackTrace();
                     }
-
                 });
-
             }
-            //If it a virtual Stock we set the initial price at 10 if there is no data for the stock
-            else {
+
+            // If it is a virtual stock
+            else
                 for (TimeScale disp : TimeScale.values())
-                    if (stock.getData(disp).size() == 0)
-                        stock.setData(disp, Arrays.asList(new StockInfo(System.currentTimeMillis(), 10)));
-
-            }
+                    if (stock.getData(disp).isEmpty())
+                        stock.getData(disp).add(new StockInfo(System.currentTimeMillis(), stock.getPrice()));
         }
-
     }
-
 
     /**
      * Saves all the data of the stocks in stock-data.yml file
