@@ -4,21 +4,14 @@ import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class ExchangeType {
     private final Material material;
     private final int modelData;
-
-    /**
-     * @param material  Type of the item exchanged
-     * @param modelData The item model data
-     */
-    public ExchangeType(Material material, int modelData) {
-        this.material = material;
-        this.modelData = modelData;
-    }
 
     public ExchangeType(ConfigurationSection config) {
         material = Material.valueOf(Utils.enumName(config.getString("material")));
@@ -36,6 +29,13 @@ public class ExchangeType {
 
     public int getModelData() {
         return modelData;
+    }
+
+    public boolean matches(@Nullable ItemStack item) {
+        if (item == null || item.getType() == Material.AIR)
+            return false;
+
+        return item.getType() == material && (item.hasItemMeta() ? item.getItemMeta().getCustomModelData() : 0) == modelData;
     }
 
     @Override

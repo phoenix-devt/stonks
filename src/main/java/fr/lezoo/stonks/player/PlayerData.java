@@ -5,6 +5,7 @@ import fr.lezoo.stonks.api.event.PlayerBuyShareEvent;
 import fr.lezoo.stonks.share.OrderInfo;
 import fr.lezoo.stonks.share.Share;
 import fr.lezoo.stonks.share.ShareType;
+import fr.lezoo.stonks.stock.ExchangeInventory;
 import fr.lezoo.stonks.stock.ExchangeType;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.util.ConfigFile;
@@ -291,13 +292,10 @@ public class PlayerData {
             long moneyPaidCeil = (long) Math.ceil(moneyPaid);
 
             // We check the amount of the item the player has in his inventory (the material is defined by custom model data and material
-            int balance = 0;
-            for (ItemStack itemStack : player.getInventory().getContents())
-                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(stock.getExchangeType()))
-                    balance += itemStack.getAmount();
+            ExchangeInventory inv = new ExchangeInventory(stock.getExchangeType(), player);
 
-            if (balance < moneyPaidCeil) {
-                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", String.valueOf(moneyPaidCeil - balance)).send(player);
+            if (inv.computeTotal() < moneyPaidCeil) {
+                Message.NOT_ENOUGH_MONEY.format("shares", amount, "left", String.valueOf(moneyPaidCeil - inv.computeTotal())).send(player);
                 return false;
             }
 
@@ -312,13 +310,8 @@ public class PlayerData {
             // We give the player the share
             giveShare(share);
 
-            // We withdraw the amount of shares he bought
-            for (ItemStack itemStack : player.getInventory().getContents())
-                if (itemStack != null && new ExchangeType(itemStack.getType(), itemStack.getItemMeta().hasCustomModelData() ? itemStack.getItemMeta().getCustomModelData() : 0).equals(stock.getExchangeType())) {
-                    double withdraw = Math.min(itemStack.getAmount(), moneyPaidCeil);
-                    itemStack.setAmount(itemStack.getAmount() - (int) withdraw);
-                    moneyPaidCeil -= withdraw;
-                }
+            // Withdraw items
+            inv.takeOff(moneyPaidCeil);
         }
 
         stock.getHandler().whenBought(type, amount);
