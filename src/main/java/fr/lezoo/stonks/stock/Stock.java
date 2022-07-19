@@ -69,7 +69,7 @@ public class Stock {
         this.dividends = dividends;
         this.exchangeType = exchangeType;
         for (TimeScale disp : TimeScale.values())
-            stockData.put(disp, Arrays.asList(firstStockData));
+            stockData.put(disp, new ArrayList(Arrays.asList(firstStockData)));
         Stonks.plugin.stockManager.initializeStockData(this);
         // Handler provider needs to be set up in last
         this.handler = handlerProvider.apply(this);

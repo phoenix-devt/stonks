@@ -45,9 +45,12 @@ public class StockManager implements FileManager {
 
         //Remove in the yml
         ConfigFile config = new ConfigFile("stocks");
-        ConfigurationSection section=config.getConfig().getConfigurationSection(stockId);
-        for(String key:section.getKeys(true))
-            section.set(key,null);
+        ConfigurationSection section = config.getConfig().getConfigurationSection(stockId);
+
+        for (String key : section.getKeys(true)) {
+            section.set(key, null);
+        }
+        config.save();
     }
 
     /**
