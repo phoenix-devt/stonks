@@ -47,9 +47,8 @@ public class StockManager implements FileManager {
         ConfigFile config = new ConfigFile("stocks");
         ConfigurationSection section = config.getConfig().getConfigurationSection(stockId);
 
-        for (String key : section.getKeys(true)) {
-            section.set(key, null);
-        }
+
+        config.getConfig().set(stockId,null);
         config.save();
     }
 
@@ -70,13 +69,14 @@ public class StockManager implements FileManager {
         ConfigFile stockDataConfig = new ConfigFile("stock-data");
         for (String key : stockDataConfig.getConfig().getKeys(true))
             stockDataConfig.getConfig().set(key, null);
-
+        stockDataConfig.save();
         // Save newest
-        for (LoadedStock loaded : mapped.values())
+        for (LoadedStock loaded : mapped.values()) {
             loaded.stock.save(config.getConfig());
+        }
 
         config.save();
-        stockDataConfig.save();
+
     }
 
     public boolean has(String id) {
