@@ -76,6 +76,7 @@ public class StockManager implements FileManager {
             loaded.stock.save(config.getConfig());
 
         config.save();
+        stockDataConfig.save();
     }
 
     public boolean has(String id) {
