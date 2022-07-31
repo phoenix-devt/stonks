@@ -2,7 +2,8 @@ name: ${project.name}
 version: ${project.version}
 main: fr.lezoo.stonks.Stonks
 author: [ ka0rX, Indyuce ]
-depend: [ Vault, PlaceholderAPI]
+depend: [ Vault ]
+soft-depend: [ PlaceholderAPI ]
 description: ${project.description}
 api-version: 1.13
 
