@@ -58,10 +58,14 @@ public class FictiveStockHandler implements StockHandler {
 
     @Override
     public void saveInFile(ConfigurationSection config) {
-        config.set("initial-supply", initialMarketShares);
-        config.set("total-supply", totalMarketShares);
-        config.set("price-multiplier", priceMultiplier);
-        config.set("volatility", volatility);
+        if (!config.contains("initial-supply"))
+            config.set("initial-supply", initialMarketShares);
+        if (totalMarketShares!=0)
+            config.set("total-supply", totalMarketShares);
+        if (priceMultiplier!=0)
+            config.set("price-multiplier", priceMultiplier);
+        if (!config.contains("volatility"))
+            config.set("volatility", volatility);
     }
 
     /**

@@ -69,7 +69,7 @@ public class Stock {
         this.dividends = dividends;
         this.exchangeType = exchangeType;
         for (TimeScale disp : TimeScale.values())
-            stockData.put(disp, Arrays.asList(firstStockData));
+            stockData.put(disp, new ArrayList(Arrays.asList(firstStockData)));
         Stonks.plugin.stockManager.initializeStockData(this);
         // Handler provider needs to be set up in last
         this.handler = handlerProvider.apply(this);
@@ -169,6 +169,9 @@ public class Stock {
         return Utils.truncate(100 * (latest - oldest) / oldest, 1);
     }
 
+    /**
+     We change the stock data only if it is not in the config so that we take in account the information changes in the yml.
+     */
     public void save(FileConfiguration config) {
 
         // If the stock is empty we destroy it to not overload memory and avoid errors
@@ -190,16 +193,18 @@ public class Stock {
                 config.set(id + ".dividends.formula", dividends.getFormula());
             if (!config.contains(id + ".dividends.period"))
                 config.set(id + ".dividends.period", dividends.getPeriod());
-            config.set(id + ".dividends.last", dividends.getLastApplication());
+            if(!config.contains(id + ".dividends.last")||dividends.getLastApplication()>config.getLong(id + ".dividends.last"))
+                 config.set(id + ".dividends.last", dividends.getLastApplication());
         }
-
-        // Save exchange type
-        if (isVirtual())
-            config.set(id + ".exchange-type", null);
-        else {
-            config.set(id + ".exchange-type.material", exchangeType.getMaterial().name());
-            config.set(id + ".exchange-type.model-data", exchangeType.getModelData());
-            config.set(id + ".exchange-type.display", exchangeType.getDisplay());
+        if (!config.contains(id + ".exchange-type")) {
+            // Save exchange type
+            if (isVirtual())
+                config.set(id + ".exchange-type", null);
+            else {
+                config.set(id + ".exchange-type.material", exchangeType.getMaterial().name());
+                config.set(id + ".exchange-type.model-data", exchangeType.getModelData());
+                config.set(id + ".exchange-type.display", exchangeType.getDisplay());
+            }
         }
 
         Stonks.plugin.stockManager.save(this);

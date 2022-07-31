@@ -38,8 +38,18 @@ public class StockManager implements FileManager {
     public void remove(String stockId) {
         Validate.isTrue(mapped.containsKey(stockId), "Tried to remove stock " + stockId + " which does not exist");
 
+
         LoadedStock removed = mapped.remove(stockId);
+
         removed.refreshRunnable.cancel();
+
+        //Remove in the yml
+        ConfigFile config = new ConfigFile("stocks");
+        ConfigurationSection section = config.getConfig().getConfigurationSection(stockId);
+
+
+        config.getConfig().set(stockId,null);
+        config.save();
     }
 
     /**
@@ -59,12 +69,14 @@ public class StockManager implements FileManager {
         ConfigFile stockDataConfig = new ConfigFile("stock-data");
         for (String key : stockDataConfig.getConfig().getKeys(true))
             stockDataConfig.getConfig().set(key, null);
-
+        stockDataConfig.save();
         // Save newest
-        for (LoadedStock loaded : mapped.values())
+        for (LoadedStock loaded : mapped.values()) {
             loaded.stock.save(config.getConfig());
+        }
 
         config.save();
+
     }
 
     public boolean has(String id) {

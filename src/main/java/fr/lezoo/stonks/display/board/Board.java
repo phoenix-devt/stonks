@@ -302,9 +302,8 @@ public class Board {
         g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.5 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.75 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.setColor(Color.GRAY);
-        g2d.setFont(new Font(null, Font.BOLD, (int) (BOARD_HEIGHT * 3.5 / 128)));
-        g2d.drawString("PARAMETERS", (int) (0.825 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
-        g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 4 / 128));
+        g2d.setFont(new Font(null, Font.BOLD, (int) (BOARD_WIDTH * 4 / 128)));
+        g2d.drawString("PARAMS", (int) (0.825 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
         g2d.drawString("BUY", (int) (0.835 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
         g2d.drawString("SHORT", (int) (0.83 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));
         g2d.drawString("ORDERS", (int) (0.83 * BOARD_WIDTH), (int) (0.85 * BOARD_HEIGHT));

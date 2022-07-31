@@ -26,6 +26,8 @@ public class RemoveTreeNode extends CommandTreeNode {
         }
 
         Stonks.plugin.stockManager.remove(format);
+
+
         return CommandResult.SUCCESS;
     }
 }
