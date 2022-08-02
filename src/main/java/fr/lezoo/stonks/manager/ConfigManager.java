@@ -72,7 +72,7 @@ public class ConfigManager {
         defaultTaxRate = Stonks.plugin.getConfig().getDouble("default-tax-rate");
         defaultDividendFormula = Stonks.plugin.getConfig().getString("default-dividends.formula");
         defaultDividendPeriod = Stonks.plugin.getConfig().getInt("default-dividends.period");
-        maximumLeverage = Stonks.plugin.getConfig().getDouble("maximum-leverage");
+        maximumLeverage = Stonks.plugin.getConfig().getDouble("maximum-leverage",10);
         // Useful checks
         Validate.isTrue(displaySignFormat.size() == 4, "Display sign format should be of length 4");
 

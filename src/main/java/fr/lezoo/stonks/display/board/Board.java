@@ -246,11 +246,11 @@ public class Board {
     }
 
     public BufferedImage getImage() {
-        FileConfiguration config=YamlConfiguration.loadConfiguration(ConfigManager.DefaultFile.BOARD.getFile());
+        FileConfiguration config = YamlConfiguration.loadConfiguration(ConfigManager.DefaultFile.BOARD.getFile());
         ConfigurationSection description = config.getConfigurationSection("description");
-        ConfigurationSection buttons=config.getConfigurationSection("buttons");
-        if(buttons==null) {
-            buttons=config.createSection("buttons");
+        ConfigurationSection buttons = config.getConfigurationSection("buttons");
+        if (buttons == null) {
+            buttons = config.createSection("buttons");
         }
         Placeholders holders = getPlaceholders();
 
@@ -286,13 +286,13 @@ public class Board {
 
         g2d.setStroke(new BasicStroke(3.0f));
         g2d.setColor(new Color(126, 51, 0));
-        g2d.draw(new Line2D.Double(0, 0.8 * BOARD_HEIGHT, 0.8 * BOARD_WIDTH, 0.8*BOARD_HEIGHT));
-        g2d.draw(new Line2D.Double(0.8 * BOARD_WIDTH,  BOARD_HEIGHT, 0.8 * BOARD_WIDTH, 0));
+        g2d.draw(new Line2D.Double(0, 0.8 * BOARD_HEIGHT, 0.8 * BOARD_WIDTH, 0.8 * BOARD_HEIGHT));
+        g2d.draw(new Line2D.Double(0.8 * BOARD_WIDTH, BOARD_HEIGHT, 0.8 * BOARD_WIDTH, 0));
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font(
-                description.contains("font.name")?description.getString("font.name"):null,
-                description.contains("font.bold")&&!description.getBoolean("font.bold")?Font.PLAIN:Font.BOLD, (int)((
-                description.contains("font.size")?description.getDouble("font.size"):1)*BOARD_HEIGHT * 5 / 128.)));
+                description.getString("font.name", null),
+                description.contains("font.bold") && !description.getBoolean("font.bold") ? Font.PLAIN : Font.BOLD, (int) (
+                        description.getDouble("font.size",1) * BOARD_HEIGHT * 5 / 128.)));
         // We want only 2 numbers after the command
         g2d.drawString(holders.apply(description.getString("time-scale")), (int) (0.03 * BOARD_WIDTH), (int) (0.845 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(description.getString("stock-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.89 * BOARD_HEIGHT));
@@ -312,13 +312,13 @@ public class Board {
         g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.75 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.setColor(Color.GRAY);
         g2d.setFont(new Font(
-                buttons.contains("font.name")?buttons.getString("font.name"):null,
-                buttons.contains("font.bold")&&!buttons.getBoolean("font.bold")?Font.PLAIN:Font.BOLD, (int)((
-                buttons.contains("font.size")?buttons.getDouble("font.size"):1)*BOARD_WIDTH * 4 / 128)));
-        g2d.drawString(buttons.getString("params","PARAMS"), (int) (0.825 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
-        g2d.drawString(buttons.getString("buy","BUY"), (int) (0.835 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
-        g2d.drawString(buttons.getString("short","SHORT"), (int) (0.83 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));
-        g2d.drawString(buttons.getString("orders","ORDERS"), (int) (0.83 * BOARD_WIDTH), (int) (0.85 * BOARD_HEIGHT));
+                buttons.getString("font.name", null),
+                buttons.contains("font.bold") && !buttons.getBoolean("font.bold") ? Font.PLAIN : Font.BOLD, (int) (
+                description.getDouble("font.size",1) * BOARD_WIDTH * 4 / 128)));
+        g2d.drawString(buttons.getString("params", "PARAMS"), (int) (0.825 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
+        g2d.drawString(buttons.getString("buy", "BUY"), (int) (0.835 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
+        g2d.drawString(buttons.getString("short", "SHORT"), (int) (0.83 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));
+        g2d.drawString(buttons.getString("orders", "ORDERS"), (int) (0.83 * BOARD_WIDTH), (int) (0.85 * BOARD_HEIGHT));
 
         g2d.setColor(Color.RED);
         Path2D.Double curve = new Path2D.Double();

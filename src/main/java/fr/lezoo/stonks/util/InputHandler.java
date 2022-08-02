@@ -83,7 +83,7 @@ public class InputHandler {
             Message.NOT_VALID_LEVERAGE.format("input", input).send(player);
             return false;
         }
-        if (amount >= Stonks.plugin.configManager.maximumLeverage) {
+        if (amount > Stonks.plugin.configManager.maximumLeverage) {
             Message.LEVERAGE_ABOVE_MAX.format("max-leverage", Stonks.plugin.configManager.maximumLeverage).send(player);
             return false;
         }
