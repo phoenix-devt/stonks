@@ -1,9 +1,25 @@
 description:
-    time-scale: 'Time Scale: {time-scale}'
-    stock-name: 'Name: {stock-name}'
-    stock-type:  'Type: {stock-type}'
-    exchange-type: 'Exchange Type: {exchange-type}'
-    current-price: 'Current price: {current-price}'
-    lowest-price:  'Lowest Price: {lowest-price}'
-    highest-price:  'Highest Price: {highest-price}'
-    evolution: 'Evolution: {evolution}'
+  font:
+    name: "Serif"
+    bold: true
+    #A double to change the size. 1 is the default size.
+    size: 1
+  time-scale: 'Time Scale: {time-scale}'
+  stock-name: 'Name: {stock-name}'
+  stock-type: 'Type: {stock-type}'
+  exchange-type: 'Exchange Type: {exchange-type}'
+  current-price: 'Current price: {current-price}'
+  lowest-price: 'Lowest Price: {lowest-price}'
+  highest-price: 'Highest Price: {highest-price}'
+  evolution: 'Evolution: {evolution}'
+
+buttons:
+  font:
+    name: "Serif"
+    bold: true
+    #A double to change the size. 1 is the default size.
+    size: 1
+  params: PARAMS
+  buy: BUY
+  short: SHORT
+  orders: ORDERS

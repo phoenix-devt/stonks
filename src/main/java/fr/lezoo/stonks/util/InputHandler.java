@@ -1,5 +1,6 @@
 package fr.lezoo.stonks.util;
 
+import fr.lezoo.stonks.Stonks;
 import fr.lezoo.stonks.player.PlayerData;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.share.ShareType;
@@ -82,7 +83,10 @@ public class InputHandler {
             Message.NOT_VALID_LEVERAGE.format("input", input).send(player);
             return false;
         }
-
+        if (amount >= Stonks.plugin.configManager.maximumLeverage) {
+            Message.LEVERAGE_ABOVE_MAX.format("max-leverage", Stonks.plugin.configManager.maximumLeverage).send(player);
+            return false;
+        }
         playerData.getOrderInfo(stock.getId()).setLeverage(amount);
 
         return true;

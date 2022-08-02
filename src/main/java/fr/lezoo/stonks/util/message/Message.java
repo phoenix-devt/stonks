@@ -18,7 +18,7 @@ public enum Message {
     CLAIM_DIVIDENDS(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou successfully redeemed &f${amount} &efrom your dividends."),
     NO_DIVIDENDS_TO_CLAIM("&cYou don't have any dividends to claim."),
     MARKET_CLOSING("&cThe stock market is closed for now."),
-
+    LEVERAGE_ABOVE_MAX("&cThe maximum leverage is {max-leverage}."),
     // Interaction with display boards
     SET_AMOUNT_INFO("", "&e* Amount: {amount} (Click to set)"),
     SET_AMOUNT_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "", "&eWrite in the chat the amount of shares you want to buy/sell"),

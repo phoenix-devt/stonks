@@ -17,6 +17,10 @@ stock-api:
 # Check out 'DecimalFormat java' online for more info
 stock-price-decimal-format: '0.##'
 
+#The maximum leverage that can be used by players
+maximum-leverage: 10
+
+
 # How the amount of shares are displayed in messages
 shares-decimal-format: '0.#'
 

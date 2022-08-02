@@ -6,6 +6,7 @@ import fr.lezoo.stonks.manager.ConfigManager;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.stock.StockInfo;
 import fr.lezoo.stonks.stock.TimeScale;
+import fr.lezoo.stonks.util.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class Board {
     private final UUID uuid;
@@ -237,15 +239,19 @@ public class Board {
         holders.register("lowest-price", format.format(stock.getLowest(time)));
         holders.register("highest-price", format.format(stock.getHighest(time)));
         holders.register("evolution", stock.getEvolution(time));
-        holders.register("time-scale", time.toString().toLowerCase());
-        holders.register("stock-type", stock.getClass().getSimpleName());
-        holders.register("exchange-type", stock.getExchangeType() == null ? "money" : stock.getExchangeType().toString().toLowerCase());
+        holders.register("time-scale", Utils.caseOnWords(time.toString().toLowerCase()));
+        holders.register("stock-type", Utils.caseOnWords(stock.getClass().getSimpleName()));
+        holders.register("exchange-type", Utils.caseOnWords(stock.getExchangeType() == null ? "Money" : stock.getExchangeType().toString()));
         return holders;
     }
 
     public BufferedImage getImage() {
-
-        ConfigurationSection config = YamlConfiguration.loadConfiguration(ConfigManager.DefaultFile.BOARD.getFile()).getConfigurationSection("description");
+        FileConfiguration config=YamlConfiguration.loadConfiguration(ConfigManager.DefaultFile.BOARD.getFile());
+        ConfigurationSection description = config.getConfigurationSection("description");
+        ConfigurationSection buttons=config.getConfigurationSection("buttons");
+        if(buttons==null) {
+            buttons=config.createSection("buttons");
+        }
         Placeholders holders = getPlaceholders();
 
 
@@ -280,19 +286,22 @@ public class Board {
 
         g2d.setStroke(new BasicStroke(3.0f));
         g2d.setColor(new Color(126, 51, 0));
-        g2d.draw(new Rectangle2D.Double(0, 0.2 * BOARD_HEIGHT, BOARD_WIDTH * 0.8, 0.8 * BOARD_HEIGHT));
-        g2d.draw(new Line2D.Double(0.8 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT, 0.8 * BOARD_WIDTH, 0));
+        g2d.draw(new Line2D.Double(0, 0.8 * BOARD_HEIGHT, 0.8 * BOARD_WIDTH, 0.8*BOARD_HEIGHT));
+        g2d.draw(new Line2D.Double(0.8 * BOARD_WIDTH,  BOARD_HEIGHT, 0.8 * BOARD_WIDTH, 0));
         g2d.setColor(Color.BLACK);
-        g2d.setFont(new Font(null, Font.BOLD, BOARD_HEIGHT * 3 / 128));
+        g2d.setFont(new Font(
+                description.contains("font.name")?description.getString("font.name"):null,
+                description.contains("font.bold")&&!description.getBoolean("font.bold")?Font.PLAIN:Font.BOLD, (int)((
+                description.contains("font.size")?description.getDouble("font.size"):1)*BOARD_HEIGHT * 5 / 128.)));
         // We want only 2 numbers after the command
-        g2d.drawString(holders.apply(config.getString("time-scale")), (int) (0.03 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("stock-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("stock-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("exchange-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("current-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.04 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("lowest-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.08 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("highest-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.12 * BOARD_HEIGHT));
-        g2d.drawString(holders.apply(config.getString("evolution")), (int) (0.45 * BOARD_WIDTH), (int) (0.16 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(description.getString("time-scale")), (int) (0.03 * BOARD_WIDTH), (int) (0.845 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(description.getString("stock-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.89 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(description.getString("stock-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.935 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(description.getString("exchange-type")), (int) (0.03 * BOARD_WIDTH), (int) (0.98 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(description.getString("current-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.845 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(description.getString("lowest-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.89 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(description.getString("highest-price")), (int) (0.45 * BOARD_WIDTH), (int) (0.935 * BOARD_HEIGHT));
+        g2d.drawString(holders.apply(description.getString("evolution")), (int) (0.45 * BOARD_WIDTH), (int) (0.98 * BOARD_HEIGHT));
 
         g2d.setColor(new Color(80, 30, 0));
         // Bouton SELL,SHORT,BUY,SET LEVERAGE
@@ -302,23 +311,26 @@ public class Board {
         g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.5 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.draw(new Rectangle2D.Double(0.82 * BOARD_WIDTH, 0.75 * BOARD_HEIGHT, 0.16 * BOARD_WIDTH, 0.2 * BOARD_HEIGHT));
         g2d.setColor(Color.GRAY);
-        g2d.setFont(new Font(null, Font.BOLD, (int) (BOARD_WIDTH * 4 / 128)));
-        g2d.drawString("PARAMS", (int) (0.825 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
-        g2d.drawString("BUY", (int) (0.835 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
-        g2d.drawString("SHORT", (int) (0.83 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));
-        g2d.drawString("ORDERS", (int) (0.83 * BOARD_WIDTH), (int) (0.85 * BOARD_HEIGHT));
+        g2d.setFont(new Font(
+                buttons.contains("font.name")?buttons.getString("font.name"):null,
+                buttons.contains("font.bold")&&!buttons.getBoolean("font.bold")?Font.PLAIN:Font.BOLD, (int)((
+                buttons.contains("font.size")?buttons.getDouble("font.size"):1)*BOARD_WIDTH * 4 / 128)));
+        g2d.drawString(buttons.getString("params","PARAMS"), (int) (0.825 * BOARD_WIDTH), (int) (0.1 * BOARD_HEIGHT));
+        g2d.drawString(buttons.getString("buy","BUY"), (int) (0.835 * BOARD_WIDTH), (int) (0.35 * BOARD_HEIGHT));
+        g2d.drawString(buttons.getString("short","SHORT"), (int) (0.83 * BOARD_WIDTH), (int) (0.60 * BOARD_HEIGHT));
+        g2d.drawString(buttons.getString("orders","ORDERS"), (int) (0.83 * BOARD_WIDTH), (int) (0.85 * BOARD_HEIGHT));
 
         g2d.setColor(Color.RED);
         Path2D.Double curve = new Path2D.Double();
-        // If price = maxVal y =0.25 IMAGE_SIZE
-        // If price = min Val y=0.95*IMAGE_SIZE (BOTTOM)
+        // If price = maxVal y =0.05 IMAGE_SIZE
+        // If price = min Val y=0.75*IMAGE_SIZE (BOTTOM)
         double x = 0;
-        double y = 0.95 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (stockData.get(index).getPrice() - minVal) / (maxVal - minVal));
+        double y = 0.75 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (stockData.get(index).getPrice() - minVal) / (maxVal - minVal));
         curve.moveTo(x, y);
         for (int i = 1; i < data_taken; i++) {
             // if data_taken < NUMBER_DATA,the graphics will be on the left of the screen mainly
             x = i * BOARD_WIDTH * 0.8 / Stock.BOARD_DATA_NUMBER;
-            y = 0.95 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (stockData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
+            y = 0.75 * BOARD_HEIGHT - (0.7 * BOARD_HEIGHT * (stockData.get(index + i).getPrice() - minVal) / (maxVal - minVal));
             curve.lineTo(x, y);
         }
 
