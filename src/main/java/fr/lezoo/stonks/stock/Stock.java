@@ -170,44 +170,53 @@ public class Stock {
     }
 
     /**
-     We change the stock data only if it is not in the config so that we take in account the information changes in the yml.
+     * We change the stock data only if it is not in the config so that we take in account the information changes in the yml.
      */
-    public void save(FileConfiguration config) {
+    public void save(FileConfiguration stockInfo, FileConfiguration stockData) {
 
         // If the stock is empty we destroy it to not overload memory and avoid errors
-        if (stockData.get(TimeScale.HOUR) == null || stockData.get(TimeScale.HOUR).size() == 0) {
-            config.set(id, null);
+        if (this.stockData.get(TimeScale.HOUR) == null || this.stockData.get(TimeScale.HOUR).size() == 0) {
+            stockInfo.set(id, null);
             return;
         }
-        if (!config.contains(id + ".name"))
-            config.set(id + ".name", name);
-        handler.saveInFile(config.getConfigurationSection(id));
-        config.set(id + ".real-stock", handler instanceof RealStockHandler);
 
-        if (!config.contains(id + ".refresh-period"))
-            config.set(id + ".refresh-period", refreshPeriod);
+        // Save main stock info
+        if (!stockInfo.contains(id + ".name"))
+            stockInfo.set(id + ".name", name);
+        handler.saveInFile(stockInfo.getConfigurationSection(id));
+        stockInfo.set(id + ".real-stock", handler instanceof RealStockHandler);
+
+        if (!stockInfo.contains(id + ".refresh-period"))
+            stockInfo.set(id + ".refresh-period", refreshPeriod);
 
         // If the stock has dividends we save it
         if (hasDividends()) {
-            if (!config.contains(id + ".dividends.formula"))
-                config.set(id + ".dividends.formula", dividends.getFormula());
-            if (!config.contains(id + ".dividends.period"))
-                config.set(id + ".dividends.period", dividends.getPeriod());
-            if(!config.contains(id + ".dividends.last")||dividends.getLastApplication()>config.getLong(id + ".dividends.last"))
-                 config.set(id + ".dividends.last", dividends.getLastApplication());
+            if (!stockInfo.contains(id + ".dividends.formula"))
+                stockInfo.set(id + ".dividends.formula", dividends.getFormula());
+            if (!stockInfo.contains(id + ".dividends.period"))
+                stockInfo.set(id + ".dividends.period", dividends.getPeriod());
+            if (!stockInfo.contains(id + ".dividends.last") || dividends.getLastApplication() > stockInfo.getLong(id + ".dividends.last"))
+                stockInfo.set(id + ".dividends.last", dividends.getLastApplication());
         }
-        if (!config.contains(id + ".exchange-type")) {
+        if (!stockInfo.contains(id + ".exchange-type")) {
             // Save exchange type
             if (isVirtual())
-                config.set(id + ".exchange-type", null);
+                stockInfo.set(id + ".exchange-type", null);
             else {
-                config.set(id + ".exchange-type.material", exchangeType.getMaterial().name());
-                config.set(id + ".exchange-type.model-data", exchangeType.getModelData());
-                config.set(id + ".exchange-type.display", exchangeType.getDisplay());
+                stockInfo.set(id + ".exchange-type.material", exchangeType.getMaterial().name());
+                stockInfo.set(id + ".exchange-type.model-data", exchangeType.getModelData());
+                stockInfo.set(id + ".exchange-type.display", exchangeType.getDisplay());
             }
         }
 
-        Stonks.plugin.stockManager.save(this);
+        // Save stock data
+        for (TimeScale time : TimeScale.values()) {
+            List<StockInfo> toBeSaved = getData(time);
+            for (int i = 0; i < toBeSaved.size(); i++) {
+                stockData.set(id + "." + time.toString().toLowerCase() + "data." + i + ".price", toBeSaved.get(i).getPrice());
+                stockData.set(id + "." + time.toString().toLowerCase() + "data." + i + ".timestamp", toBeSaved.get(i).getTimeStamp());
+            }
+        }
     }
 
     /**

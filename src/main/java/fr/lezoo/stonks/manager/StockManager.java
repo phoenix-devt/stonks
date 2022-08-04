@@ -13,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
@@ -36,19 +37,15 @@ public class StockManager implements FileManager {
     }
 
     public void remove(String stockId) {
-        Validate.isTrue(mapped.containsKey(stockId), "Tried to remove stock " + stockId + " which does not exist");
+        final @Nullable LoadedStock removed = mapped.remove(stockId);
+        Validate.notNull(removed, "Tried removing stock '" + stockId + "' which does not exist");
 
-
-        LoadedStock removed = mapped.remove(stockId);
-
+        // Stock was found and gets removed
         removed.refreshRunnable.cancel();
 
-        //Remove in the yml
+        // Remove it from the yml
         ConfigFile config = new ConfigFile("stocks");
-        ConfigurationSection section = config.getConfig().getConfigurationSection(stockId);
-
-
-        config.getConfig().set(stockId,null);
+        config.getConfig().set(stockId, null);
         config.save();
     }
 
@@ -63,20 +60,19 @@ public class StockManager implements FileManager {
 
     @Override
     public void save() {
-        ConfigFile config = new ConfigFile("stocks");
-
-        //Remove the data of the stocks in stock-data.yml
+        ConfigFile stockInfoConfig = new ConfigFile("stocks");
         ConfigFile stockDataConfig = new ConfigFile("stock-data");
+
+        // Remove old stock data
         for (String key : stockDataConfig.getConfig().getKeys(true))
             stockDataConfig.getConfig().set(key, null);
-        stockDataConfig.save();
+
         // Save newest
-        for (LoadedStock loaded : mapped.values()) {
-            loaded.stock.save(config.getConfig());
-        }
+        for (LoadedStock loaded : mapped.values())
+            loaded.stock.save(stockInfoConfig.getConfig(), stockDataConfig.getConfig());
 
-        config.save();
-
+        stockInfoConfig.save();
+        stockDataConfig.save();
     }
 
     public boolean has(String id) {
@@ -177,31 +173,5 @@ public class StockManager implements FileManager {
                     if (stock.getData(disp).isEmpty())
                         stock.getData(disp).add(new StockInfo(System.currentTimeMillis(), stock.getPrice()));
         }
-    }
-
-    /**
-     * Saves all the data of the stocks in stock-data.yml file
-     */
-    public void save(Stock stock) {
-        ConfigFile configFile = new ConfigFile("stock-data");
-        FileConfiguration config = configFile.getConfig();
-        //We remove the old data
-        if (config.contains(stock.getId())) {
-            ConfigurationSection section = config.getConfigurationSection(stock.getId());
-            for (String key : section.getKeys(true)) {
-                section.set(key, null);
-
-            }
-        }
-        //We save the information of the data using stockDataManager
-        for (TimeScale time : TimeScale.values()) {
-            List<StockInfo> stockData = stock.getData(time);
-            //We load the data needed
-            for (int i = 0; i < stockData.size(); i++) {
-                config.set(stock.getId() + "." + time.toString().toLowerCase() + "data." + i + ".price", stockData.get(i).getPrice());
-                config.set(stock.getId() + "." + time.toString().toLowerCase() + "data." + i + ".timestamp", stockData.get(i).getTimeStamp());
-            }
-        }
-        configFile.save();
     }
 }
