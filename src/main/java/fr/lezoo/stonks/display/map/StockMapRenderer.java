@@ -9,6 +9,7 @@ import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.stock.StockInfo;
 import fr.lezoo.stonks.stock.TimeScale;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -36,8 +37,7 @@ public class StockMapRenderer extends MapRenderer {
     private final int datataken;
     private List<StockInfo> stockData;
     private TimeScale time;
-    private final int refreshRate = (int) (Stonks.plugin.configManager.mapRefreshTime * 20);
-    private int counter = refreshRate;
+    private long lastUpdate = 0;
 
     public StockMapRenderer(Player player, ItemStack map, Stock stock, TimeScale time) {
         this.player = player;
@@ -91,7 +91,8 @@ public class StockMapRenderer extends MapRenderer {
 
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
-        if (counter++ >= refreshRate) {
+
+        if (System.currentTimeMillis() - lastUpdate >= Stonks.plugin.configManager.mapRefreshTime * 1000) {
             //We update the meta of the map in order to keep it relevant.
             updateMeta();
             BufferedImage image = getStockImage();
@@ -99,7 +100,7 @@ public class StockMapRenderer extends MapRenderer {
             image = MapPalette.resizeImage(image);
             //draw image on canvas
             mapCanvas.drawImage(0, 0, image);
-            counter = 0;
+            lastUpdate = System.currentTimeMillis();
         }
     }
 

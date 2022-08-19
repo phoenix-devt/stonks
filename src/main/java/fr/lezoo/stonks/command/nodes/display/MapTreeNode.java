@@ -22,7 +22,7 @@ public class MapTreeNode extends CommandTreeNode {
 
     @Override
     public CommandResult execute(CommandSender sender, String[] args) {
-        if (args.length < 3)
+        if (args.length < 4)
             return CommandResult.THROW_USAGE;
 
         if (!Stonks.plugin.stockManager.has(args[2])) {

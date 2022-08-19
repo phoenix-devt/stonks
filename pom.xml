@@ -6,7 +6,7 @@
 
     <groupId>fr.lezoo</groupId>
     <artifactId>Stonks</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <description>Stocks in Minecraft!</description>
 
     <build>
@@ -118,12 +118,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
+
 
     </dependencies>
 

@@ -32,7 +32,7 @@ public class StockMap extends CustomItem<DisplayInfo> {
         ItemStack item = super.build(player, info);
         MapMeta meta = (MapMeta) item.getItemMeta();
         //We create a mpa view
-        MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
+        MapView mapView = Bukkit.createMap(player.getWorld());
         mapView.getRenderers().clear();
         mapView.addRenderer(new StockMapRenderer(player, item, stock, time));
         mapView.setUnlimitedTracking(false);
