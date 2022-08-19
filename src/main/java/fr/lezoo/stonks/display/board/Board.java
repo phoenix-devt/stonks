@@ -368,7 +368,7 @@ public class Board {
             // Create the map that will go in the frame
             ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
             MapMeta meta = (MapMeta) mapItem.getItemMeta();
-            MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
+            MapView mapView = Bukkit.createMap(itemFrame.getWorld());
             mapView.getRenderers().clear();
 
             // (j = 0 => x = 0) but (i = 0 => i = BOARD_HEIGHT) because of how graphics 2D works

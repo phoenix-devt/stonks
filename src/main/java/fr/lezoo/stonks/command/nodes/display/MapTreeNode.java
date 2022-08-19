@@ -25,11 +25,11 @@ public class MapTreeNode extends CommandTreeNode {
         if (args.length < 3)
             return CommandResult.THROW_USAGE;
 
-        Stock stock = Stonks.plugin.stockManager.get(args[2]);
-        if (stock == null) {
+        if (!Stonks.plugin.stockManager.has(args[2])) {
             sender.sendMessage(ChatColor.RED + "Could not find target stock");
             return CommandResult.FAILURE;
         }
+        Stock stock = Stonks.plugin.stockManager.get(args[2]);
 
         TimeScale display;
         try {
