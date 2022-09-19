@@ -86,7 +86,7 @@ public class Stock {
         // If it doesn't have a field dividends we use the default dividends given in the config.yml
         this.dividends = config.contains("dividends") ? new Dividends(this, config.getConfigurationSection("dividends")) : new Dividends(this);
 
-        exchangeType = config.contains("exchange-type") ? new ExchangeType(config.getConfigurationSection("exchange-type")) : null;
+        exchangeType = config.contains("exchange-type")&&!config.getString("exchange-type").equals("money") ? new ExchangeType(config.getConfigurationSection("exchange-type")) : null;
         this.handler = config.getBoolean("real-stock") ? new RealStockHandler(this) : new FictiveStockHandler(this, config);
         // Set the data of the stock after initializing stock handler
         Stonks.plugin.stockManager.initializeStockData(this);
@@ -201,7 +201,7 @@ public class Stock {
         if (!stockInfo.contains(id + ".exchange-type")) {
             // Save exchange type
             if (isVirtual())
-                stockInfo.set(id + ".exchange-type", null);
+                stockInfo.set(id + ".exchange-type", "money");
             else {
                 stockInfo.set(id + ".exchange-type.material", exchangeType.getMaterial().name());
                 stockInfo.set(id + ".exchange-type.model-data", exchangeType.getModelData());

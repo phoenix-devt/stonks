@@ -6,7 +6,7 @@
 
     <groupId>fr.lezoo</groupId>
     <artifactId>Stonks</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.7</version>
     <description>Stocks in Minecraft!</description>
 
     <build>

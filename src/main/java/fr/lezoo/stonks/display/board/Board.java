@@ -189,7 +189,8 @@ public class Board {
             for (int y = 0; y < height; y++) {
                 BoardPoint point = pointArray[x][y];
                 ItemFrame itemFrame = point.itemFrame;
-                if (!point.getLocation().subtract(boardFace.getDirection()).getBlock().getType().equals(Material.AIR)) {
+                if (point.getLocation().getBlock().isPassable()
+                        &&!point.getLocation().clone().subtract(boardFace.getDirection()).getBlock().getType().equals(Material.AIR)) {
                     if (itemFrame != null && !itemFrame.isDead()) {
                         if (isAir(itemFrame.getItem()))
                             point.fillItemFrame();
