@@ -92,7 +92,7 @@ public class StockMapRenderer extends MapRenderer {
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
 
-        if (System.currentTimeMillis() - lastUpdate >= Stonks.plugin.configManager.mapRefreshTime * 1000) {
+        if (System.currentTimeMillis() - lastUpdate >= Stonks.plugin.configManager.mapRefreshTime * 50) {
             //We update the meta of the map in order to keep it relevant.
             updateMeta();
             BufferedImage image = getStockImage();

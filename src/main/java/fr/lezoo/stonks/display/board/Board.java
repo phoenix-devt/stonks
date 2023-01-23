@@ -293,7 +293,7 @@ public class Board {
         g2d.setFont(new Font(
                 description.getString("font.name", null),
                 description.contains("font.bold") && !description.getBoolean("font.bold") ? Font.PLAIN : Font.BOLD, (int) (
-                        description.getDouble("font.size",1) * BOARD_HEIGHT * 5 / 128.)));
+                        description.getDouble("font.size",1) * Math.min(BOARD_HEIGHT * 6 / 128.,BOARD_WIDTH*4.5/128.))));
         // We want only 2 numbers after the command
         g2d.drawString(holders.apply(description.getString("time-scale")), (int) (0.03 * BOARD_WIDTH), (int) (0.845 * BOARD_HEIGHT));
         g2d.drawString(holders.apply(description.getString("stock-name")), (int) (0.03 * BOARD_WIDTH), (int) (0.89 * BOARD_HEIGHT));

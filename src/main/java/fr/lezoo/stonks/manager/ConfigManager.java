@@ -46,7 +46,7 @@ public class ConfigManager {
     public List<String> displaySignFormat;
     public int dividendsRedeemHour;
 
-    public long boardRefreshTime, shareRefreshTime, signRefreshTime, mapRefreshTime;
+    public long boardLoadDelay, boardRefreshTime, shareRefreshTime, signRefreshTime, mapRefreshTime;
     public double defaultTaxRate, maximumLeverage;
     public int maxInteractionDistance, defaultDividendPeriod;
     public String defaultDividendFormula;
@@ -72,7 +72,8 @@ public class ConfigManager {
         defaultTaxRate = Stonks.plugin.getConfig().getDouble("default-tax-rate");
         defaultDividendFormula = Stonks.plugin.getConfig().getString("default-dividends.formula");
         defaultDividendPeriod = Stonks.plugin.getConfig().getInt("default-dividends.period");
-        maximumLeverage = Stonks.plugin.getConfig().getDouble("maximum-leverage",10);
+        maximumLeverage = Stonks.plugin.getConfig().getDouble("maximum-leverage", 10);
+        boardLoadDelay=Stonks.plugin.getConfig().getLong("board-load-delay",100);
         // Useful checks
         Validate.isTrue(displaySignFormat.size() == 4, "Display sign format should be of length 4");
 

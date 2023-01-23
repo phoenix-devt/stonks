@@ -7,6 +7,7 @@ import fr.lezoo.stonks.command.objects.parameter.SimpleParameter;
 import fr.lezoo.stonks.stock.Stock;
 import fr.lezoo.stonks.stock.StockInfo;
 import fr.lezoo.stonks.stock.handler.FictiveStockHandler;
+import fr.lezoo.stonks.util.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -43,6 +44,7 @@ public class CreateTreeNode extends CommandTreeNode {
         }
 
         Stonks.plugin.stockManager.register(new Stock(args[2], args[3], stock -> new FictiveStockHandler(stock, initialPrice, initialSupply), null, null, new StockInfo(System.currentTimeMillis(), initialPrice)));
+        Message.STOCK_CREATED.format("stock-name",args[3]).send(sender);
         return CommandResult.SUCCESS;
     }
 }

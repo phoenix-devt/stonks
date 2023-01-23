@@ -24,17 +24,21 @@ maximum-leverage: 10
 # How the amount of shares are displayed in messages
 shares-decimal-format: '0.#'
 
-# How frequently display maps refresh
-map-refresh-time: 30
+#The delay in ticks before which board are loaded, if you have issues when issuing /restart or /rl
+#you might want to increase this delay to make sure boards are loaded after the item frames spawned.
+board-load-delay: 100
 
-# How frequently display boards refresh
-board-refresh-time: 10
+# How frequently display maps refresh in ticks.
+map-refresh-time: 100
 
-# How frequently Stonks checks for shares that need to automatically close
-share-refresh-time: 60
+# How frequently display boards refresh in ticks.
+board-refresh-time: 100
 
-# How frequently display signs refresh
-sign-refresh-time: 10
+# How frequently Stonks checks for shares that need to automatically close in ticks.
+share-refresh-time: 100
+
+# How frequently display signs refresh in ticks.
+sign-refresh-time: 100
 
 # Default tax rate on share benefit
 default-tax-rate: 0

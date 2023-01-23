@@ -25,7 +25,7 @@ public class BoardMapRenderer extends MapRenderer {
 
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
-        if (System.currentTimeMillis() - lastUpdate < Stonks.plugin.configManager.boardRefreshTime * 1000)
+        if (System.currentTimeMillis() - lastUpdate < Stonks.plugin.configManager.boardRefreshTime * 50)
             return;
 
         lastUpdate = System.currentTimeMillis();

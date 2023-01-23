@@ -50,10 +50,7 @@ public class Stonks extends JavaPlugin {
     @Nullable
     public StockAPI stockAPI;
 
-    /*
-     * TODO Comment obtenir les lives de trading
-     * TODO Signs, playerdata avec les shares
-     */
+
     public void onLoad() {
         plugin = this;
     }
@@ -94,7 +91,7 @@ public class Stonks extends JavaPlugin {
         stockManager.load();
         shareManager.load();
         // A delay is required otherwise entities are not loaded yet
-        Bukkit.getScheduler().runTaskLater(this, () -> boardManager.load(), 20);
+        Bukkit.getScheduler().runTaskLater(this, () -> boardManager.load(), configManager.boardLoadDelay);
         signManager.load();
         playerManager.load();
 
@@ -130,12 +127,11 @@ public class Stonks extends JavaPlugin {
         }.runTaskTimer(this, 0L, configManager.signRefreshTime);
 
 
-        // Refresh boards
+        // Refresh stocks
         new BukkitRunnable() {
             //We refresh the stock by putting the good values
             @Override
             public void run() {
-
                 stockManager.refresh();
             }
         }.runTaskTimer(this, 0, TimeScale.MINUTE.getTime() / (1000 * Stock.BOARD_DATA_NUMBER));
@@ -148,7 +144,7 @@ public class Stonks extends JavaPlugin {
                 if (Bukkit.getOnlinePlayers().size() > 0)
                     boardManager.refreshBoards();
             }
-        }.runTaskTimer(this, 0, 20L * this.configManager.boardRefreshTime);
+        }.runTaskTimer(this, configManager.boardLoadDelay, this.configManager.boardRefreshTime);
 
         // Refresh the shares
         new BukkitRunnable() {

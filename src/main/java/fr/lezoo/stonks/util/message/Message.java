@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Message {
+    STOCK_CREATED("&aYou successfully created the stock &6{stock-name}&a."),
     NOT_ENOUGH_MONEY("&cYou don't have enough money: you need ${left} more"),
     BUY_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou bought {shares} shares from {name} for ${price}."),
     SELL_SHARES(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "&eYou shorted {shares} shares from {name} for ${price}."),
@@ -32,8 +33,8 @@ public enum Message {
     BUY_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "", "&eWrite in the chat the amount of shares you would like to buy."),
     SELL_CUSTOM_ASK(new SoundReader(Sound.ENTITY_PLAYER_LEVELUP, 1, 2), "", "&eWrite in the chat the amount of shares you would like to short."),
     NOT_VALID_NUMBER("&c{input} is not a valid number."),
-    NO_ORDER("You don't have any order for {stock-name}"),
-    NO_AMOUNT("You didn't specify the amount of shares you wanted for {stock-name}"),
+    NO_ORDER("&cYou don't have any order for &6{stock-name}"),
+    NO_AMOUNT("&cYou didn't specify the amount of shares you wanted for &6{stock-name}"),
     NOT_VALID_AMOUNT("&c{input} is not a valid amount."),
     NOT_VALID_MIN_PRICE("&c{input} is not a valid min price."),
     NOT_VALID_MAX_PRICE("&c{input} is not a valid max price."),
